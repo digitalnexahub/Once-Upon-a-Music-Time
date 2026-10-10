@@ -90,3 +90,26 @@
   .wtpc .wtpc__rv,.wtpc .wtpc__card{opacity:1!important;transform:none!important;translate:none!important}
 }
 .wtpc .screen-reader-text{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
+
+/* ---------- match the category slider design ---------- */
+.wtpc .wtpc__sub{font:600 11px/1.2 'Barlow',sans-serif;letter-spacing:.2em;color:#5a615c;margin-bottom:10px}
+.wtpc .wtpc__title{font:700 clamp(32px,3vw,44px)/1.05 'Barlow',sans-serif!important;color:#1d211e;letter-spacing:-.01em}
+.wtpc__head{margin-bottom:32px}
+.wtpc .wtpc__all{gap:14px;padding:6px 6px 6px 20px;border:1px solid var(--ln);border-radius:999px;background:#fff;font:600 14px/1 'Barlow',sans-serif;transition:border-color .4s var(--ease),box-shadow .4s var(--ease),transform .4s var(--ease)}
+.wtpc .wtpc__all svg{width:36px;height:36px;padding:10px;border-radius:50%;background:#1D4032;stroke:#fff;transition:transform .5s var(--ease),background-color .4s}
+.wtpc .wtpc__all:hover{border-color:#1D4032;color:var(--tx);box-shadow:0 12px 26px -16px rgba(21,53,40,.6);transform:translateY(-2px)}
+.wtpc .wtpc__all:hover svg{transform:rotate(-45deg);background:#0f2a1f}
+.wtpc__nav{width:56px!important;height:56px!important;border:0!important;background:#fff!important;box-shadow:0 8px 24px -8px rgba(0,0,0,.35)!important}
+.wtpc__nav svg{width:22px;height:22px}
+.wtpc__nav--prev{left:16px!important}.wtpc__nav--next{right:16px!important}
+.wtpc__nav:hover{transform:translateY(-50%) scale(1.06);color:#1D4032!important}
+.wtpc__nav:disabled{opacity:0!important}
+.wtpc__dots{display:none!important}
+.wtpc__line{position:relative;width:min(470px,70%);height:4px;margin:44px auto 0;background:#D0D0D0;border-radius:3px;cursor:pointer}
+.wtpc__line:before{content:"";position:absolute;left:0;right:0;top:-10px;bottom:-10px}
+.wtpc__line span{position:absolute;left:0;top:0;height:100%;width:25%;background:#000;border-radius:3px;transition:transform .45s var(--ease),width .3s var(--ease);pointer-events:none}
+.wtpc__card{border-radius:10px}
+.wtpc .wtpc__name{font-size:16px!important}
+.wtpc__now{font-size:20px}
+.wtpc__btn{height:42px;font-size:13.5px}
+@media (max-width:767px){.wtpc__nav{width:44px!important;height:44px!important}.wtpc__nav--prev{left:-4px!important}.wtpc__nav--next{right:-4px!important}.wtpc .wtpc__all{font-size:13px;padding:5px 5px 5px 16px}.wtpc .wtpc__all svg{width:32px;height:32px;padding:9px}}
