@@ -233,10 +233,11 @@ add_shortcode( 'wt_products_carousel', function ( $a ) {
 	if ( ! function_exists( 'wc_get_products' ) ) { return ''; }
 	$a     = shortcode_atts( [ 'limit' => 8 ], $a );
 	$items = wc_get_products( [ 'limit' => (int) $a['limit'], 'featured' => true, 'status' => 'publish', 'orderby' => 'ID', 'order' => 'ASC' ] );
-	if ( count( $items ) < 4 ) {
-		$items = array_merge( $items, wc_get_products( [ 'limit' => 8 - count( $items ), 'status' => 'publish', 'exclude' => wp_list_pluck( array_map( fn( $p ) => (object) [ 'id' => $p->get_id() ], $items ), 'id' ) ] ) );
+	if ( count( $items ) < (int) $a['limit'] ) {
+		$have  = array_map( fn( $p ) => $p->get_id(), $items );
+		$items = array_merge( $items, wc_get_products( [ 'limit' => (int) $a['limit'] - count( $items ), 'status' => 'publish', 'exclude' => $have, 'orderby' => 'date', 'order' => 'DESC' ] ) );
 	}
-	$o = '<div class="wt-carousel" data-carousel><button class="wt-car-btn prev" aria-label="Previous products">' . wt_icon( 'left' ) . '</button><div class="wt-car-track" tabindex="0" aria-label="Featured products">';
+	$o = '<div class="wt-carousel wt-reveal" data-carousel><button class="wt-car-btn prev" aria-label="Previous products">' . wt_icon( 'left' ) . '</button><div class="wt-car-track" tabindex="0" aria-label="Featured products">';
 	foreach ( $items as $p ) {
 		$rating = get_post_meta( $p->get_id(), '_wt_display_rating', true );
 		$count  = get_post_meta( $p->get_id(), '_wt_display_count', true );
@@ -246,7 +247,7 @@ add_shortcode( 'wt_products_carousel', function ( $a ) {
 			esc_url( $p->add_to_cart_url() ), esc_attr( $p->get_type() ), $p->get_id(), esc_attr( $p->get_sku() ), esc_attr( $p->get_name() )
 		);
 		if ( ! $p->is_type( 'simple' ) ) { $btn = '<a class="wt-atc" href="' . esc_url( $p->get_permalink() ) . '">Choose options</a>'; }
-		$o .= '<article class="wt-pcard wt-reveal"><a class="wt-pcard__img" href="' . esc_url( $p->get_permalink() ) . '">' . $p->get_image( 'woocommerce_single', [ 'loading' => 'lazy' ] ) . '</a><div class="wt-pcard__b"><h3><a href="' . esc_url( $p->get_permalink() ) . '">' . esc_html( $p->get_name() ) . '</a></h3>';
+		$o .= '<article class="wt-pcard"><a class="wt-pcard__img" href="' . esc_url( $p->get_permalink() ) . '">' . $p->get_image( 'woocommerce_single', [ 'loading' => 'lazy' ] ) . '</a><div class="wt-pcard__b"><h3><a href="' . esc_url( $p->get_permalink() ) . '">' . esc_html( $p->get_name() ) . '</a></h3>';
 		if ( $rating ) { $o .= '<div class="wt-pcard__r">' . wt_stars( (float) $rating ) . ' <span>' . esc_html( number_format( (float) $rating, 1 ) ) . ' (' . (int) $count . ')</span></div>'; }
 		$o .= '<div class="wt-pcard__p">' . $p->get_price_html() . '</div>' . $btn . '</div></article>';
 	}
@@ -257,11 +258,11 @@ add_shortcode( 'wt_products_carousel', function ( $a ) {
 add_shortcode( 'wt_blog_cards', function ( $a ) {
 	$a = shortcode_atts( [ 'limit' => 3 ], $a );
 	$q = new WP_Query( [ 'posts_per_page' => (int) $a['limit'], 'ignore_sticky_posts' => true ] );
-	$o = '<div class="wt-blog">';
+	$o = '<div class="wt-blog wt-reveal-group">';
 	while ( $q->have_posts() ) {
 		$q->the_post();
 		$cat = get_the_category();
-		$o  .= '<article class="wt-bcard wt-reveal"><a class="wt-bcard__img" href="' . esc_url( get_permalink() ) . '" tabindex="-1" aria-hidden="true">' . get_the_post_thumbnail( null, 'medium_large', [ 'loading' => 'lazy', 'alt' => '' ] ) . '</a><div class="wt-bcard__b">';
+		$o  .= '<article class="wt-bcard"><a class="wt-bcard__img" href="' . esc_url( get_permalink() ) . '" tabindex="-1" aria-hidden="true">' . get_the_post_thumbnail( null, 'medium_large', [ 'loading' => 'lazy', 'alt' => '' ] ) . '</a><div class="wt-bcard__b">';
 		if ( $cat ) { $o .= '<span class="wt-badge">' . esc_html( $cat[0]->name ) . '</span>'; }
 		$o .= '<h3><a href="' . esc_url( get_permalink() ) . '">' . esc_html( get_the_title() ) . '</a></h3><p>' . esc_html( wp_trim_words( get_the_excerpt(), 14 ) ) . '</p><a class="wt-more" href="' . esc_url( get_permalink() ) . '">Read more <span aria-hidden="true">→</span><span class="screen-reader-text"> about ' . esc_html( get_the_title() ) . '</span></a></div></article>';
 	}
@@ -290,10 +291,10 @@ add_shortcode( 'wt_reviews', function () {
 		];
 	}
 	$o = $placeholder ? '<p class="wt-admin-note">Editor-only preview: no approved product reviews yet, so visitors see a short call to action instead of these placeholder cards.</p>' : '';
-	$o .= '<div class="wt-reviews">';
+	$o .= '<div class="wt-reviews wt-reveal-group">';
 	foreach ( $cards as $i => $c ) {
 		$av = $c[4] ? '<img src="' . esc_url( $c[4] ) . '" alt="" width="36" height="36" loading="lazy">' : '<span class="wt-av" aria-hidden="true">' . esc_html( mb_substr( $c[2], 0, 1 ) ) . '</span>';
-		$o .= '<figure class="wt-rcard wt-reveal"><div class="wt-rcard__t">' . wt_stars( $c[0] ) . '<blockquote>“' . esc_html( wp_trim_words( $c[1], 24 ) ) . '”</blockquote><figcaption>' . $av . '<span><b>' . esc_html( $c[2] ) . '</b><small>' . esc_html( $c[3] ) . '</small></span></figcaption></div>' . wp_get_attachment_image( $photos[ $i % 3 ], 'medium', false, [ 'class' => 'wt-rcard__img', 'loading' => 'lazy', 'alt' => '' ] ) . '</figure>';
+		$o .= '<figure class="wt-rcard"><div class="wt-rcard__t">' . wt_stars( $c[0] ) . '<blockquote>“' . esc_html( wp_trim_words( $c[1], 24 ) ) . '”</blockquote><figcaption>' . $av . '<span><b>' . esc_html( $c[2] ) . '</b><small>' . esc_html( $c[3] ) . '</small></span></figcaption></div>' . wp_get_attachment_image( $photos[ $i % 3 ], 'medium', false, [ 'class' => 'wt-rcard__img', 'loading' => 'lazy', 'alt' => '' ] ) . '</figure>';
 	}
 	return $o . '</div>';
 } );
@@ -352,12 +353,13 @@ if(st&&sp){st.addEventListener('click',function(){sp.hidden=!sp.hidden;st.setAtt
 var top=d.getElementById('wt-top');if(top)top.addEventListener('click',function(){window.scrollTo({top:0,behavior:reduce?'auto':'smooth'});});
 // smooth anchors
 d.querySelectorAll('a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var id=a.getAttribute('href');if(id.length<2)return;var el=d.querySelector(id);if(!el)return;e.preventDefault();window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-90,behavior:reduce?'auto':'smooth'});});});
-// reveal
-var els=d.querySelectorAll('.wt-reveal,.wt-reveal-group > .e-con > *,.wt-reveal-group > *');
+// reveal (single elements, and groups whose children stagger in together)
 if(!reduce&&'IntersectionObserver' in window){
  d.documentElement.classList.add('wt-anim');
- var io=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}});},{threshold:.12,rootMargin:'0px 0px -40px 0px'});
- els.forEach(function(el){var sib=el.parentNode?Array.prototype.indexOf.call(el.parentNode.children,el):0;el.style.transitionDelay=Math.min(sib,6)*100+'ms';io.observe(el);});
+ var show=function(el){if(el.classList.contains('wt-reveal-group')){Array.prototype.forEach.call(el.children,function(c,i){c.style.transitionDelay=Math.min(i,6)*100+'ms';c.classList.add('in');});}else{el.classList.add('in');}};
+ var io=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){show(x.target);io.unobserve(x.target);}});},{threshold:.08,rootMargin:'0px 0px -30px 0px'});
+ d.querySelectorAll('.wt-reveal,.wt-reveal-group').forEach(function(el){io.observe(el);});
+ window.addEventListener('beforeprint',function(){d.querySelectorAll('.wt-reveal,.wt-reveal-group').forEach(show);});
 }
 // hotspots
 function close(s){s.classList.remove('open');s.querySelector('button').setAttribute('aria-expanded','false');}
@@ -367,19 +369,35 @@ d.querySelectorAll('.wt-spot').forEach(function(s){var btn=s.querySelector('butt
  s.addEventListener('mouseleave',function(){if(window.matchMedia('(hover:hover)').matches)close(s);});
 });
 d.addEventListener('click',function(){d.querySelectorAll('.wt-spot.open').forEach(close);});
-// carousels
+// carousels: arrows, dots, keyboard, touch swipe (native), mouse drag, autoplay
 d.querySelectorAll('[data-carousel]').forEach(function(c){
- var tr=c.querySelector('.wt-car-track'),dots=c.querySelector('.wt-car-dots');
- function per(){var card=tr.children[0];return card?Math.max(1,Math.round(tr.clientWidth/card.getBoundingClientRect().width)):1;}
- function pages(){return Math.max(1,Math.ceil(tr.children.length-per()+1));}
- function step(){var card=tr.children[0];return card?card.getBoundingClientRect().width+parseFloat(getComputedStyle(tr).columnGap||0):tr.clientWidth;}
- function build(){dots.innerHTML='';var n=pages();c.classList.toggle('no-nav',n<2);for(var i=0;i<n;i++){var x=d.createElement('button');x.setAttribute('role','tab');x.setAttribute('aria-label','Go to slide '+(i+1));(function(i){x.addEventListener('click',function(){tr.scrollTo({left:i*step(),behavior:reduce?'auto':'smooth'});});})(i);dots.appendChild(x);}sync();}
- function sync(){var i=Math.round(tr.scrollLeft/step());Array.prototype.forEach.call(dots.children,function(x,j){x.classList.toggle('on',j===i);x.setAttribute('aria-selected',j===i);});c.querySelector('.prev').disabled=tr.scrollLeft<5;c.querySelector('.next').disabled=tr.scrollLeft+tr.clientWidth>=tr.scrollWidth-5;}
- c.querySelector('.prev').addEventListener('click',function(){tr.scrollBy({left:-step(),behavior:reduce?'auto':'smooth'});});
- c.querySelector('.next').addEventListener('click',function(){tr.scrollBy({left:step(),behavior:reduce?'auto':'smooth'});});
- tr.addEventListener('scroll',function(){window.requestAnimationFrame(sync);},{passive:true});
- tr.addEventListener('keydown',function(e){if(e.key==='ArrowRight'){e.preventDefault();c.querySelector('.next').click();}if(e.key==='ArrowLeft'){e.preventDefault();c.querySelector('.prev').click();}});
- window.addEventListener('resize',build);build();
+ var tr=c.querySelector('.wt-car-track'),dots=c.querySelector('.wt-car-dots'),prev=c.querySelector('.prev'),next=c.querySelector('.next'),n=tr.children.length,timer=null,paused=false,drag=null,moved=false;
+ function gap(){return parseFloat(getComputedStyle(tr).columnGap)||0;}
+ function step(){return n?tr.children[0].getBoundingClientRect().width+gap():tr.clientWidth;}
+ function per(){return Math.max(1,Math.round((tr.clientWidth+gap())/step()));}
+ function max(){return Math.max(0,n-per());}
+ function idx(){return Math.round(tr.scrollLeft/step());}
+ function go(i){i=Math.max(0,Math.min(max(),i));tr.scrollTo({left:i*step(),behavior:reduce?'auto':'smooth'});}
+ function build(){dots.innerHTML='';var m=max();c.classList.toggle('no-nav',m<1);for(var i=0;i<=m;i++){(function(i){var x=d.createElement('button');x.type='button';x.setAttribute('role','tab');x.setAttribute('aria-label','Go to slide '+(i+1));x.addEventListener('click',function(){go(i);restart();});dots.appendChild(x);})(i);}sync();}
+ function sync(){var i=idx();Array.prototype.forEach.call(dots.children,function(x,j){x.classList.toggle('on',j===i);x.setAttribute('aria-selected',j===i?'true':'false');});prev.disabled=tr.scrollLeft<4;next.disabled=tr.scrollLeft>=tr.scrollWidth-tr.clientWidth-4;}
+ prev.addEventListener('click',function(){go(idx()-1);restart();});
+ next.addEventListener('click',function(){go(idx()+1);restart();});
+ var raf;tr.addEventListener('scroll',function(){cancelAnimationFrame(raf);raf=requestAnimationFrame(sync);},{passive:true});
+ tr.addEventListener('keydown',function(e){if(e.key==='ArrowRight'){e.preventDefault();go(idx()+1);}if(e.key==='ArrowLeft'){e.preventDefault();go(idx()-1);}});
+ // mouse drag (touch uses native scrolling + snap)
+ tr.addEventListener('pointerdown',function(e){if(e.pointerType!=='mouse'||e.button!==0)return;drag={x:e.clientX,l:tr.scrollLeft};moved=false;});
+ window.addEventListener('pointermove',function(e){if(!drag)return;var dx=e.clientX-drag.x;if(Math.abs(dx)>5){moved=true;c.classList.add('dragging');}if(moved)tr.scrollLeft=drag.l-dx;});
+ window.addEventListener('pointerup',function(){if(!drag)return;drag=null;c.classList.remove('dragging');if(moved)go(idx());restart();});
+ tr.addEventListener('click',function(e){if(moved){e.preventDefault();e.stopPropagation();moved=false;}},true);
+ tr.addEventListener('dragstart',function(e){e.preventDefault();});
+ // autoplay, paused on hover/focus/off-screen
+ function tick(){if(paused||d.hidden)return;go(idx()>=max()?0:idx()+1);}
+ function restart(){clearInterval(timer);if(!reduce&&max()>0)timer=setInterval(tick,5000);}
+ c.addEventListener('mouseenter',function(){paused=true;});c.addEventListener('mouseleave',function(){paused=false;});
+ c.addEventListener('focusin',function(){paused=true;});c.addEventListener('focusout',function(){paused=false;});
+ tr.addEventListener('touchstart',function(){paused=true;},{passive:true});tr.addEventListener('touchend',function(){setTimeout(function(){paused=false;},4000);},{passive:true});
+ if('IntersectionObserver' in window){new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting)restart();else clearInterval(timer);});}).observe(c);}else restart();
+ var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(build,150);});build();
 });
 // add to cart feedback (WooCommerce triggers jQuery events)
 if(window.jQuery){jQuery(d.body).on('adding_to_cart',function(e,btn){btn&&btn.addClass&&btn.addClass('is-loading').text('Adding…');}).on('added_to_cart',function(e,f,h,btn){if(btn&&btn.removeClass){btn.removeClass('is-loading').addClass('is-done').text('Added ✓');setTimeout(function(){btn.removeClass('is-done').text('Add to basket');},2200);}}).on('ajax_request_not_sent.adding_to_cart',function(e,btn){btn&&btn.removeClass&&btn.removeClass('is-loading').text('Add to basket');});
@@ -541,7 +559,8 @@ body.wt-lock{overflow:hidden}
 .wt-step .wt-p p{font-size:13.5px!important;margin:0}
 /* products */
 .wt-carousel{position:relative}
-.wt-car-track{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 72px)/4);gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;scroll-behavior:smooth;padding:4px 2px 8px}
+.wt-car-track{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 72px)/4);gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:4px 2px 8px;cursor:grab;overscroll-behavior-x:contain}
+.wt-carousel.dragging .wt-car-track{scroll-snap-type:none;cursor:grabbing}.wt-carousel.dragging a{pointer-events:none}
 .wt-car-track::-webkit-scrollbar{display:none}
 .wt-pcard{scroll-snap-align:start;background:#fff;border:1px solid var(--ln);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .35s var(--ease),transform .35s var(--ease)}
 .wt-pcard:hover{box-shadow:0 20px 40px -24px rgba(21,53,40,.35);transform:translateY(-3px)}
