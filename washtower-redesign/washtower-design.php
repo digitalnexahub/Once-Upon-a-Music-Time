@@ -416,6 +416,7 @@ add_action( 'wp', function () { remove_action( 'woocommerce_before_single_produc
 add_action( 'woocommerce_after_add_to_cart_button', function () {
 	global $product;
 	if ( ! $product || ! $product->is_purchasable() || ! $product->is_in_stock() ) { return; }
+	if ( $product->is_type( 'simple' ) ) { echo '<input type="hidden" name="add-to-cart" value="' . esc_attr( $product->get_id() ) . '">'; }
 	echo '<button type="submit" name="wt_buy_now" value="1" class="wt-buynow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>Buy now</button>';
 } );
 add_filter( 'woocommerce_add_to_cart_redirect', function ( $url ) {
