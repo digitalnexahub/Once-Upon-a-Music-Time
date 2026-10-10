@@ -17,6 +17,7 @@ add_action( 'wp_enqueue_scripts', function () {
 	wp_localize_script( 'wt-design', 'WT', [
 		'ajax'  => admin_url( 'admin-ajax.php' ),
 		'nonce' => wp_create_nonce( 'wt_newsletter' ),
+		'acc'   => is_user_logged_in() ? '' : wp_create_nonce( 'wt_account' ),
 	] );
 	wp_add_inline_script( 'wt-design', wt_design_js() );
 	if ( function_exists( 'WC' ) ) {
@@ -131,6 +132,118 @@ add_filter( 'gettext', function ( $t, $text, $domain ) {
 	}
 	return $t;
 }, 10, 3 );
+
+/* ---------------------------------------------------------------- account panel (login / register / lost password) */
+
+add_action( 'wp_footer', function () {
+	if ( is_user_logged_in() || ! function_exists( 'wc_get_page_permalink' ) ) { return; }
+	$terms = get_privacy_policy_url();
+	$eye   = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+	?>
+	<div class="wta" id="wta" hidden>
+		<div class="wta__overlay" data-wta-close></div>
+		<aside class="wta__panel" role="dialog" aria-modal="true" aria-labelledby="wta-title">
+			<button type="button" class="wta__close" data-wta-close aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+			<div class="wta__brand">WASHTOWER<sup>&reg;</sup></div>
+			<h2 class="wta__title" id="wta-title"><span data-t="login">Welcome back</span><span data-t="register">Create your account</span><span data-t="lost">Reset your password</span></h2>
+			<p class="wta__lead"><span data-t="login">Log in to track orders, save designs and check out faster.</span><span data-t="register">Save your designs, track orders and get exclusive offers.</span><span data-t="lost">Enter your email and we&rsquo;ll send you a secure link to set a new password.</span></p>
+
+			<div class="wta__tabs" role="tablist">
+				<button type="button" role="tab" data-view="login" aria-selected="true">Log in</button>
+				<button type="button" role="tab" data-view="register" aria-selected="false">Sign up</button>
+				<span class="wta__ink" aria-hidden="true"></span>
+			</div>
+
+			<div class="wta__views">
+				<form class="wta__form is-active" data-form="login" novalidate>
+					<div class="wta__f"><input type="text" name="log" id="wta-log" autocomplete="username" required placeholder=" "><label for="wta-log">Email or username</label></div>
+					<div class="wta__f wta__f--pw"><input type="password" name="pwd" id="wta-pwd" autocomplete="current-password" required placeholder=" "><label for="wta-pwd">Password</label><button type="button" class="wta__eye" aria-label="Show password"><?php echo $eye; ?></button></div>
+					<div class="wta__row">
+						<label class="wta__check"><input type="checkbox" name="remember" value="1" checked><span></span>Remember me</label>
+						<button type="button" class="wta__link" data-view="lost">Forgot password?</button>
+					</div>
+					<button type="submit" class="wta__btn"><span>Log in</span></button>
+					<p class="wta__switch">New to Washtower? <button type="button" class="wta__link" data-view="register">Create an account</button></p>
+				</form>
+
+				<form class="wta__form" data-form="register" novalidate>
+					<div class="wta__f"><input type="email" name="email" id="wta-email" autocomplete="email" required placeholder=" "><label for="wta-email">Email address</label></div>
+					<div class="wta__f wta__f--pw"><input type="password" name="password" id="wta-rpwd" autocomplete="new-password" required minlength="8" placeholder=" "><label for="wta-rpwd">Create password</label><button type="button" class="wta__eye" aria-label="Show password"><?php echo $eye; ?></button></div>
+					<div class="wta__meter" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+					<p class="wta__hint" data-meter-text>At least 8 characters, with a mix of letters and numbers.</p>
+					<input type="text" name="company" class="wta__hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+					<label class="wta__check wta__check--top"><input type="checkbox" name="optin" value="1"><span></span>Send me design ideas and offers by email</label>
+					<button type="submit" class="wta__btn"><span>Create account</span></button>
+					<p class="wta__legal">By creating an account you agree to our <a href="<?php echo esc_url( $terms ?: home_url( '/' ) ); ?>">privacy policy</a>.</p>
+					<p class="wta__switch">Already have an account? <button type="button" class="wta__link" data-view="login">Log in</button></p>
+				</form>
+
+				<form class="wta__form" data-form="lost" novalidate>
+					<div class="wta__f"><input type="text" name="user_login" id="wta-lost" autocomplete="email" required placeholder=" "><label for="wta-lost">Email or username</label></div>
+					<button type="submit" class="wta__btn"><span>Send reset link</span></button>
+					<p class="wta__switch"><button type="button" class="wta__link wta__back" data-view="login"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Back to log in</button></p>
+				</form>
+
+				<div class="wta__done" data-form="done" aria-live="polite">
+					<svg class="wta__tick" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="23"/><path d="M15 27l7 7 15-15"/></svg>
+					<h3 data-done-title>Check your inbox</h3>
+					<p data-done-text></p>
+					<button type="button" class="wta__btn wta__btn--ghost" data-view="login"><span>Back to log in</span></button>
+				</div>
+			</div>
+			<p class="wta__msg" role="alert"></p>
+		</aside>
+	</div>
+	<?php
+}, 20 );
+
+function wt_account_json_error( $msg ) { wp_send_json_error( [ 'message' => $msg ], 400 ); }
+function wt_account_rate_key() { return 'wt_login_' . md5( $_SERVER['REMOTE_ADDR'] ?? '' ); }
+
+add_action( 'wp_ajax_nopriv_wt_account', function () {
+	check_ajax_referer( 'wt_account', 'nonce' );
+	$do = sanitize_key( $_POST['do'] ?? '' );
+
+	if ( 'login' === $do ) {
+		$tries = (int) get_transient( wt_account_rate_key() );
+		if ( $tries >= 6 ) { wt_account_json_error( 'Too many attempts. Please wait 10 minutes and try again.' ); }
+		$login = sanitize_text_field( wp_unslash( $_POST['log'] ?? '' ) );
+		if ( is_email( $login ) ) { $u = get_user_by( 'email', $login ); if ( $u ) { $login = $u->user_login; } }
+		$user = wp_signon( [ 'user_login' => $login, 'user_password' => (string) wp_unslash( $_POST['pwd'] ?? '' ), 'remember' => ! empty( $_POST['remember'] ) ], is_ssl() );
+		if ( is_wp_error( $user ) ) {
+			set_transient( wt_account_rate_key(), $tries + 1, 10 * MINUTE_IN_SECONDS );
+			wt_account_json_error( 'That email/username and password don’t match. Please try again.' );
+		}
+		delete_transient( wt_account_rate_key() );
+		wp_send_json_success( [ 'message' => 'Welcome back, ' . esc_html( $user->display_name ) . '!', 'redirect' => wc_get_page_permalink( 'myaccount' ) ] );
+	}
+
+	if ( 'register' === $do ) {
+		if ( ! empty( $_POST['company'] ) ) { wt_account_json_error( 'Something went wrong. Please try again.' ); }
+		if ( 'yes' !== get_option( 'woocommerce_enable_myaccount_registration' ) ) { wt_account_json_error( 'Registration is currently closed.' ); }
+		$email = sanitize_email( wp_unslash( $_POST['email'] ?? '' ) );
+		$pass  = (string) wp_unslash( $_POST['password'] ?? '' );
+		if ( ! is_email( $email ) ) { wt_account_json_error( 'Please enter a valid email address.' ); }
+		if ( strlen( $pass ) < 8 ) { wt_account_json_error( 'Your password needs at least 8 characters.' ); }
+		if ( email_exists( $email ) ) { wt_account_json_error( 'An account with this email already exists. Try logging in.' ); }
+		$id = wc_create_new_customer( $email, '', $pass );
+		if ( is_wp_error( $id ) ) { wt_account_json_error( wp_strip_all_tags( $id->get_error_message() ) ); }
+		if ( ! empty( $_POST['optin'] ) ) { update_user_meta( $id, 'wt_marketing_optin', 1 ); }
+		wc_set_customer_auth_cookie( $id );
+		wp_send_json_success( [ 'message' => 'Your account is ready. Welcome to Washtower!', 'redirect' => wc_get_page_permalink( 'myaccount' ) ] );
+	}
+
+	if ( 'lost' === $do ) {
+		$login = sanitize_text_field( wp_unslash( $_POST['user_login'] ?? '' ) );
+		if ( '' === $login ) { wt_account_json_error( 'Please enter your email or username.' ); }
+		$tries = (int) get_transient( wt_account_rate_key() . '_lp' );
+		if ( $tries < 5 ) { set_transient( wt_account_rate_key() . '_lp', $tries + 1, 15 * MINUTE_IN_SECONDS ); retrieve_password( $login ); }
+		/* same answer whether or not the account exists, so emails can't be probed */
+		wp_send_json_success( [ 'message' => 'If an account exists for ' . esc_html( $login ) . ', a password reset link is on its way. The link expires in 24 hours.' ] );
+	}
+
+	wt_account_json_error( 'Unknown request.' );
+} );
 
 /* ---------------------------------------------------------------- newsletter */
 
@@ -352,6 +465,33 @@ function fxPos(b,e){var r=b.getBoundingClientRect();b.style.setProperty('--x',(e
 d.addEventListener('pointerover',function(e){var b=e.target.closest&&e.target.closest('.wt-fx');if(b&&!b.contains(e.relatedTarget))fxPos(b,e);});
 d.addEventListener('pointerout',function(e){var b=e.target.closest&&e.target.closest('.wt-fx');if(b&&!b.contains(e.relatedTarget)){fxPos(b,e);b.style.transform='';}});
 if(!reduce&&window.matchMedia('(hover:hover)').matches){d.addEventListener('pointermove',function(e){var b=e.target.closest&&e.target.closest('.wt-fx');if(!b)return;var r=b.getBoundingClientRect(),mx=(e.clientX-r.left-r.width/2)/r.width,my=(e.clientY-r.top-r.height/2)/r.height;b.style.transform='translate('+(mx*6).toFixed(2)+'px,'+(my*5-2).toFixed(2)+'px)';},{passive:true});}
+/* account panel: log in / sign up / reset password */
+(function(){var A=d.getElementById('wta');if(!A)return;var panel=A.querySelector('.wta__panel'),msg=A.querySelector('.wta__msg'),last=null,view='login';
+ function show(v,focus){view=v;A.setAttribute('data-view',v);A.querySelectorAll('.wta__tabs [role=tab]').forEach(function(t){t.setAttribute('aria-selected',t.getAttribute('data-view')===v?'true':'false');});
+  A.querySelectorAll('[data-form]').forEach(function(f){f.classList.toggle('is-active',f.getAttribute('data-form')===v);});msg.textContent='';msg.className='wta__msg';
+  if(focus!==false){var i=A.querySelector('[data-form="'+v+'"] input:not([type=checkbox]):not(.wta__hp)');if(i)setTimeout(function(){i.focus();},380);}}
+ function open(v){last=d.activeElement;A.hidden=false;void A.offsetWidth;A.classList.add('is-open');d.body.classList.add('wt-lock');show(v||'login');}
+ function close(){A.classList.remove('is-open');d.body.classList.remove('wt-lock');setTimeout(function(){A.hidden=true;},reduce?0:450);if(last&&last.focus)last.focus();}
+ d.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('.wth-ic a, a[href*="/my-account"]:not(.wta *)');if(a&&!e.ctrlKey&&!e.metaKey&&!/lost-password/.test(a.href)){e.preventDefault();open('login');}});
+ A.addEventListener('click',function(e){if(e.target.closest('[data-wta-close]'))return close();var v=e.target.closest('[data-view]');if(v){e.preventDefault();show(v.getAttribute('data-view'));}
+  var eye=e.target.closest('.wta__eye');if(eye){var inp=eye.parentNode.querySelector('input');var on=inp.type==='password';inp.type=on?'text':'password';eye.classList.toggle('on',on);eye.setAttribute('aria-label',on?'Hide password':'Show password');}});
+ d.addEventListener('keydown',function(e){if(!A.classList.contains('is-open'))return;if(e.key==='Escape')close();if(e.key==='Tab'){var f=panel.querySelectorAll('button:not([hidden]),input:not(.wta__hp),a');f=Array.prototype.filter.call(f,function(x){return x.offsetParent!==null;});if(!f.length)return;var a=f[0],z=f[f.length-1];if(e.shiftKey&&d.activeElement===a){z.focus();e.preventDefault();}else if(!e.shiftKey&&d.activeElement===z){a.focus();e.preventDefault();}}});
+ var pw=A.querySelector('#wta-rpwd'),meter=A.querySelector('.wta__meter'),mt=A.querySelector('[data-meter-text]');
+ if(pw)pw.addEventListener('input',function(){var v=pw.value,sc=0;if(v.length>=8)sc++;if(/[A-Z]/.test(v)&&/[a-z]/.test(v))sc++;if(/\d/.test(v))sc++;if(/[^A-Za-z0-9]/.test(v)||v.length>=12)sc++;meter.setAttribute('data-score',v?sc:0);mt.textContent=!v?'At least 8 characters, with a mix of letters and numbers.':['Too short','Weak','Okay','Good','Strong'][sc]+' password';});
+ function fail(form,text){msg.textContent=text;msg.className='wta__msg is-err';form.classList.remove('shake');void form.offsetWidth;form.classList.add('shake');}
+ A.querySelectorAll('form[data-form]').forEach(function(form){form.addEventListener('submit',function(e){e.preventDefault();var kind=form.getAttribute('data-form');
+  var bad=null;form.querySelectorAll('input[required]').forEach(function(i){i.closest('.wta__f')&&i.closest('.wta__f').classList.remove('is-bad');if(!bad&&(!i.value.trim()||(i.type==='email'&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(i.value))||(i.minLength>0&&i.value.length<i.minLength)))bad=i;});
+  if(bad){bad.closest('.wta__f').classList.add('is-bad');bad.focus();return fail(form,bad.minLength>0&&bad.value?'Your password needs at least 8 characters.':(bad.type==='email'?'Please enter a valid email address.':'Please fill in this field.'));}
+  var btn=form.querySelector('.wta__btn');btn.classList.add('is-loading');btn.disabled=true;msg.textContent='';msg.className='wta__msg';
+  var fd=new FormData(form);fd.append('action','wt_account');fd.append('do',kind);fd.append('nonce',WT.acc);
+  fetch(WT.ajax,{method:'POST',body:fd,credentials:'same-origin'}).then(function(r){return r.json();}).then(function(j){
+   if(!j||!j.success)throw new Error(j&&j.data&&j.data.message||'Something went wrong. Please try again.');
+   btn.classList.remove('is-loading');btn.classList.add('is-done');
+   if(kind==='lost'){A.querySelector('[data-done-text]').textContent=j.data.message;show('done',false);btn.classList.remove('is-done');btn.disabled=false;form.reset();return;}
+   msg.textContent=j.data.message;msg.className='wta__msg is-ok';setTimeout(function(){location.href=j.data.redirect||location.href;},900);
+  }).catch(function(err){btn.classList.remove('is-loading');btn.disabled=false;fail(form,err.message);});});});
+ window.wtAccount={open:open,close:close};
+})();
 /* add to cart feedback (WooCommerce triggers jQuery events) */
 if(window.jQuery){jQuery(d.body).on('adding_to_cart',function(e,btn){btn&&btn.addClass&&btn.addClass('is-loading').text('Adding…');}).on('added_to_cart',function(e,f,h,btn){if(btn&&btn.removeClass){btn.removeClass('is-loading').addClass('is-done').text('Added ✓');setTimeout(function(){btn.removeClass('is-done').text('Add to basket');},2200);}}).on('ajax_request_not_sent.adding_to_cart',function(e,btn){btn&&btn.removeClass&&btn.removeClass('is-loading').text('Add to basket');});
  jQuery(d).ajaxError(function(e,x,s){if(s&&s.url&&s.url.indexOf('add_to_cart')>-1){jQuery('.wt-atc.is-loading').removeClass('is-loading').addClass('is-error').text('Try again');}});}
@@ -997,5 +1137,96 @@ a{color:var(--g)}a:hover,a:active{color:var(--g3)}
 .wth-tools>.wth-cta{height:auto}
 .wth-search .elementor-search-form{margin:0!important;top:auto!important;transform:none!important}
 .wth-search .elementor-search-form__toggle{margin:0!important}
+/* ---------- account panel ---------- */
+.wta{position:fixed;inset:0;z-index:100000;font-family:var(--sans)}
+.wta[hidden]{display:none}
+.wta__overlay{position:absolute;inset:0;background:rgba(14,26,20,.5);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);opacity:0;transition:opacity .45s var(--ease)}
+.wta__panel{position:absolute;top:0;right:0;bottom:0;width:min(460px,100vw);background:#fff;padding:34px 40px 30px;overflow-y:auto;box-shadow:-30px 0 70px -30px rgba(0,0,0,.5);transform:translateX(100%);transition:transform .55s var(--ease);display:flex;flex-direction:column}
+.wta.is-open .wta__overlay{opacity:1}.wta.is-open .wta__panel{transform:none}
+.wta.is-open .wta__panel>*{animation:wtaIn .6s var(--ease) both}
+.wta.is-open .wta__panel>*:nth-child(2){animation-delay:.08s}.wta.is-open .wta__panel>*:nth-child(3){animation-delay:.12s}.wta.is-open .wta__panel>*:nth-child(4){animation-delay:.16s}.wta.is-open .wta__panel>*:nth-child(5){animation-delay:.2s}.wta.is-open .wta__panel>*:nth-child(6){animation-delay:.24s}
+@keyframes wtaIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.wta__close{position:absolute;top:22px;right:22px;width:42px;height:42px;border-radius:50%!important;border:0!important;background:var(--off)!important;color:var(--tx)!important;display:grid;place-items:center;padding:0!important;cursor:pointer;transition:background .3s,transform .45s var(--ease)}
+.wta__close:hover{background:var(--sage)!important;transform:rotate(90deg)}
+.wta__close svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round}
+.wta__brand{font:600 14px/1 var(--sans);letter-spacing:.3em;color:var(--tx);margin:4px 0 34px}.wta__brand sup{font-size:8px;letter-spacing:0}
+.wta__title{margin:0 0 8px!important;font:700 30px/1.1 var(--sans)!important;color:var(--tx)!important;letter-spacing:-.01em}
+.wta__lead{margin:0 0 26px;font:400 14.5px/1.55 var(--sans);color:var(--tx2)}
+.wta [data-t]{display:none}
+.wta[data-view="login"] [data-t="login"],.wta[data-view="register"] [data-t="register"],.wta[data-view="lost"] [data-t="lost"],.wta[data-view="done"] [data-t="lost"]{display:inline;animation:wtaFade .4s var(--ease)}
+@keyframes wtaFade{from{opacity:0}to{opacity:1}}
+.wta__tabs{position:relative;display:grid;grid-template-columns:1fr 1fr;background:var(--off);border-radius:12px;padding:4px;margin-bottom:26px}
+.wta__tabs button{position:relative;z-index:1;height:42px;border:0!important;background:none!important;color:var(--tx2)!important;font:600 14px/1 var(--sans)!important;cursor:pointer;border-radius:9px!important;padding:0!important;transition:color .3s}
+.wta__tabs button[aria-selected="true"]{color:var(--tx)!important}
+.wta__ink{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);background:#fff;border-radius:9px;box-shadow:0 4px 14px -6px rgba(0,0,0,.25);transition:transform .45s var(--ease)}
+.wta[data-view="register"] .wta__ink{transform:translateX(100%)}
+.wta[data-view="lost"] .wta__tabs,.wta[data-view="done"] .wta__tabs{display:none}
+.wta__views{position:relative}
+.wta__form,.wta__done{display:none}
+.wta__form.is-active,.wta__done.is-active{display:block;animation:wtaView .5s var(--ease)}
+@keyframes wtaView{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+.wta__f{position:relative;margin-bottom:14px}
+.wta__f input{width:100%;height:58px;padding:22px 16px 8px!important;border:1.5px solid var(--ln)!important;border-radius:12px!important;background:#fff!important;font:500 15px/1 var(--sans)!important;color:var(--tx)!important;outline:0!important;box-shadow:none!important;transition:border-color .3s,box-shadow .3s}
+.wta__f--pw input{padding-right:52px!important}
+.wta__f label{position:absolute;left:17px;top:19px;font:400 15px/1.2 var(--sans);color:#8a8f8b;pointer-events:none;transform-origin:left top;transition:transform .3s var(--ease),color .3s}
+.wta__f input:focus{border-color:var(--g)!important;box-shadow:0 0 0 4px rgba(29,64,50,.1)!important}
+.wta__f input:focus+label,.wta__f input:not(:placeholder-shown)+label{transform:translateY(-11px) scale(.76);color:var(--g)}
+.wta__f.is-bad input{border-color:#C0563F!important;box-shadow:0 0 0 4px rgba(192,86,63,.1)!important}
+.wta__eye{position:absolute;right:8px;top:9px;width:40px;height:40px;border:0!important;background:none!important;color:#8a8f8b!important;border-radius:50%!important;display:grid;place-items:center;padding:0!important;cursor:pointer;transition:color .3s,background .3s}
+.wta__eye:hover{background:var(--off)!important;color:var(--tx)!important}
+.wta__eye svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.wta__eye.on svg path{stroke-dasharray:3 2}
+.wta__eye.on{color:var(--g)!important}
+.wta__row{display:flex;justify-content:space-between;align-items:center;margin:2px 0 22px}
+.wta__check{display:inline-flex;align-items:center;gap:10px;font:500 13.5px/1.3 var(--sans);color:var(--tx2);cursor:pointer;user-select:none}
+.wta__check input{position:absolute;opacity:0;width:0;height:0}
+.wta__check span{width:20px;height:20px;border:1.5px solid #c7ccc6;border-radius:6px;display:grid;place-items:center;flex:none;transition:background .25s,border-color .25s}
+.wta__check span:after{content:"";width:10px;height:6px;border:solid #fff;border-width:0 0 2px 2px;transform:rotate(-45deg) scale(0);margin-top:-2px;transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.wta__check input:checked+span{background:var(--g);border-color:var(--g)}.wta__check input:checked+span:after{transform:rotate(-45deg) scale(1)}
+.wta__check input:focus-visible+span{box-shadow:0 0 0 3px rgba(29,64,50,.25)}
+.wta__check--top{margin:6px 0 20px}
+.wta__link{border:0!important;background:none!important;padding:0!important;color:var(--g)!important;font:600 13.5px/1.3 var(--sans)!important;cursor:pointer;position:relative;display:inline-flex;align-items:center;gap:6px}
+.wta__link:after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:1.5px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .35s var(--ease)}
+.wta__link:hover:after{transform:scaleX(1);transform-origin:left}
+.wta__back svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s var(--ease)}
+.wta__back:hover svg{transform:translateX(-3px)}
+.wta__btn{position:relative;width:100%;height:54px;border:0!important;border-radius:12px!important;background:var(--g)!important;color:#fff!important;font:600 15px/1 var(--sans)!important;cursor:pointer;overflow:hidden;display:grid;place-items:center;padding:0!important;transition:background .3s,transform .3s var(--ease),box-shadow .3s}
+.wta__btn:hover{background:var(--g3)!important;transform:translateY(-2px);box-shadow:0 14px 28px -16px rgba(21,53,40,.7)}
+.wta__btn:active{transform:translateY(1px) scale(.98)}
+.wta__btn span{transition:opacity .2s,transform .3s var(--ease)}
+.wta__btn.is-loading span{opacity:0;transform:translateY(-8px)}
+.wta__btn.is-loading:after{content:"";position:absolute;width:20px;height:20px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:wtpcSpin .7s linear infinite}
+.wta__btn.is-done{background:#2F6B4F!important}
+.wta__btn.is-done span{opacity:0}
+.wta__btn.is-done:after{content:"";position:absolute;width:12px;height:22px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg) translate(-2px,-2px);animation:wtaPop .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes wtaPop{from{transform:rotate(45deg) scale(0)}to{transform:rotate(45deg) scale(1) translate(-2px,-2px)}}
+@keyframes wtpcSpin{to{transform:rotate(360deg)}}
+.wta__btn--ghost{background:#fff!important;color:var(--tx)!important;border:1.5px solid var(--tx)!important;margin-top:24px}
+.wta__btn--ghost:hover{background:var(--off)!important}
+.wta__switch{margin:22px 0 0;text-align:center;font:400 14px/1.4 var(--sans);color:var(--tx2)}
+.wta__legal{margin:14px 0 0;text-align:center;font:400 12.5px/1.5 var(--sans);color:#8a8f8b}
+.wta__legal a{color:var(--tx2);text-decoration:underline}
+.wta__meter{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:-4px 2px 8px}
+.wta__meter i{height:4px;border-radius:4px;background:#e6e8e4;transition:background .35s}
+.wta__meter[data-score="1"] i:nth-child(-n+1){background:#C0563F}
+.wta__meter[data-score="2"] i:nth-child(-n+2){background:#E5AC32}
+.wta__meter[data-score="3"] i:nth-child(-n+3){background:#7FA36B}
+.wta__meter[data-score="4"] i{background:var(--g)}
+.wta__hint{margin:0 2px 4px;font:400 12.5px/1.4 var(--sans);color:#8a8f8b}
+.wta__hp{position:absolute!important;left:-9999px}
+.wta__done{text-align:center;padding:12px 0}
+.wta__tick{width:76px;height:76px;margin:0 auto 18px;display:block;fill:none;stroke:var(--g);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.wta__tick circle{stroke-dasharray:145;stroke-dashoffset:145;animation:wtaDraw .7s var(--ease) forwards}
+.wta__tick path{stroke-dasharray:36;stroke-dashoffset:36;animation:wtaDraw .45s .55s var(--ease) forwards}
+@keyframes wtaDraw{to{stroke-dashoffset:0}}
+.wta__done h3{margin:0 0 8px;font:700 22px/1.2 var(--sans);color:var(--tx)}
+.wta__done p{margin:0 auto;max-width:330px;font:400 14.5px/1.55 var(--sans);color:var(--tx2)}
+.wta[data-view="done"] .wta__title,.wta[data-view="done"] .wta__lead{display:none}
+.wta__msg{margin:16px 0 0;min-height:20px;font:500 13.5px/1.45 var(--sans);text-align:center}
+.wta__msg.is-err{color:#A8432E}.wta__msg.is-ok{color:var(--g)}
+.wta__form.shake{animation:wtaShake .45s cubic-bezier(.36,.07,.19,.97)}
+@keyframes wtaShake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-6px)}40%,60%{transform:translateX(6px)}}
+@media (max-width:480px){.wta__panel{padding:26px 22px 24px}.wta__title{font-size:26px!important}.wta__brand{margin-bottom:26px}}
+@media (prefers-reduced-motion:reduce){.wta *,.wta__panel,.wta__overlay{animation:none!important;transition:none!important}}
 CSS;
 }
