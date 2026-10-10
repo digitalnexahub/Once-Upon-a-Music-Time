@@ -778,5 +778,15 @@ html.wt-anim .wt-reveal.in,html.wt-anim .wt-reveal-group>.in{opacity:1;transform
 .wt-h1 .elementor-heading-title{font-size:clamp(38px,3.5vw,60px)!important}
 @media (max-width:1024px){.wt-hero{grid-template-columns:1fr!important}}
 @media (max-width:767px){.wt-cat-carousel .wt-car-track{padding-right:16px!important}}
+.wt-cat-carousel .wt-car-track{grid-auto-columns:clamp(280px,28vw,452px)!important}
+.wt-cat-carousel .wt-cat{aspect-ratio:451/563!important;border-radius:10px!important}
+.wt-cat-carousel .wt-cat__t{left:32px!important;right:28px!important;bottom:30px!important}
+.wt-cat-carousel .wt-cat__t .elementor-heading-title{font-size:clamp(20px,1.5vw,27px)!important}
+.wt-cat-carousel .wt-cat__go .elementor-icon{width:40px;height:40px}
+.wt-cat-carousel .wt-cat__go .elementor-icon svg{width:17px;height:17px}
+.wt-cat-carousel .wt-cat__badge{top:16px;left:16px}
+.wt-cat-carousel .wt-cat__badge .elementor-heading-title{font-size:12px!important;padding:10px 16px}
+@media (max-width:1024px){.wt-cat-carousel .wt-car-track{grid-auto-columns:clamp(260px,42vw,400px)!important}}
+@media (max-width:767px){.wt-cat-carousel .wt-car-track{grid-auto-columns:80%!important}.wt-cat-carousel .wt-cat__t{left:20px!important;right:18px!important;bottom:20px!important}}
 CSS;
 }
