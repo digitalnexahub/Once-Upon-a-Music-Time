@@ -851,5 +851,16 @@ h1,h2,h3,h4,h5,h6,.elementor-heading-title,.product_title,.woocommerce-loop-prod
 .wt-b .elementor-button.wt-fx:hover,.wth-cta .elementor-button.wt-fx:hover,.wt-atc.wt-fx:hover,.wt-btn.wt-fx:hover{background:var(--g)!important}
 .wt-b--o .elementor-button.wt-fx:hover{background:#fff!important}
 @media (prefers-reduced-motion:reduce){.wt-fx,.wt-fx:before{transition:none!important}.wt-fx:after,.wt-fx .elementor-button-icon svg{animation:none!important}}
+/* ---------- "View all" links: text + circular arrow ---------- */
+.wt-head .wt-link .elementor-button{display:inline-flex!important;align-items:center!important;gap:14px;padding:6px 6px 6px 20px!important;border:1px solid var(--ln)!important;border-radius:999px!important;background:#fff!important;font:600 14px/1 var(--sans)!important;color:var(--tx)!important;transition:border-color .4s cubic-bezier(.22,1,.36,1),box-shadow .4s cubic-bezier(.22,1,.36,1),transform .4s cubic-bezier(.22,1,.36,1)!important}
+.wt-head .wt-link .elementor-button-icon{display:none!important}
+.wt-head .wt-link .elementor-button-content-wrapper{gap:0!important}
+.wt-head .wt-link .elementor-button:after{content:"";width:36px;height:36px;border-radius:50%;flex:none;background:var(--g) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/16px no-repeat;transition:transform .5s cubic-bezier(.22,1,.36,1),background-color .4s,background-position .5s cubic-bezier(.22,1,.36,1)}
+.wt-head .wt-link .elementor-button:hover{border-color:var(--g)!important;box-shadow:0 12px 26px -16px rgba(21,53,40,.6);transform:translateY(-2px)}
+.wt-head .wt-link .elementor-button:hover:after{transform:rotate(-45deg);background-color:#0f2a1f}
+.wt-head .wt-link .elementor-button-text{position:relative}
+.wt-head .wt-link .elementor-button-text:after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:1.5px;background:var(--g);transform:scaleX(0);transform-origin:right;transition:transform .45s cubic-bezier(.22,1,.36,1)}
+.wt-head .wt-link .elementor-button:hover .elementor-button-text:after{transform:scaleX(1);transform-origin:left}
+@media (max-width:767px){.wt-head .wt-link .elementor-button{font-size:13px!important;padding:5px 5px 5px 16px!important}.wt-head .wt-link .elementor-button:after{width:32px;height:32px}}
 CSS;
 }
