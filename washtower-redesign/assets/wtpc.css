@@ -145,3 +145,5 @@
 @keyframes wtpcBump{0%{transform:scale(1)}35%{transform:scale(1.25) rotate(-8deg)}65%{transform:scale(.95)}100%{transform:scale(1)}}
 .wtpc__msg{display:flex;justify-content:center;align-items:center;gap:8px}
 .wtpc__msg:not(:empty):not(.is-err):before{content:"";width:18px;height:18px;border-radius:50%;background:#2F6B4F url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4L18 8'/%3E%3C/svg%3E") center/11px no-repeat;flex:none}
+
+.wtpc__btn.is-loading>span{position:absolute;visibility:hidden}

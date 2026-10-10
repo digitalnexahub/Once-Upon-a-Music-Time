@@ -6,7 +6,7 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 define( 'WT_ASSET_URL', content_url( 'uploads/wt-assets/' ) );
-define( 'WT_ASSET_VER', '1.3.0' );
+define( 'WT_ASSET_VER', '1.3.1' );
 
 add_action( 'wp_enqueue_scripts', function () {
 	wp_register_style( 'wt-product-carousel', WT_ASSET_URL . 'wtpc.css', [], WT_ASSET_VER );
