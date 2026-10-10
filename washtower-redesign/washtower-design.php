@@ -581,6 +581,7 @@ add_action( 'woocommerce_shop_loop_item_title', function () {
 	$t = $product ? get_the_terms( $product->get_id(), 'product_cat' ) : false;
 	if ( $t && ! is_wp_error( $t ) ) { echo '<span class="wt-pcat">' . esc_html( $t[0]->name ) . '</span>'; }
 }, 9 );
+add_filter( 'woocommerce_product_single_add_to_cart_text', function () { return __( 'Add to basket', 'woocommerce' ); } );
 add_filter( 'woocommerce_product_add_to_cart_text', function ( $t, $p ) {
 	return ( $p && $p->is_purchasable() && $p->is_in_stock() && $p->is_type( 'simple' ) ) ? __( 'Add to basket', 'woocommerce' ) : $t;
 }, 10, 2 );
@@ -1931,6 +1932,11 @@ a{color:var(--g)}a:hover,a:active{color:var(--g3)}
 .wt-acc .wt-acc__p.open{grid-template-rows:1fr!important;visibility:visible}
 .wt-acc .wt-acc__in{overflow:hidden;min-height:0}
 .wt-acc .wt-acc__in>h2:first-child{display:none}
+
+/* single add-to-cart: bag icon instead of arrow */
+.single-product .single_add_to_cart_button:before{display:none!important}
+.single_add_to_cart_button .wt-bi{order:-1;width:20px;height:20px;flex-basis:20px;background-size:20px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z'/%3E%3Cpath d='M9 8V6a3 3 0 0 1 6 0v2'/%3E%3C/svg%3E")}
+.single_add_to_cart_button.wt-fx:hover .wt-bi{transform:translateY(-2px) rotate(-8deg)}
 
 CSS;
 }
