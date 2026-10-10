@@ -811,5 +811,7 @@ h1,h2,h3,h4,h5,h6,.elementor-heading-title,.product_title,.woocommerce-loop-prod
 @media (min-width:1025px) and (max-width:1384px){.wt-hero{max-width:calc(100% - 64px)!important}}
 @media (min-width:1385px){.wt-hero__img{width:calc(100% + (100vw - 1320px) / 2)!important;max-width:none!important;--width:auto}}
 @media (min-width:1025px) and (max-width:1384px){.wt-hero__img{width:calc(100% + 32px)!important;max-width:none!important;--width:auto}}
+.wt-hero__img img{object-fit:cover!important;object-position:64% 55%!important}
+@media (max-width:1024px){.wt-hero__img img{object-position:62% 60%!important}}
 CSS;
 }
