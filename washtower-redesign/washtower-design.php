@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 /* ---------------------------------------------------------------- assets */
 
 add_action( 'wp_enqueue_scripts', function () {
-	wp_enqueue_style( 'wt-fonts', 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Caveat:wght@500&family=Barlow:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap', [], null );
+	wp_enqueue_style( 'wt-fonts', 'https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap', [], null );
 	wp_register_style( 'wt-design', false );
 	wp_enqueue_style( 'wt-design' );
 	wp_add_inline_style( 'wt-design', wt_design_css() );
@@ -841,7 +841,7 @@ html,body{overflow-x:clip}
 .wt-hero__img .elementor-widget-image,.wt-hero__img .elementor-widget-image>div{height:100%}
 .wt-hero__img img{width:100%!important;height:100%!important;object-fit:cover;object-position:center;display:block;animation:wtHero 1.4s var(--ease) both}
 .wt-note{position:absolute!important;top:12%;right:5%;width:auto!important;z-index:2}
-.wt-note .wt-note__t{font:500 26px/1.05 'Caveat',cursive;color:#2E3A33;transform:rotate(-6deg);display:block;text-align:right}
+.wt-note .wt-note__t{font:italic 500 24px/1.05 'Barlow',sans-serif;color:#2E3A33;transform:rotate(-6deg);display:block;text-align:right}
 .wt-note svg{width:70px;height:46px;color:#2E3A33;display:block;margin:0 0 4px -30px}
 @keyframes wtHero{from{opacity:0;transform:scale(1.06)}to{opacity:1;transform:none}}
 .wt-hero__txt>*{animation:wtUp .9s var(--ease) both}.wt-hero__txt>*:nth-child(2){animation-delay:.08s}.wt-hero__txt>*:nth-child(3){animation-delay:.2s}.wt-hero__txt>*:nth-child(4){animation-delay:.32s}
@@ -1958,6 +1958,10 @@ a{color:var(--g)}a:hover,a:active{color:var(--g3)}
 .wt-buynow svg{width:18px;height:18px;fill:currentColor;transition:transform .4s var(--ease)}.wt-buynow:hover svg{transform:scale(1.15) rotate(-8deg)}
 .wt-buynow.is-loading{pointer-events:none;opacity:.8}.wt-buynow.is-loading svg{animation:wtSpin .8s linear infinite}
 .variations_form .wt-buynow{margin-top:0}
+
+/* Barlow everywhere (icon fonts excluded) */
+html,body,body :where(*:not(i):not(svg):not(svg *):not([class*="eicon"]):not([class*="fa-"]):not([class^="fa"]):not(.dashicons):not([class*="dashicons-"]):not(.star-rating):not(.star-rating *):not(.stars *)),button,input,select,textarea,.elementor-widget-container,.elementor *:not(i):not([class*="eicon"]):not([class*="fa-"]),.woocommerce *:not(.star-rating):not(.star-rating *):not(i),.wtpc *,.wt3s *,.wtwu *,.wta *,.wtu *,.wtd *,.wt-toast *{font-family:'Barlow',system-ui,-apple-system,sans-serif!important}
+#wpadminbar *{font-family:inherit}
 
 CSS;
 }
