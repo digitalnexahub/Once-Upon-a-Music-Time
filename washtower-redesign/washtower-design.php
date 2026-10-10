@@ -902,5 +902,21 @@ h1,h2,h3,h4,h5,h6,.elementor-heading-title,.product_title,.woocommerce-loop-prod
 /* ---------- Elementor editor: never hide anything behind scroll/entrance animations ---------- */
 .elementor-editor-active .wt-reveal,.elementor-editor-active .wt-reveal-group>*,.elementor-editor-active .wt3s__rv,.elementor-editor-active .wt3s__card,.elementor-editor-active .wt3s__media img,.elementor-editor-active .wt3s__num,.elementor-editor-active .wt3s__arrow svg,.elementor-editor-active .wtpc__rv,.elementor-editor-active .wtpc__card{opacity:1!important;transform:none!important;translate:none!important;animation:none!important}
 .elementor-editor-active .wt-util__img img{clip-path:none!important}
+/* ---------- native Elementor Hotspot widget (Design your own) ---------- */
+.wt-design__img .wt-hotspots,.wt-design__img .wt-hotspots>.elementor-widget-container{position:absolute!important;inset:0;width:100%!important;height:100%!important}
+.wt-hotspots img{width:100%!important;height:100%!important;max-width:none!important;object-fit:cover;object-position:center 40%;display:block}
+.wt-hotspots .e-hotspot{--hotspot-color:#1d211e;--hotspot-box-color:#fff;--hotspot-size:16px;--tooltip-color:#4b524d;--tooltip-text-color:#4b524d;z-index:3}
+.wt-hotspots .e-hotspot__button{background:#fff!important;color:#1d211e!important;border-radius:999px!important;padding:4px 14px 4px 4px!important;min-height:0!important;min-width:0!important;gap:8px!important;box-shadow:0 8px 22px -10px rgba(0,0,0,.35)!important;font:600 12px/1 var(--sans)!important;transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s}
+.wt-hotspots .e-hotspot__icon{width:26px;height:26px;border:1.5px solid #2d3a33;border-radius:50%;display:grid!important;place-items:center;transition:transform .4s cubic-bezier(.22,1,.36,1),background .3s,color .3s,border-color .3s}
+.wt-hotspots .e-hotspot__icon svg{width:14px!important;height:14px!important;fill:none!important;stroke:currentColor!important}
+.wt-hotspots .e-hotspot__label{font:600 12px/1 var(--sans)!important;color:#1d211e!important;white-space:nowrap}
+.wt-hotspots .e-hotspot:hover .e-hotspot__button,.wt-hotspots .e-hotspot--active .e-hotspot__button{transform:translateY(-2px);box-shadow:0 12px 26px -10px rgba(0,0,0,.4)!important}
+.wt-hotspots .e-hotspot:hover .e-hotspot__icon,.wt-hotspots .e-hotspot--active .e-hotspot__icon{transform:rotate(45deg);background:var(--g);color:#fff;border-color:var(--g)}
+.wt-hotspots .e-hotspot__outer-circle,.wt-hotspots .e-hotspot__inner-circle{display:none!important}
+.wt-hotspots .e-hotspot__tooltip{background:#fff!important;color:#4b524d!important;border-radius:10px!important;padding:12px 14px!important;width:220px!important;max-width:min(220px,70vw);font:400 12.5px/1.5 var(--sans)!important;box-shadow:0 18px 36px -14px rgba(0,0,0,.35)!important;text-align:left!important}
+.wt-hotspots .e-hotspot__tooltip p{margin:0}.wt-hotspots .e-hotspot__tooltip strong{display:block;color:#1d211e;margin-bottom:3px}
+.wt-hotspots .e-hotspot__tooltip:after{border-top-color:#fff!important}
+@media (max-width:1024px){.wt-design__img{min-height:480px}}
+@media (max-width:767px){.wt-design__img{min-height:400px}.wt-hotspots .e-hotspot__label{display:none!important}.wt-hotspots .e-hotspot__button{padding:3px!important;gap:0!important}}
 CSS;
 }
