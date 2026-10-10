@@ -232,7 +232,7 @@ add_shortcode( 'wt_reviews', function () {
 // Interactive hotspots on the "Design your own" image.
 add_shortcode( 'wt_hotspots', function ( $a ) {
 	$a    = shortcode_atts( [ 'image' => 59 ], $a );
-	$spot = [ [ 'Tall storage', 'Full-height cupboards for linen, ironing boards and cleaning kit.', 26, 9 ], [ 'Integrated appliances', 'Washer and dryer raised to a comfortable working height.', 74, 16 ], [ 'Pull out baskets', 'Slide-out baskets make loading and sorting effortless.', 28, 48 ], [ 'Soft close drawers', 'Quiet, cushioned drawers for detergents and accessories.', 70, 60 ] ];
+	$spot = [ [ 'Tall storage', 'Full-height cupboards for linen, ironing boards and cleaning kit.', 27, 17 ], [ 'Integrated appliances', 'Washer and dryer raised to a comfortable working height.', 62, 29 ], [ 'Pull out baskets', 'Slide-out baskets make loading and sorting effortless.', 37, 66 ], [ 'Soft close drawers', 'Quiet, cushioned drawers for detergents and accessories.', 65, 68 ] ];
 	$o    = '<div class="wt-hot">' . wp_get_attachment_image( (int) $a['image'], 'full', false, [ 'class' => 'wt-hot__img', 'loading' => 'lazy', 'alt' => 'Woman using a modern integrated laundry cabinet (placeholder image)' ] );
 	foreach ( $spot as $i => $s ) {
 		$o .= '<div class="wt-spot" style="left:' . $s[2] . '%;top:' . $s[3] . '%"><button class="wt-spot__b" aria-expanded="false" aria-describedby="wt-tip-' . $i . '"><span aria-hidden="true">+</span><span class="screen-reader-text">' . esc_html( $s[0] ) . '</span></button><span class="wt-spot__lbl" aria-hidden="true">' . esc_html( $s[0] ) . '</span><span class="wt-tip" role="tooltip" id="wt-tip-' . $i . '"><b>' . esc_html( $s[0] ) . '</b>' . esc_html( $s[1] ) . '</span></div>';
@@ -862,5 +862,38 @@ h1,h2,h3,h4,h5,h6,.elementor-heading-title,.product_title,.woocommerce-loop-prod
 .wt-head .wt-link .elementor-button-text:after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:1.5px;background:var(--g);transform:scaleX(0);transform-origin:right;transition:transform .45s cubic-bezier(.22,1,.36,1)}
 .wt-head .wt-link .elementor-button:hover .elementor-button-text:after{transform:scaleX(1);transform-origin:left}
 @media (max-width:767px){.wt-head .wt-link .elementor-button{font-size:13px!important;padding:5px 5px 5px 16px!important}.wt-head .wt-link .elementor-button:after{width:32px;height:32px}}
+/* ---------- "Design your own" section (reference match) ---------- */
+.wt-design{grid-template-columns:56% 44%!important;background:var(--off)!important;min-height:clamp(520px,43vw,820px);overflow:hidden}
+.wt-design__img,.wt-hot{min-height:100%}
+.wt-design__txt{background:var(--off);padding:clamp(48px,5vw,90px) max(32px,calc((100vw - 1320px)/2)) clamp(48px,5vw,90px) clamp(40px,4.4vw,84px)!important;gap:0!important;justify-content:center!important}
+.wt-design__txt>.elementor-widget-heading.wt-label{margin-bottom:14px}
+.wt-design__txt .wt-label .elementor-heading-title{font-size:11px!important;letter-spacing:.2em!important;color:#5a615c!important}
+.wt-design__txt .wt-h2 .elementor-heading-title{font-size:clamp(34px,3.2vw,52px)!important;line-height:1.05!important;font-weight:600!important;color:#141a16!important;margin-bottom:16px}
+.wt-design__txt .wt-p,.wt-design__txt .wt-p p{font-size:15px!important;line-height:1.6!important;color:#4b524d!important;max-width:440px;margin:0 0 26px}
+.wt-feats{gap:18px!important;margin:0 0 34px!important}
+.wt-feat .elementor-icon-box-wrapper{gap:16px!important;align-items:center!important}
+.wt-feat .elementor-icon-box-icon .elementor-icon{width:46px!important;height:46px!important;border:1px solid #c9d0c8!important;border-radius:50%!important;background:transparent;color:var(--g)!important;display:grid!important;place-items:center;transition:background .35s,border-color .35s}
+.wt-feat .elementor-icon svg{width:20px!important;height:20px!important}
+.wt-feat:hover .elementor-icon{background:#fff;border-color:var(--g)!important}
+.wt-feat .elementor-icon-box-title{font:700 15px/1.25 var(--sans)!important;color:#141a16!important;margin:0 0 3px!important}
+.wt-feat .elementor-icon-box-description{font:400 13px/1.45 var(--sans)!important;color:#5a615c!important}
+.wt-design__btns{gap:34px!important}
+.wt-design__btns .wt-b .elementor-button{height:48px!important;padding:0 30px!important;border-radius:6px!important}
+.wt-design__btns .wt-link .elementor-button{font:600 14px/1 var(--sans)!important;color:#141a16!important;gap:10px}
+.wt-design__btns .wt-link .elementor-button-icon{display:none!important}
+.wt-design__btns .wt-link .elementor-button:after{content:"";width:16px;height:16px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat;transition:transform .45s cubic-bezier(.22,1,.36,1)}
+.wt-design__btns .wt-link .elementor-button:hover:after{transform:translateX(5px)}
+.wt-design__btns .wt-link .elementor-button:hover{color:var(--g)!important}
+.wt-leaf{position:absolute!important;right:0;bottom:0;width:clamp(120px,11vw,200px)!important;z-index:0;pointer-events:none;opacity:.95}
+.wt-leaf svg{display:block;width:100%;height:auto}
+.wt-design__txt>*:not(.wt-leaf){position:relative;z-index:1}
+/* hotspots as white pills with "+" circle */
+.wt-spot{gap:0!important;background:#fff;border-radius:999px;padding:4px 14px 4px 4px;box-shadow:0 8px 22px -10px rgba(0,0,0,.35);cursor:pointer;transform:translate(-14px,-50%)!important}
+.wt-spot__b{width:26px!important;height:26px!important;border:1.5px solid #2d3a33!important;background:#fff!important;color:#2d3a33!important;font-size:16px!important;font-weight:500!important;margin-right:8px;animation:none!important;box-shadow:none!important;transition:transform .4s cubic-bezier(.22,1,.36,1),background .3s,color .3s}
+.wt-spot__lbl{display:inline!important;background:none!important;box-shadow:none!important;padding:0!important;font:600 12px/1 var(--sans)!important;color:#1d211e!important}
+.wt-spot:hover .wt-spot__b,.wt-spot.open .wt-spot__b{transform:rotate(45deg);background:var(--g)!important;color:#fff!important;border-color:var(--g)!important}
+.wt-spot:before{content:"";position:absolute;left:4px;top:4px;width:26px;height:26px;border-radius:50%;box-shadow:0 0 0 0 rgba(255,255,255,.8);animation:wtPulse 2.6s infinite;pointer-events:none}
+@media (max-width:1024px){.wt-design{grid-template-columns:1fr!important}.wt-design__txt{padding:56px 32px!important}.wt-hot{min-height:480px}}
+@media (max-width:767px){.wt-design__txt{padding:44px 16px!important}.wt-hot{min-height:400px}.wt-spot{padding:3px 3px 3px 3px}.wt-spot__lbl{display:none!important}.wt-spot__b{margin:0}.wt-design__btns{flex-direction:row!important;align-items:center!important;gap:22px!important}.wt-leaf{width:110px!important;opacity:.6}}
 CSS;
 }
