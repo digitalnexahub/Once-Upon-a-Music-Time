@@ -6,7 +6,7 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 define( 'WT_ASSET_URL', content_url( 'uploads/wt-assets/' ) );
-define( 'WT_ASSET_VER', '1.1.0' );
+define( 'WT_ASSET_VER', '1.2.0' );
 
 add_action( 'wp_enqueue_scripts', function () {
 	wp_register_style( 'wt-product-carousel', WT_ASSET_URL . 'wtpc.css', [], WT_ASSET_VER );
@@ -155,7 +155,7 @@ add_action( 'elementor/widgets/register', function ( $widgets_manager ) {
 			</section>
 			<?php
 			if ( \Elementor\Plugin::$instance->editor->is_edit_mode() ) {
-				echo '<script>window.wtpcInit&&document.querySelectorAll(".wtpc").forEach(function(r){r.removeAttribute("data-wtpc-ready");window.wtpcInit(r);});</script>';
+				echo '<script>window.wtpcInit&&document.querySelectorAll(".wtpc:not([data-wtpc-ready])").forEach(window.wtpcInit);</script>';
 			}
 		}
 	}

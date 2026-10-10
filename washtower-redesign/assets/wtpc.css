@@ -113,3 +113,11 @@
 .wtpc__now{font-size:20px}
 .wtpc__btn{height:42px;font-size:13.5px}
 @media (max-width:767px){.wtpc__nav{width:44px!important;height:44px!important}.wtpc__nav--prev{left:-4px!important}.wtpc__nav--next{right:-4px!important}.wtpc .wtpc__all{font-size:13px;padding:5px 5px 5px 16px}.wtpc .wtpc__all svg{width:32px;height:32px;padding:9px}}
+
+/* ---------- full-bleed like the category slider ---------- */
+.wtpc{overflow:hidden}
+@media (min-width:768px){
+  .wtpc__view{margin-left:calc((100% - 100vw) / 2);margin-right:calc((100% - 100vw) / 2);padding-left:calc((100vw - 100%) / 2);padding-right:calc((100vw - 100%) / 2)}
+  .wtpc__nav--prev{left:calc(40px - (100vw - 100%) / 2)!important}
+  .wtpc__nav--next{right:calc(40px - (100vw - 100%) / 2)!important}
+}

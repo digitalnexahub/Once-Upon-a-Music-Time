@@ -17,6 +17,7 @@
     var shop=root.getAttribute('data-shop')||'/shop/',limit=parseInt(root.getAttribute('data-limit'),10)||8;
     root.querySelector('.wtpc__all').setAttribute('href',shop);
     var idx=0,per=4,cards=[];
+    root.querySelectorAll('.wtpc__line').forEach(function(l){l.remove();});
     var line=document.createElement('div');line.className='wtpc__line';line.setAttribute('aria-hidden','true');line.appendChild(document.createElement('span'));dots.parentNode.insertBefore(line,dots);
     line.addEventListener('click',function(e){var r=line.getBoundingClientRect();idx=Math.round((e.clientX-r.left)/r.width*maxIdx());render();});
 
@@ -123,5 +124,5 @@
   window.wtpcInit=init;
   function all(){document.querySelectorAll('.wtpc').forEach(init);}
   if(document.readyState!=='loading')all();else document.addEventListener('DOMContentLoaded',all);
-  window.addEventListener('elementor/frontend/init',function(){if(window.elementorFrontend&&elementorFrontend.hooks){elementorFrontend.hooks.addAction('frontend/element_ready/wt-product-carousel.default',function($el){var r=$el[0].querySelector('.wtpc');if(r){r.removeAttribute('data-wtpc-ready');init(r);}});}});
+  window.addEventListener('elementor/frontend/init',function(){if(window.elementorFrontend&&elementorFrontend.hooks){elementorFrontend.hooks.addAction('frontend/element_ready/wt-product-carousel.default',function($el){var r=$el[0].querySelector('.wtpc');if(r)init(r);});}});
 })();
