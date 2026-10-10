@@ -988,5 +988,14 @@ a{color:var(--g)}a:hover,a:active{color:var(--g3)}
 .wth-search .elementor-search-form--full-screen .dialog-lightbox-close-button:hover{background:rgba(255,255,255,.12);transform:rotate(90deg)}
 .wth-search .elementor-search-form--full-screen .dialog-lightbox-close-button svg{fill:#fff!important;width:16px;height:16px}
 .wth-search .elementor-search-form--full-screen:after{content:"Press Enter to search, Esc to close";position:absolute;left:50%;transform:translateX(-50%);top:calc(50% + 70px);font:500 13px/1 var(--sans);letter-spacing:.06em;color:rgba(255,255,255,.55);white-space:nowrap}
+.wth-tools{align-items:center!important}
+.wth-tools>.elementor-element{display:flex!important;align-items:center!important;height:40px;margin:0!important}
+.wth-tools>.elementor-element>.elementor-widget-container,.wth-search search,.wth-search .elementor-search-form,.wth-ic .elementor-icon-wrapper,.wth-cart .elementor-menu-cart__wrapper,.wth-cart .elementor-menu-cart__toggle_wrapper,.wth-cart .elementor-menu-cart__toggle{display:flex!important;align-items:center!important;height:40px;line-height:0}
+.wth-cart .elementor-menu-cart__toggle_button,.wth-cart .elementor-button-icon{color:var(--tx)!important;--toggle-button-icon-color:var(--tx)}
+.wth-cart .elementor-menu-cart__toggle_button:hover .elementor-button-icon{color:var(--g)!important}
+.wth-search .elementor-search-form--full-screen .elementor-search-form__input{font-size:clamp(22px,3vw,40px)!important}
+.wth-tools>.wth-cta{height:auto}
+.wth-search .elementor-search-form{margin:0!important;top:auto!important;transform:none!important}
+.wth-search .elementor-search-form__toggle{margin:0!important}
 CSS;
 }
