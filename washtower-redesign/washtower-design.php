@@ -195,7 +195,7 @@ add_action( 'wp_footer', function () {
 		</aside>
 	</div>
 	<?php
-}, 20 );
+}, 1 );
 
 /* ---------- logged-in account panel + My Account dashboard ---------- */
 
@@ -272,7 +272,7 @@ add_action( 'wp_footer', function () {
 		</aside>
 	</div>
 	<?php
-}, 21 );
+}, 1 );
 
 /* My Account: dashboard with stats, spending graph and recent orders */
 add_action( 'woocommerce_account_dashboard', function () {
