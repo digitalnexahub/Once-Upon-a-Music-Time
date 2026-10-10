@@ -718,7 +718,7 @@ if(cartForm){var ct;cartForm.addEventListener('change',function(e){if(!e.target.
 if(window.jQuery){jQuery(d.body).on('updated_cart_totals updated_wc_div',function(){wtQty();});}
 /* product tabs -> accordion */
 d.querySelectorAll('.single-product .woocommerce-tabs').forEach(function(t){var tabs=t.querySelectorAll('ul.tabs li a');t.classList.add('wt-acc');
- tabs.forEach(function(a,i){var panel=t.querySelector(a.getAttribute('href'));if(!panel)return;var b=d.createElement('button');b.type='button';b.className='wt-acc__h';b.setAttribute('aria-expanded',i===0?'true':'false');b.innerHTML='<span>'+a.textContent+'</span><i aria-hidden="true"></i>';panel.parentNode.insertBefore(b,panel);panel.classList.add('wt-acc__p');panel.style.display='';if(i===0)panel.classList.add('open');
+ tabs.forEach(function(a,i){var panel=t.querySelector(a.getAttribute('href'));if(!panel)return;var b=d.createElement('button');b.type='button';b.className='wt-acc__h';b.setAttribute('aria-expanded',i===0?'true':'false');b.innerHTML='<span>'+a.textContent+'</span><i aria-hidden="true"></i>';panel.parentNode.insertBefore(b,panel);panel.classList.add('wt-acc__p');if(!panel.querySelector(':scope>.wt-acc__in')){var w=d.createElement('div');w.className='wt-acc__in';while(panel.firstChild){w.appendChild(panel.firstChild);}panel.appendChild(w);}panel.style.display='';if(i===0)panel.classList.add('open');
   b.addEventListener('click',function(){var o=b.getAttribute('aria-expanded')!=='true';b.setAttribute('aria-expanded',o);panel.classList.toggle('open',o);});});});
 /* product: sticky buy bar */
 var sb=d.querySelector('.wt-sticky-buy'),cartF=d.querySelector('.single-product form.cart');
@@ -1926,6 +1926,11 @@ a{color:var(--g)}a:hover,a:active{color:var(--g3)}
 .single-product .woocommerce-tabs .panel>h2:first-child{display:none}
 .wt-related{margin:80px 0 20px}
 .wt-related .wtpc{padding-top:40px;border-top:1px solid var(--ln)}
+
+.wt-acc .wt-acc__p{grid-template-rows:0fr!important;visibility:hidden}
+.wt-acc .wt-acc__p.open{grid-template-rows:1fr!important;visibility:visible}
+.wt-acc .wt-acc__in{overflow:hidden;min-height:0}
+.wt-acc .wt-acc__in>h2:first-child{display:none}
 
 CSS;
 }
