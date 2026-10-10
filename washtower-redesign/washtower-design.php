@@ -2000,7 +2000,6 @@ html,body,body :where(*:not(i):not(svg):not(svg *):not([class*="eicon"]):not([cl
  .wth-nav .elementor-nav-menu--dropdown a{font:600 17px/1.2 var(--sans)!important;padding:16px 8px!important;border-bottom:1px solid var(--ln)}
  .wth-announce{font-size:12px}
  html,body{overflow-x:clip}
- body .elementor-section,body .e-con{--padding-left:16px;--padding-right:16px}
  .elementor-widget-heading h1.elementor-heading-title{font-size:clamp(30px,8.6vw,40px)!important;line-height:1.08!important}
  .elementor-widget-heading h2.elementor-heading-title{font-size:clamp(26px,7.4vw,34px)!important;line-height:1.12!important}
  .wt-b .elementor-button,.wt-b--o .elementor-button{width:100%;justify-content:center;min-height:52px;border-radius:12px!important}
