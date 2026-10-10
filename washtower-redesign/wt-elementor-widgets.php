@@ -72,21 +72,21 @@ add_action( 'elementor/widgets/register', function ( $widgets_manager ) {
 				case 'ids':
 					$ids = array_filter( array_map( 'absint', explode( ',', (string) $s['ids'] ) ) );
 					if ( ! $ids ) { return []; }
-					$list = wc_get_products( $base + [ 'include' => $ids, 'limit' => count( $ids ) ] );
+					$list = wc_get_products( array_merge( $base, [ 'include' => $ids, 'limit' => count( $ids ) ] ) );
 					usort( $list, fn( $a, $b ) => array_search( $a->get_id(), $ids, true ) <=> array_search( $b->get_id(), $ids, true ) );
 					return $list;
 				case 'category':
-					return wc_get_products( $base + [ 'category' => [ $s['category'] ], 'orderby' => 'date', 'order' => 'DESC' ] );
+					return wc_get_products( array_merge( $base, [ 'category' => [ $s['category'] ], 'orderby' => 'date', 'order' => 'DESC' ] ) );
 				case 'sale':
 					$ids = wc_get_product_ids_on_sale();
-					return $ids ? wc_get_products( $base + [ 'include' => $ids ] ) : [];
+					return $ids ? wc_get_products( array_merge( $base, [ 'include' => $ids ] ) ) : [];
 				case 'latest':
-					return wc_get_products( $base + [ 'orderby' => 'date', 'order' => 'DESC' ] );
+					return wc_get_products( array_merge( $base, [ 'orderby' => 'date', 'order' => 'DESC' ] ) );
 				default:
-					$list = wc_get_products( $base + [ 'featured' => true, 'orderby' => 'date', 'order' => 'ASC' ] );
+					$list = wc_get_products( array_merge( $base, [ 'featured' => true, 'orderby' => 'date', 'order' => 'ASC' ] ) );
 					if ( count( $list ) < $limit ) {
 						$have = array_map( fn( $p ) => $p->get_id(), $list );
-						$list = array_merge( $list, wc_get_products( $base + [ 'limit' => $limit - count( $list ), 'exclude' => $have, 'orderby' => 'date', 'order' => 'DESC' ] ) );
+						$list = array_merge( $list, wc_get_products( array_merge( $base, [ 'limit' => $limit - count( $list ), 'exclude' => $have, 'orderby' => 'date', 'order' => 'DESC' ] ) ) );
 					}
 					return $list;
 			}
