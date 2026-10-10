@@ -197,6 +197,126 @@ add_action( 'wp_footer', function () {
 	<?php
 }, 20 );
 
+/* ---------- logged-in account panel + My Account dashboard ---------- */
+
+function wt_account_data( $uid ) {
+	$paid   = [ 'wc-completed', 'wc-processing', 'wc-on-hold' ];
+	$orders = wc_get_orders( [ 'customer_id' => $uid, 'limit' => -1, 'status' => array_keys( wc_get_order_statuses() ), 'orderby' => 'date', 'order' => 'DESC' ] );
+	$months = [];
+	for ( $i = 11; $i >= 0; $i-- ) { $months[ gmdate( 'Y-m', strtotime( "first day of -$i month" ) ) ] = 0.0; }
+	$spent = 0.0; $status = [];
+	foreach ( $orders as $o ) {
+		$st = 'wc-' . $o->get_status();
+		$status[ $o->get_status() ] = ( $status[ $o->get_status() ] ?? 0 ) + 1;
+		if ( ! in_array( $st, $paid, true ) ) { continue; }
+		$spent += (float) $o->get_total();
+		$k = $o->get_date_created() ? $o->get_date_created()->date( 'Y-m' ) : '';
+		if ( isset( $months[ $k ] ) ) { $months[ $k ] += (float) $o->get_total(); }
+	}
+	return [ 'orders' => $orders, 'months' => $months, 'spent' => $spent, 'status' => $status ];
+}
+
+function wt_spend_chart( $months ) {
+	$w = 640; $h = 220; $pl = 8; $pr = 8; $pt = 18; $pb = 30;
+	$max = max( $months ) ?: 1; $n = count( $months ); $step = ( $w - $pl - $pr ) / ( $n - 1 );
+	$pts = []; $i = 0;
+	foreach ( $months as $k => $v ) { $pts[] = [ $pl + $i * $step, $pt + ( $h - $pt - $pb ) * ( 1 - $v / $max ), $k, $v ]; $i++; }
+	$line = ''; foreach ( $pts as $j => $p ) {
+		if ( 0 === $j ) { $line .= 'M' . round( $p[0], 1 ) . ' ' . round( $p[1], 1 ); continue; }
+		$q = $pts[ $j - 1 ]; $cx = ( $q[0] + $p[0] ) / 2;
+		$line .= ' C' . round( $cx, 1 ) . ' ' . round( $q[1], 1 ) . ' ' . round( $cx, 1 ) . ' ' . round( $p[1], 1 ) . ' ' . round( $p[0], 1 ) . ' ' . round( $p[1], 1 );
+	}
+	$area = $line . ' L' . round( end( $pts )[0], 1 ) . ' ' . ( $h - $pb ) . ' L' . $pl . ' ' . ( $h - $pb ) . ' Z';
+	$o  = '<svg class="wtd-chart__svg" viewBox="0 0 ' . $w . ' ' . $h . '" preserveAspectRatio="none" role="img" aria-label="Spending per month for the last 12 months">';
+	$o .= '<defs><linearGradient id="wtdG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1D4032" stop-opacity=".28"/><stop offset="1" stop-color="#1D4032" stop-opacity="0"/></linearGradient></defs>';
+	for ( $g = 0; $g < 4; $g++ ) { $y = $pt + ( $h - $pt - $pb ) * $g / 3; $o .= '<line class="wtd-chart__grid" x1="0" x2="' . $w . '" y1="' . $y . '" y2="' . $y . '"/>'; }
+	$o .= '<path class="wtd-chart__area" d="' . $area . '"/><path class="wtd-chart__line" d="' . $line . '" pathLength="1"/>';
+	foreach ( $pts as $p ) {
+		$label = date_i18n( 'M Y', strtotime( $p[2] . '-01' ) );
+		$o .= '<g class="wtd-chart__pt" data-label="' . esc_attr( $label ) . '" data-value="' . esc_attr( wp_strip_all_tags( wc_price( $p[3] ) ) ) . '"><rect x="' . round( $p[0] - $step / 2, 1 ) . '" y="0" width="' . round( $step, 1 ) . '" height="' . $h . '" fill="transparent"/><circle cx="' . round( $p[0], 1 ) . '" cy="' . round( $p[1], 1 ) . '" r="4.5"/></g>';
+	}
+	$o .= '</svg><div class="wtd-chart__x">';
+	foreach ( $pts as $p ) { $o .= '<span>' . esc_html( date_i18n( 'M', strtotime( $p[2] . '-01' ) ) ) . '</span>'; }
+	return $o . '</div><div class="wtd-chart__tip" aria-hidden="true"></div>';
+}
+
+function wt_ic( $name ) {
+	$p = [
+		'home' => '<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/>', 'box' => '<path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/>',
+		'pin' => '<path d="M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/>', 'user' => '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+		'out' => '<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="M10 17l-5-5 5-5M5 12h11"/>', 'bag' => '<path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
+		'pound' => '<path d="M17 19H7c2-1.5 2.5-3 2.5-5V8.5a3.5 3.5 0 0 1 6.8-1.2M7 13h7"/>', 'cal' => '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+		'pen' => '<path d="M4 20l4-1 11-11-3-3L5 16z"/>', 'dl' => '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>', 'arrow' => '<path d="M5 12h14M13 6l6 6-6 6"/>',
+	];
+	return '<svg class="wt-ic2" viewBox="0 0 24 24" aria-hidden="true">' . ( $p[ $name ] ?? '' ) . '</svg>';
+}
+
+/* logged-in panel (opens from the header account icon) */
+add_action( 'wp_footer', function () {
+	if ( ! is_user_logged_in() || ! function_exists( 'wc_get_account_endpoint_url' ) ) { return; }
+	$u = wp_get_current_user(); $d = wt_account_data( $u->ID );
+	$name = $u->first_name ?: $u->display_name;
+	$links = [ [ 'home', 'Dashboard', wc_get_account_endpoint_url( 'dashboard' ) ], [ 'box', 'Orders', wc_get_account_endpoint_url( 'orders' ) ], [ 'pin', 'Addresses', wc_get_account_endpoint_url( 'edit-address' ) ], [ 'user', 'Account details', wc_get_account_endpoint_url( 'edit-account' ) ] ];
+	?>
+	<div class="wta" id="wtu" hidden data-view="user">
+		<div class="wta__overlay" data-wta-close></div>
+		<aside class="wta__panel" role="dialog" aria-modal="true" aria-labelledby="wtu-title">
+			<button type="button" class="wta__close" data-wta-close aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+			<div class="wta__brand">WASHTOWER<sup>&reg;</sup></div>
+			<div class="wtu__me"><span class="wtu__av"><?php echo esc_html( strtoupper( mb_substr( $name, 0, 1 ) ) ); ?></span><span><strong id="wtu-title">Hi, <?php echo esc_html( $name ); ?></strong><small><?php echo esc_html( $u->user_email ); ?></small></span></div>
+			<div class="wtu__stats"><div><b><?php echo count( $d['orders'] ); ?></b><span>Orders</span></div><div><b><?php echo wp_kses_post( wc_price( $d['spent'], [ 'decimals' => 0 ] ) ); ?></b><span>Total spent</span></div><div><b><?php echo (int) ( WC()->cart ? WC()->cart->get_cart_contents_count() : 0 ); ?></b><span>In basket</span></div></div>
+			<nav class="wtu__links" aria-label="Account">
+				<?php foreach ( $links as $i => $l ) : ?><a href="<?php echo esc_url( $l[2] ); ?>" style="--i:<?php echo (int) $i; ?>"><?php echo wt_ic( $l[0] ); ?><span><?php echo esc_html( $l[1] ); ?></span><?php echo wt_ic( 'arrow' ); ?></a><?php endforeach; ?>
+			</nav>
+			<a class="wta__btn wtu__out" href="<?php echo esc_url( wc_logout_url() ); ?>"><span><?php echo wt_ic( 'out' ); ?>Log out</span></a>
+		</aside>
+	</div>
+	<?php
+}, 21 );
+
+/* My Account: dashboard with stats, spending graph and recent orders */
+add_action( 'woocommerce_account_dashboard', function () {
+	$u = wp_get_current_user(); $d = wt_account_data( $u->ID );
+	$name   = $u->first_name ?: $u->display_name;
+	$recent = array_slice( $d['orders'], 0, 4 );
+	$basket = WC()->cart ? WC()->cart->get_cart_contents_count() : 0;
+	$since  = $u->user_registered ? date_i18n( 'M Y', strtotime( $u->user_registered ) ) : '';
+	$has    = array_sum( $d['months'] ) > 0;
+	?>
+	<div class="wtd">
+		<div class="wtd-hello">
+			<div><p class="wtd-eyebrow">Your account</p><h2>Welcome back, <?php echo esc_html( $name ); ?></h2><p>Track orders, manage addresses and keep your laundry room plans in one place.</p></div>
+			<a class="wtd-cta" href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>">Shop cabinets <?php echo wt_ic( 'arrow' ); ?></a>
+		</div>
+		<div class="wtd-stats">
+			<div class="wtd-stat" style="--i:0"><span class="wtd-stat__ic"><?php echo wt_ic( 'box' ); ?></span><b data-count="<?php echo count( $d['orders'] ); ?>"><?php echo count( $d['orders'] ); ?></b><small>Orders placed</small></div>
+			<div class="wtd-stat" style="--i:1"><span class="wtd-stat__ic"><?php echo wt_ic( 'pound' ); ?></span><b><?php echo wp_kses_post( wc_price( $d['spent'], [ 'decimals' => 0 ] ) ); ?></b><small>Total spent</small></div>
+			<div class="wtd-stat" style="--i:2"><span class="wtd-stat__ic"><?php echo wt_ic( 'bag' ); ?></span><b data-count="<?php echo (int) $basket; ?>"><?php echo (int) $basket; ?></b><small>Items in basket</small></div>
+			<div class="wtd-stat" style="--i:3"><span class="wtd-stat__ic"><?php echo wt_ic( 'cal' ); ?></span><b><?php echo esc_html( $since ); ?></b><small>Member since</small></div>
+		</div>
+		<div class="wtd-grid">
+			<section class="wtd-card wtd-chart">
+				<header><div><h3>Spending</h3><p>Last 12 months</p></div><b><?php echo wp_kses_post( wc_price( array_sum( $d['months'] ), [ 'decimals' => 0 ] ) ); ?></b></header>
+				<div class="wtd-chart__box<?php echo $has ? '' : ' is-empty'; ?>"><?php echo wt_spend_chart( $d['months'] ); ?><?php if ( ! $has ) : ?><p class="wtd-chart__empty">Your spending will appear here after your first order.</p><?php endif; ?></div>
+			</section>
+			<section class="wtd-card wtd-recent">
+				<header><div><h3>Recent orders</h3><p><?php echo count( $d['orders'] ) ? 'Your latest purchases' : 'Nothing ordered yet'; ?></p></div><a href="<?php echo esc_url( wc_get_account_endpoint_url( 'orders' ) ); ?>">View all</a></header>
+				<?php if ( $recent ) : ?><ul>
+					<?php foreach ( $recent as $o ) : ?><li><a href="<?php echo esc_url( $o->get_view_order_url() ); ?>"><span class="wtd-o__n">#<?php echo esc_html( $o->get_order_number() ); ?><small><?php echo esc_html( wc_format_datetime( $o->get_date_created() ) ); ?></small></span><span class="wtd-pill wtd-pill--<?php echo esc_attr( $o->get_status() ); ?>"><?php echo esc_html( wc_get_order_status_name( $o->get_status() ) ); ?></span><b><?php echo wp_kses_post( $o->get_formatted_order_total() ); ?></b></a></li><?php endforeach; ?>
+				</ul><?php else : ?>
+					<div class="wtd-empty"><?php echo wt_ic( 'box' ); ?><p>When you place an order it will show up here with live status updates.</p><a class="wtd-cta wtd-cta--sm" href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>">Start shopping <?php echo wt_ic( 'arrow' ); ?></a></div>
+				<?php endif; ?>
+			</section>
+		</div>
+		<div class="wtd-quick">
+			<a href="<?php echo esc_url( wc_get_account_endpoint_url( 'edit-address' ) ); ?>"><?php echo wt_ic( 'pin' ); ?><span><b>Addresses</b><small>Billing &amp; delivery</small></span></a>
+			<a href="<?php echo esc_url( wc_get_account_endpoint_url( 'edit-account' ) ); ?>"><?php echo wt_ic( 'pen' ); ?><span><b>Account details</b><small>Name, email &amp; password</small></span></a>
+			<a href="<?php echo esc_url( ( $p = get_page_by_title( 'Get a Free Design' ) ) ? get_permalink( $p ) : home_url( '/' ) ); ?>"><?php echo wt_ic( 'home' ); ?><span><b>Free design</b><small>Plan your laundry room</small></span></a>
+		</div>
+	</div>
+	<?php
+}, 1 );
+
 function wt_account_json_error( $msg ) { wp_send_json_error( [ 'message' => $msg ], 400 ); }
 function wt_account_rate_key() { return 'wt_login_' . md5( $_SERVER['REMOTE_ADDR'] ?? '' ); }
 
@@ -492,6 +612,18 @@ if(!reduce&&window.matchMedia('(hover:hover)').matches){d.addEventListener('poin
   }).catch(function(err){btn.classList.remove('is-loading');btn.disabled=false;fail(form,err.message);});});});
  window.wtAccount={open:open,close:close};
 })();
+/* logged-in account panel */
+(function(){var U=d.getElementById('wtu');if(!U)return;var last=null;
+ function open(){last=d.activeElement;U.hidden=false;void U.offsetWidth;U.classList.add('is-open');d.body.classList.add('wt-lock');setTimeout(function(){var a=U.querySelector('.wtu__links a');if(a)a.focus();},400);}
+ function close(){U.classList.remove('is-open');d.body.classList.remove('wt-lock');setTimeout(function(){U.hidden=true;},reduce?0:450);if(last&&last.focus)last.focus();}
+ d.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('.wth-ic a');if(a&&!e.ctrlKey&&!e.metaKey){e.preventDefault();open();}});
+ U.addEventListener('click',function(e){if(e.target.closest('[data-wta-close]'))close();});
+ d.addEventListener('keydown',function(e){if(e.key==='Escape'&&U.classList.contains('is-open'))close();});
+})();
+/* My Account spending chart tooltip */
+d.querySelectorAll('.wtd-chart__box').forEach(function(box){var tip=box.querySelector('.wtd-chart__tip'),svg=box.querySelector('svg');if(!tip||!svg)return;
+ box.querySelectorAll('.wtd-chart__pt').forEach(function(g){g.addEventListener('mouseenter',function(){var c=g.querySelector('circle'),r=c.getBoundingClientRect(),b=box.getBoundingClientRect();tip.innerHTML='<b>'+g.getAttribute('data-value')+'</b><span>'+g.getAttribute('data-label')+'</span>';tip.style.left=(r.left-b.left+r.width/2)+'px';tip.style.top=(r.top-b.top)+'px';tip.classList.add('on');g.classList.add('on');});
+  g.addEventListener('mouseleave',function(){tip.classList.remove('on');g.classList.remove('on');});});});
 /* add to cart feedback (WooCommerce triggers jQuery events) */
 if(window.jQuery){jQuery(d.body).on('adding_to_cart',function(e,btn){btn&&btn.addClass&&btn.addClass('is-loading').text('Adding…');}).on('added_to_cart',function(e,f,h,btn){if(btn&&btn.removeClass){btn.removeClass('is-loading').addClass('is-done').text('Added ✓');setTimeout(function(){btn.removeClass('is-done').text('Add to basket');},2200);}}).on('ajax_request_not_sent.adding_to_cart',function(e,btn){btn&&btn.removeClass&&btn.removeClass('is-loading').text('Add to basket');});
  jQuery(d).ajaxError(function(e,x,s){if(s&&s.url&&s.url.indexOf('add_to_cart')>-1){jQuery('.wt-atc.is-loading').removeClass('is-loading').addClass('is-error').text('Try again');}});}
@@ -1228,5 +1360,128 @@ a{color:var(--g)}a:hover,a:active{color:var(--g3)}
 @keyframes wtaShake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-6px)}40%,60%{transform:translateX(6px)}}
 @media (max-width:480px){.wta__panel{padding:26px 22px 24px}.wta__title{font-size:26px!important}.wta__brand{margin-bottom:26px}}
 @media (prefers-reduced-motion:reduce){.wta *,.wta__panel,.wta__overlay{animation:none!important;transition:none!important}}
+/* ---------- logged-in panel ---------- */
+.wtu__me{display:flex;align-items:center;gap:14px;margin:0 0 22px}
+.wtu__av{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#1D4032,#2F6B4F);color:#fff;display:grid;place-items:center;font:700 22px/1 var(--sans);box-shadow:0 10px 24px -12px rgba(21,53,40,.7);flex:none}
+.wtu__me strong{display:block;font:700 22px/1.2 var(--sans);color:var(--tx)}
+.wtu__me small{display:block;font:400 13.5px/1.3 var(--sans);color:var(--tx2);margin-top:3px;word-break:break-all}
+.wtu__stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 22px}
+.wtu__stats div{background:var(--off);border-radius:12px;padding:14px 12px}
+.wtu__stats b{display:block;font:700 18px/1.1 var(--sans);color:var(--tx)}
+.wtu__stats span{display:block;font:500 12px/1.2 var(--sans);color:var(--tx2);margin-top:4px}
+.wtu__links{display:flex;flex-direction:column;gap:6px;margin-bottom:22px}
+.wtu__links a{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--ln);border-radius:12px;color:var(--tx)!important;text-decoration:none;font:600 15px/1 var(--sans);transition:border-color .3s,background .3s,transform .35s var(--ease)}
+.wta.is-open .wtu__links a{animation:wtaIn .55s var(--ease) both;animation-delay:calc(.15s + var(--i) * .06s)}
+.wtu__links a span{flex:1}
+.wtu__links a:hover{border-color:var(--g);background:var(--sage);transform:translateX(4px)}
+.wtu__links .wt-ic2:last-child{opacity:.4;transition:transform .35s var(--ease),opacity .3s}
+.wtu__links a:hover .wt-ic2:last-child{opacity:1;transform:translateX(3px)}
+.wt-ic2{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.wtu__links .wt-ic2:first-child{color:var(--g)}
+.wtu__out{margin-top:auto;text-decoration:none!important}
+.wtu__out span{display:inline-flex;align-items:center;gap:10px}
+/* ---------- My Account page ---------- */
+.woocommerce-account .entry-title,.woocommerce-account .page-header .entry-title{font:700 clamp(30px,3vw,44px)/1.1 var(--sans)!important;color:var(--tx);max-width:1320px;margin:44px auto 26px!important;padding:0 32px}
+.woocommerce-account .page-content,.woocommerce-account main .woocommerce{max-width:1320px;margin:0 auto;padding:0 32px 80px}
+.woocommerce-account .woocommerce{display:grid;grid-template-columns:270px 1fr;gap:32px;align-items:start}
+.woocommerce-account .woocommerce:before,.woocommerce-account .woocommerce:after{display:none!important}
+.woocommerce-account .woocommerce-MyAccount-navigation,.woocommerce-account .woocommerce-MyAccount-content{float:none!important;width:auto!important}
+.woocommerce-MyAccount-navigation{position:sticky;top:110px;background:#fff;border:1px solid var(--ln);border-radius:18px;padding:10px}
+.woocommerce-MyAccount-navigation ul{list-style:none!important;margin:0!important;padding:0!important}
+.woocommerce-MyAccount-navigation li{margin:0!important}
+.woocommerce-MyAccount-navigation a{display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:12px;color:var(--tx)!important;text-decoration:none!important;font:600 14.5px/1 var(--sans);transition:background .3s,color .3s,transform .35s var(--ease)}
+.woocommerce-MyAccount-navigation a:before{content:"";width:20px;height:20px;flex:none;background:currentColor;-webkit-mask:var(--ic) center/contain no-repeat;mask:var(--ic) center/contain no-repeat;opacity:.75}
+.woocommerce-MyAccount-navigation a:hover{background:var(--off);transform:translateX(3px)}
+.woocommerce-MyAccount-navigation .is-active a{background:var(--g);color:#fff!important}
+.woocommerce-MyAccount-navigation .is-active a:before{opacity:1}
+.woocommerce-MyAccount-navigation-link--customer-logout{border-top:1px solid var(--ln);margin-top:8px!important;padding-top:8px}
+.woocommerce-MyAccount-navigation-link--customer-logout a{color:#A8432E!important}
+.woocommerce-MyAccount-navigation-link--customer-logout a:hover{background:#FBEDEA}
+.woocommerce-MyAccount-navigation-link--dashboard a{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='7' height='9' rx='1.5'/%3E%3Crect x='14' y='3' width='7' height='5' rx='1.5'/%3E%3Crect x='14' y='12' width='7' height='9' rx='1.5'/%3E%3Crect x='3' y='16' width='7' height='5' rx='1.5'/%3E%3C/svg%3E")}
+.woocommerce-MyAccount-navigation-link--orders a{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 7l9-4 9 4v10l-9 4-9-4z'/%3E%3Cpath d='M3 7l9 4 9-4M12 11v10'/%3E%3C/svg%3E")}
+.woocommerce-MyAccount-navigation-link--downloads a{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 4v11M7 10l5 5 5-5M5 20h14'/%3E%3C/svg%3E")}
+.woocommerce-MyAccount-navigation-link--edit-address a{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z'/%3E%3Ccircle cx='12' cy='9' r='2.5'/%3E%3C/svg%3E")}
+.woocommerce-MyAccount-navigation-link--edit-account a{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6'/%3E%3C/svg%3E")}
+.woocommerce-MyAccount-navigation-link--customer-logout a{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3'/%3E%3Cpath d='M10 17l-5-5 5-5M5 12h11'/%3E%3C/svg%3E")}
+.woocommerce-MyAccount-content{min-width:0;font:400 15px/1.6 var(--sans);color:var(--tx2)}
+.woocommerce-MyAccount-content:has(.wtd)>p{display:none}
+.wtd{display:flex;flex-direction:column;gap:20px}
+.wtd>*{animation:wtaIn .7s var(--ease) both}.wtd>*:nth-child(2){animation-delay:.08s}.wtd>*:nth-child(3){animation-delay:.16s}.wtd>*:nth-child(4){animation-delay:.24s}
+.wtd-hello{display:flex;justify-content:space-between;align-items:center;gap:24px;padding:30px 32px;border-radius:20px;color:#fff;background:radial-gradient(120% 140% at 100% 0%,#2F6B4F 0%,#1D4032 45%,#153528 100%);position:relative;overflow:hidden}
+.wtd-hello:after{content:"";position:absolute;right:-60px;bottom:-90px;width:260px;height:260px;border-radius:50%;border:1px solid rgba(255,255,255,.12);box-shadow:0 0 0 40px rgba(255,255,255,.03)}
+.wtd-eyebrow{margin:0 0 8px!important;font:600 11px/1 var(--sans)!important;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.65)!important}
+.wtd-hello h2{margin:0 0 8px!important;font:700 clamp(24px,2.4vw,34px)/1.1 var(--sans)!important;color:#fff!important}
+.wtd-hello p{margin:0;color:rgba(255,255,255,.8);font-size:15px;max-width:460px}
+.wtd-cta{position:relative;z-index:1;display:inline-flex;align-items:center;gap:10px;height:48px;padding:0 22px;border-radius:12px;background:#fff;color:var(--g)!important;font:600 14.5px/1 var(--sans);text-decoration:none!important;white-space:nowrap;transition:transform .35s var(--ease),box-shadow .35s}
+.wtd-cta:hover{transform:translateY(-2px);box-shadow:0 14px 28px -14px rgba(0,0,0,.5)}
+.wtd-cta .wt-ic2{transition:transform .35s var(--ease)}.wtd-cta:hover .wt-ic2{transform:translateX(4px)}
+.wtd-cta--sm{height:42px;background:var(--g);color:#fff!important}
+.wtd-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.wtd-stat{background:#fff;border:1px solid var(--ln);border-radius:16px;padding:18px;transition:transform .35s var(--ease),box-shadow .35s}
+.wtd-stat:hover{transform:translateY(-3px);box-shadow:0 16px 30px -22px rgba(21,53,40,.5)}
+.wtd-stat__ic{width:40px;height:40px;border-radius:12px;background:var(--sage);color:var(--g);display:grid;place-items:center;margin-bottom:14px}
+.wtd-stat b{display:block;font:700 24px/1.1 var(--sans);color:var(--tx)}
+.wtd-stat small{display:block;margin-top:4px;font:500 13px/1.2 var(--sans);color:var(--tx2)}
+.wtd-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:20px}
+.wtd-card{background:#fff;border:1px solid var(--ln);border-radius:18px;padding:22px 22px 18px;min-width:0}
+.wtd-card header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}
+.wtd-card h3{margin:0!important;font:700 18px/1.2 var(--sans)!important;color:var(--tx)!important}
+.wtd-card header p{margin:3px 0 0;font-size:13px;color:var(--tx2)}
+.wtd-card header>b{font:700 22px/1 var(--sans);color:var(--tx)}
+.wtd-card header>a{font:600 13.5px/1 var(--sans);color:var(--g)!important;text-decoration:none}
+.wtd-chart__box{position:relative}
+.wtd-chart__svg{display:block;width:100%;height:220px;overflow:visible}
+.wtd-chart__grid{stroke:#ECEDE9;stroke-width:1;vector-effect:non-scaling-stroke}
+.wtd-chart__area{fill:url(#wtdG);opacity:0;animation:wtdFade 1s .6s var(--ease) forwards}
+.wtd-chart__line{fill:none;stroke:var(--g);stroke-width:2.5;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:wtdDraw 1.4s .25s var(--ease) forwards}
+.wtd-chart__pt circle{fill:#fff;stroke:var(--g);stroke-width:2;vector-effect:non-scaling-stroke;opacity:0;transform-box:fill-box;transform-origin:center;transition:transform .25s var(--ease),opacity .25s}
+.wtd-chart__pt.on circle{opacity:1;transform:scale(1.4)}
+.wtd-chart__pt{cursor:pointer}
+@keyframes wtdDraw{to{stroke-dashoffset:0}}@keyframes wtdFade{to{opacity:1}}
+.wtd-chart__x{display:grid;grid-template-columns:repeat(12,1fr);margin-top:8px;font:500 11.5px/1 var(--sans);color:#9aa09b;text-align:center}
+.wtd-chart__tip{position:absolute;transform:translate(-50%,calc(-100% - 12px));background:var(--tx);color:#fff;border-radius:10px;padding:8px 12px;font:500 12px/1.3 var(--sans);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s,transform .25s var(--ease)}
+.wtd-chart__tip b{display:block;font-size:14px}.wtd-chart__tip span{opacity:.7}
+.wtd-chart__tip.on{opacity:1;transform:translate(-50%,calc(-100% - 16px))}
+.wtd-chart__box.is-empty .wtd-chart__line{stroke:#CFD5CD;stroke-dasharray:6 6;animation:none;stroke-dashoffset:0}
+.wtd-chart__empty{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);margin:0;background:#fff;border:1px solid var(--ln);border-radius:999px;padding:10px 18px;font:500 13px/1.3 var(--sans);color:var(--tx2);white-space:nowrap}
+.wtd-recent ul{list-style:none;margin:0;padding:0}
+.wtd-recent li a{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:12px 6px;border-top:1px solid var(--ln);color:var(--tx)!important;text-decoration:none!important;transition:background .3s}
+.wtd-recent li:first-child a{border-top:0}
+.wtd-recent li a:hover{background:var(--off)}
+.wtd-o__n{font:600 14px/1.2 var(--sans)}.wtd-o__n small{display:block;font-weight:400;font-size:12px;color:var(--tx2);margin-top:3px}
+.wtd-recent b{font:700 14px/1 var(--sans)}
+.wtd-pill{font:600 11px/1 var(--sans);padding:6px 10px;border-radius:999px;background:var(--off);color:var(--tx2)}
+.wtd-pill--completed{background:#E3F1E8;color:#24603F}.wtd-pill--processing{background:#E6EEF8;color:#2D5B8F}.wtd-pill--on-hold,.wtd-pill--pending{background:#FFF4D6;color:#7A5A00}.wtd-pill--cancelled,.wtd-pill--failed,.wtd-pill--refunded{background:#FBEDEA;color:#A8432E}
+.wtd-empty{text-align:center;padding:16px 8px 8px}
+.wtd-empty>.wt-ic2{width:44px;height:44px;color:var(--g);padding:10px;background:var(--sage);border-radius:14px;margin-bottom:10px}
+.wtd-empty p{margin:0 auto 16px;max-width:260px;font-size:13.5px}
+.wtd-quick{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.wtd-quick a{display:flex;align-items:center;gap:14px;padding:18px;border:1px solid var(--ln);border-radius:16px;background:#fff;color:var(--tx)!important;text-decoration:none!important;transition:border-color .3s,transform .35s var(--ease),box-shadow .35s}
+.wtd-quick a>.wt-ic2{width:42px;height:42px;padding:10px;border-radius:12px;background:var(--off);color:var(--g);transition:background .3s,color .3s}
+.wtd-quick a:hover{border-color:var(--g);transform:translateY(-3px);box-shadow:0 16px 30px -22px rgba(21,53,40,.5)}
+.wtd-quick a:hover>.wt-ic2{background:var(--g);color:#fff}
+.wtd-quick b{display:block;font:700 15px/1.2 var(--sans)}.wtd-quick small{display:block;font-size:12.5px;color:var(--tx2);margin-top:3px}
+/* orders / addresses / forms */
+.woocommerce-MyAccount-content table.shop_table{border:1px solid var(--ln)!important;border-radius:16px!important;overflow:hidden;border-collapse:separate!important;background:#fff}
+.woocommerce-MyAccount-content table.shop_table th{background:var(--off);font:600 13px/1 var(--sans);color:var(--tx2);text-transform:uppercase;letter-spacing:.06em;padding:14px 16px!important;border:0!important}
+.woocommerce-MyAccount-content table.shop_table td{padding:16px!important;border-top:1px solid var(--ln)!important;border-left:0!important;border-right:0!important;font-size:14.5px;color:var(--tx)}
+.woocommerce-MyAccount-content .button,.woocommerce-MyAccount-content button[type=submit]{background:var(--g)!important;color:#fff!important;border:0!important;border-radius:10px!important;padding:12px 20px!important;font:600 14px/1 var(--sans)!important;transition:background .3s,transform .3s var(--ease)!important}
+.woocommerce-MyAccount-content .button:hover,.woocommerce-MyAccount-content button[type=submit]:hover{background:var(--g3)!important;transform:translateY(-2px)}
+.woocommerce-MyAccount-content input.input-text,.woocommerce-MyAccount-content select,.woocommerce-MyAccount-content textarea{height:50px;border:1.5px solid var(--ln)!important;border-radius:12px!important;padding:0 14px!important;font:500 15px/1 var(--sans)!important;background:#fff!important;transition:border-color .3s,box-shadow .3s}
+.woocommerce-MyAccount-content input.input-text:focus{border-color:var(--g)!important;box-shadow:0 0 0 4px rgba(29,64,50,.1)!important;outline:0}
+.woocommerce-MyAccount-content label{font:600 13.5px/1.3 var(--sans)!important;color:var(--tx)}
+.woocommerce-Addresses{display:grid!important;grid-template-columns:1fr 1fr;gap:16px}
+.woocommerce-Addresses:before,.woocommerce-Addresses:after{display:none!important}
+.woocommerce-Addresses .woocommerce-Address{width:auto!important;float:none!important;background:#fff;border:1px solid var(--ln);border-radius:16px;padding:20px}
+.woocommerce-Address-title{display:flex;justify-content:space-between;align-items:center}
+.woocommerce-Address-title h2{font:700 18px/1.2 var(--sans)!important;margin:0!important}
+.woocommerce-Address-title a{font:600 13.5px/1 var(--sans);color:var(--g)!important}
+.woocommerce-MyAccount-content fieldset{border:1px solid var(--ln);border-radius:16px;padding:20px;margin:24px 0}
+.woocommerce-MyAccount-content mark{background:var(--sage);color:var(--g);padding:2px 6px;border-radius:6px}
+.woocommerce-account .woocommerce-info,.woocommerce-account .woocommerce-message{border:0!important;border-radius:14px;background:var(--off)!important;color:var(--tx)!important;padding:16px 20px!important}
+.woocommerce-account .woocommerce-info:before,.woocommerce-account .woocommerce-message:before{color:var(--g)!important}
+@media (max-width:1024px){.woocommerce-account .woocommerce{grid-template-columns:1fr}.woocommerce-MyAccount-navigation{position:static}.woocommerce-MyAccount-navigation ul{display:flex;overflow-x:auto;gap:4px;scrollbar-width:none}.woocommerce-MyAccount-navigation li{flex:none}.woocommerce-MyAccount-navigation-link--customer-logout{border:0;margin:0!important;padding:0}.wtd-grid{grid-template-columns:1fr}.wtd-stats{grid-template-columns:1fr 1fr}}
+@media (max-width:767px){.woocommerce-account .entry-title,.woocommerce-account .page-content,.woocommerce-account main .woocommerce{padding-left:16px;padding-right:16px}.wtd-hello{flex-direction:column;align-items:flex-start;padding:24px}.wtd-quick{grid-template-columns:1fr}.woocommerce-Addresses{grid-template-columns:1fr}.wtd-chart__svg{height:180px}.wtd-chart__x span:nth-child(even){visibility:hidden}.wtd-chart__empty{white-space:normal;width:80%;text-align:center}}
+@media (prefers-reduced-motion:reduce){.wtd>*,.wtd-chart__line,.wtd-chart__area{animation:none!important;stroke-dashoffset:0!important;opacity:1!important}}
 CSS;
 }
