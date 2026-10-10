@@ -362,11 +362,11 @@ if(!reduce&&'IntersectionObserver' in window){
  window.addEventListener('beforeprint',function(){d.querySelectorAll('.wt-reveal,.wt-reveal-group').forEach(show);});
 }
 // hotspots
-function close(s){s.classList.remove('open');s.querySelector('button').setAttribute('aria-expanded','false');}
+function close(s){s.dataset.pinned='';s.classList.remove('open');s.querySelector('button').setAttribute('aria-expanded','false');}
 d.querySelectorAll('.wt-spot').forEach(function(s){var btn=s.querySelector('button');
- btn.addEventListener('click',function(e){e.stopPropagation();var o=!s.classList.contains('open');d.querySelectorAll('.wt-spot.open').forEach(close);if(o){s.classList.add('open');btn.setAttribute('aria-expanded','true');var tip=s.querySelector('.wt-tip');tip.style.transform='';var r=tip.getBoundingClientRect(),dx=0;if(r.right>window.innerWidth-12)dx=window.innerWidth-12-r.right;if(r.left<12)dx=12-r.left;if(dx)tip.style.transform='translateX(calc(-50% + '+dx+'px))';}});
+ btn.addEventListener('click',function(e){e.stopPropagation();var o=!(s.classList.contains('open')&&s.dataset.pinned);d.querySelectorAll('.wt-spot.open').forEach(function(z){if(z!==s)close(z);});s.dataset.pinned=o?'1':'';if(!o){close(s);return;}if(o){s.classList.add('open');btn.setAttribute('aria-expanded','true');var tip=s.querySelector('.wt-tip');tip.style.transform='';var r=tip.getBoundingClientRect(),dx=0;if(r.right>window.innerWidth-12)dx=window.innerWidth-12-r.right;if(r.left<12)dx=12-r.left;if(dx)tip.style.transform='translateX(calc(-50% + '+dx+'px))';}});
  s.addEventListener('mouseenter',function(){if(window.matchMedia('(hover:hover)').matches){s.classList.add('open');btn.setAttribute('aria-expanded','true');}});
- s.addEventListener('mouseleave',function(){if(window.matchMedia('(hover:hover)').matches)close(s);});
+ s.addEventListener('mouseleave',function(){if(window.matchMedia('(hover:hover)').matches&&!s.dataset.pinned)close(s);});
 });
 d.addEventListener('click',function(){d.querySelectorAll('.wt-spot.open').forEach(close);});
 // carousels: arrows, dots, keyboard, touch swipe (native), mouse drag, autoplay
