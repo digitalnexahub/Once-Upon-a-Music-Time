@@ -788,5 +788,9 @@ html.wt-anim .wt-reveal.in,html.wt-anim .wt-reveal-group>.in{opacity:1;transform
 .wt-cat-carousel .wt-cat__badge .elementor-heading-title{font-size:12px!important;padding:10px 16px}
 @media (max-width:1024px){.wt-cat-carousel .wt-car-track{grid-auto-columns:clamp(260px,42vw,400px)!important}}
 @media (max-width:767px){.wt-cat-carousel .wt-car-track{grid-auto-columns:80%!important}.wt-cat-carousel .wt-cat__t{left:20px!important;right:18px!important;bottom:20px!important}}
+.wt-car-btn{background:#fff!important;-webkit-backdrop-filter:none;backdrop-filter:none;border:0!important;color:var(--tx)!important;box-shadow:0 8px 24px -8px rgba(0,0,0,.35)!important}
+.wt-car-btn:hover{background:#fff!important;color:var(--g)!important}
+.wt-cat__go .elementor-icon{background:rgba(255,255,255,.18)!important;-webkit-backdrop-filter:blur(10px) saturate(1.3);backdrop-filter:blur(10px) saturate(1.3);border:1px solid rgba(255,255,255,.45)!important;color:#fff!important}
+.wt-cat:hover .wt-cat__go .elementor-icon{background:rgba(255,255,255,.95)!important;color:var(--tx)!important}
 CSS;
 }
