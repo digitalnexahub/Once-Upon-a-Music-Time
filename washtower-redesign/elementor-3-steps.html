@@ -150,7 +150,8 @@
     Array.prototype.forEach.call(arrows,function(a,i){a.style.setProperty('--i',i+1);});
 
     /* scroll reveal, runs once */
-    if(!reduce&&'IntersectionObserver' in window){
+    var inEditor=document.body.classList.contains('elementor-editor-active')||/[?&]elementor-preview=/.test(location.search);
+    if(!reduce&&!inEditor&&'IntersectionObserver' in window){
       root.classList.add('wt3s--anim');
       var io=new IntersectionObserver(function(entries){
         entries.forEach(function(e){

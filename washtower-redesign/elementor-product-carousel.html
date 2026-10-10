@@ -234,7 +234,8 @@
     });
 
     /* ---------- scroll reveal (once) ---------- */
-    if(!reduce&&'IntersectionObserver' in window){
+    var inEditor=document.body.classList.contains('elementor-editor-active')||/[?&]elementor-preview=/.test(location.search);
+    if(!reduce&&!inEditor&&'IntersectionObserver' in window){
       root.classList.add('wtpc--anim');
       var io=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){root.classList.add('wtpc--in');io.disconnect();}});},{threshold:.15});
       io.observe(root);

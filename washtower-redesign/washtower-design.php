@@ -284,7 +284,8 @@ var top=d.getElementById('wt-top');if(top)top.addEventListener('click',function(
 /* smooth anchors */
 d.querySelectorAll('a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var id=a.getAttribute('href');if(id.length<2)return;var el=d.querySelector(id);if(!el)return;e.preventDefault();window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-90,behavior:reduce?'auto':'smooth'});});});
 /* reveal (single elements, and groups whose children stagger in together) */
-if(!reduce&&'IntersectionObserver' in window){
+var inEditor=d.body.classList.contains('elementor-editor-active')||/[?&]elementor-preview=/.test(location.search);
+if(!reduce&&!inEditor&&'IntersectionObserver' in window){
  d.documentElement.classList.add('wt-anim');
  var show=function(el){if(el.classList.contains('wt-reveal-group')){Array.prototype.forEach.call(el.children,function(c,i){c.style.transitionDelay=Math.min(i,6)*100+'ms';c.classList.add('in');});}else{el.classList.add('in');}};
  var io=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){show(x.target);io.unobserve(x.target);}});},{threshold:.08,rootMargin:'0px 0px -30px 0px'});
@@ -898,5 +899,8 @@ h1,h2,h3,h4,h5,h6,.elementor-heading-title,.product_title,.woocommerce-loop-prod
 .wt-design{background:linear-gradient(170deg,#F4F1EA 0%,#F8F6F1 45%,#FFFFFF 100%)!important}
 .wt-design__txt{background:transparent!important}
 @media (max-width:1024px){.wt-design__txt{background:linear-gradient(180deg,#F4F1EA 0%,#FFFFFF 100%)!important}}
+/* ---------- Elementor editor: never hide anything behind scroll/entrance animations ---------- */
+.elementor-editor-active .wt-reveal,.elementor-editor-active .wt-reveal-group>*,.elementor-editor-active .wt3s__rv,.elementor-editor-active .wt3s__card,.elementor-editor-active .wt3s__media img,.elementor-editor-active .wt3s__num,.elementor-editor-active .wt3s__arrow svg,.elementor-editor-active .wtpc__rv,.elementor-editor-active .wtpc__card{opacity:1!important;transform:none!important;translate:none!important;animation:none!important}
+.elementor-editor-active .wt-util__img img{clip-path:none!important}
 CSS;
 }
