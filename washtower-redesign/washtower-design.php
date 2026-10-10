@@ -1901,6 +1901,21 @@ a{color:var(--g)}a:hover,a:active{color:var(--g3)}
 @keyframes wtToastIn{from{transform:translateY(-140%) scale(.96);opacity:0}to{transform:none;opacity:1}}
 @media (max-width:600px){.wt-toasts{left:50%!important;right:auto!important;width:calc(100vw - 32px)}}
 
+/* cart totals shipping */
+.woocommerce-cart .cart_totals>h2{font-size:0!important}.woocommerce-cart .cart_totals>h2:before{content:"Order summary";font:700 22px/1.2 var(--sans)}
+.woocommerce-cart .cart_totals table.shop_table,.woocommerce-cart .cart_totals table.shop_table tbody{display:block;border:0!important}
+.woocommerce-cart .cart_totals table.shop_table tr{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--ln)}
+.woocommerce-cart .cart_totals table.shop_table th,.woocommerce-cart .cart_totals table.shop_table td{display:block;border:0!important;padding:0!important;background:none!important;text-align:right;width:auto!important}
+.woocommerce-cart .cart_totals table.shop_table th{text-align:left;font:600 14px var(--sans);color:var(--tx2)}
+.woocommerce-cart .cart_totals tr.woocommerce-shipping-totals td:before,.woocommerce-cart .cart_totals tr td:before{display:none!important}
+.woocommerce-cart .cart_totals #shipping_method{list-style:none;margin:0!important;padding:0!important}
+.woocommerce-cart .cart_totals #shipping_method li{margin:0!important;display:inline-flex;align-items:center;gap:6px;background:var(--sage);color:var(--g);border-radius:999px;padding:6px 12px;font:700 13px var(--sans)}
+.woocommerce-cart .cart_totals #shipping_method li input{display:none}
+.woocommerce-cart .cart_totals #shipping_method li:before{content:"";width:14px;height:14px;background:no-repeat center/14px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231D4032' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5 9-10'/%3E%3C/svg%3E")}
+.woocommerce-cart .cart_totals .woocommerce-shipping-destination,.woocommerce-cart .cart_totals .woocommerce-shipping-calculator{display:none!important}
+.woocommerce-cart .cart_totals tr.order-total{border-bottom:0;padding-top:18px}
+.woocommerce-cart .cart_totals tr.order-total th{color:var(--tx);font-size:16px}
+
 CSS;
 }
 
