@@ -688,5 +688,23 @@ html.wt-anim .wt-reveal.in,html.wt-anim .wt-reveal-group>.in{opacity:1;transform
 .wth-announce svg,.wth-ic svg,.wt-ib svg,.wt-hero__trust svg{fill:none!important;stroke:currentColor!important}
 .wt-ib .elementor-icon{color:var(--g)!important}
 @media (max-width:1024px){.wth-nav{order:3}.wth-header>.e-con-inner,.wth-header{gap:6px!important}}
+.wth-header .wth-nav{flex:1 1 auto!important;width:auto!important;max-width:none!important}
+.wth-nav .elementor-nav-menu--main>.elementor-nav-menu{flex-wrap:nowrap!important;justify-content:center!important}
+.wth-logo{flex:0 0 auto!important;width:auto!important}
+.wth-tools{margin-left:auto!important;flex:0 0 auto!important;width:auto!important;--width:auto!important}
+.wth-nav .elementor-nav-menu--main .elementor-item{padding:24px 14px!important}
+.wth-nav .e--pointer-underline .elementor-item:after{bottom:16px!important;left:14px!important;right:14px!important}
+.wt-hero{grid-template-columns:46% 54%!important}
+.wt-hero__txt{padding-right:40px!important}
+.wt-h1 .elementor-heading-title{font-size:clamp(38px,3.75vw,66px)!important;line-height:1.04!important}
+@media (min-width:1025px){.wt-hero .wt-h1 .elementor-heading-title{white-space:nowrap}}
+@media (max-width:1024px){.wt-hero{grid-template-columns:1fr!important}}
+.wt-car-btn,.wt-car-btn:focus,.wt-top,.wt-top:focus,.wt-news button,.wt-news button:focus,.wt-spot__b,.wt-spot__b:focus{border-color:var(--ln)!important;color:var(--g)!important;background:#fff!important}
+.wt-car-btn{color:var(--tx)!important}
+.wt-car-btn:hover{background:var(--g)!important;color:#fff!important;border-color:var(--g)!important}
+.wt-spot.open .wt-spot__b{background:var(--g)!important;color:#fff!important}
+.wt-top{border:0!important}
+.wth-nav .elementor-nav-menu--main .elementor-item{padding-top:20px!important;padding-bottom:20px!important}
+@media (max-width:767px){.wth-announce .elementor-icon-list-item:after{display:none!important}}
 CSS;
 }
