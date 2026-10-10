@@ -13,6 +13,67 @@ add_action( 'wp_enqueue_scripts', function () {
 	wp_register_script( 'wt-product-carousel', WT_ASSET_URL . 'wtpc.js', [], WT_ASSET_VER, true );
 } );
 
+function wt_pc_markup( array $s, array $list, $uid ) {
+	$shop  = ! empty( $s['link']['url'] ) ? $s['link']['url'] : wc_get_page_permalink( 'shop' );
+				$bag   = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>';
+	?>
+	<section class="wtpc" data-ssr="1" data-shop="<?php echo esc_url( $shop ); ?>" aria-labelledby="<?php echo esc_attr( $uid ); ?>">
+		<div class="wtpc__in">
+			<header class="wtpc__head">
+				<div>
+					<?php if ( $s['subtitle'] ) : ?><p class="wtpc__sub wtpc__rv"><?php echo esc_html( $s['subtitle'] ); ?></p><?php endif; ?>
+					<h2 id="<?php echo esc_attr( $uid ); ?>" class="wtpc__title wtpc__rv"><?php echo esc_html( $s['title'] ); ?></h2>
+				</div>
+				<?php if ( $s['link_text'] ) : ?>
+					<a class="wtpc__all wtpc__rv" href="<?php echo esc_url( $shop ); ?>"><?php echo esc_html( $s['link_text'] ); ?> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+				<?php endif; ?>
+			</header>
+			<div class="wtpc__car">
+				<button type="button" class="wtpc__nav wtpc__nav--prev" aria-label="Previous products"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+				<div class="wtpc__view" tabindex="0" aria-roledescription="carousel" aria-label="<?php echo esc_attr( $s['title'] ); ?>">
+					<ul class="wtpc__track">
+						<?php foreach ( $list as $p ) :
+							$img    = $p->get_image_id();
+							$count  = (int) $p->get_review_count();
+							$rating = (float) $p->get_average_rating();
+							$simple = $p->is_type( 'simple' ) && $p->is_purchasable() && $p->is_in_stock();
+							$sale   = $p->is_on_sale() && 'yes' === $s['show_regular'] && $p->get_regular_price();
+							?>
+							<li class="wtpc__card">
+								<a class="wtpc__img" href="<?php echo esc_url( $p->get_permalink() ); ?>" tabindex="-1" aria-hidden="true">
+									<?php echo $img ? wp_get_attachment_image( $img, 'woocommerce_single', false, [ 'loading' => 'lazy', 'sizes' => '(max-width:767px) 85vw,(max-width:1024px) 48vw,300px', 'alt' => $p->get_name() ] ) : wc_placeholder_img( 'woocommerce_single' ); ?>
+								</a>
+								<div class="wtpc__body">
+									<h3 class="wtpc__name"><a href="<?php echo esc_url( $p->get_permalink() ); ?>"><?php echo esc_html( $p->get_name() ); ?></a></h3>
+									<div class="wtpc__rate">
+										<?php if ( 'yes' === $s['show_rating'] && $count ) : ?>
+											<span class="wtpc__stars" aria-label="<?php echo esc_attr( sprintf( 'Rated %.1f out of 5', $rating ) ); ?>">&#9733;&#9733;&#9733;&#9733;&#9733;<span style="width:<?php echo esc_attr( $rating / 5 * 100 ); ?>%">&#9733;&#9733;&#9733;&#9733;&#9733;</span></span>
+											<span><?php echo esc_html( number_format( $rating, 1 ) . ' (' . $count . ')' ); ?></span>
+										<?php endif; ?>
+									</div>
+									<div class="wtpc__price">
+										<span class="wtpc__now"><?php echo wp_kses_post( wc_price( wc_get_price_to_display( $p ) ) ); ?></span>
+										<?php if ( $sale ) : ?><span class="wtpc__was"><span class="screen-reader-text">Was </span><?php echo wp_kses_post( wc_price( wc_get_price_to_display( $p, [ 'price' => $p->get_regular_price() ] ) ) ); ?></span><?php endif; ?>
+									</div>
+									<?php if ( $simple ) : ?>
+										<button type="button" class="wtpc__btn" data-id="<?php echo esc_attr( $p->get_id() ); ?>" data-name="<?php echo esc_attr( $p->get_name() ); ?>"><span><?php echo $bag . esc_html( $s['button_text'] ); ?></span></button>
+									<?php else : ?>
+										<a class="wtpc__btn" href="<?php echo esc_url( $p->get_permalink() ); ?>"><span><?php echo $bag; ?>Choose options</span></a>
+									<?php endif; ?>
+								</div>
+							</li>
+						<?php endforeach; ?>
+					</ul>
+				</div>
+				<button type="button" class="wtpc__nav wtpc__nav--next" aria-label="Next products"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+			</div>
+			<div class="wtpc__dots" role="tablist" aria-label="Choose slide"></div>
+			<p class="wtpc__msg" role="status" aria-live="polite"></p>
+		</div>
+	</section>
+	<?php
+}
+
 add_action( 'elementor/elements/categories_registered', function ( $manager ) {
 	$manager->add_category( 'washtower', [ 'title' => 'WASHTOWER', 'icon' => 'fa fa-plug' ] );
 } );
@@ -93,67 +154,8 @@ add_action( 'elementor/widgets/register', function ( $widgets_manager ) {
 		}
 
 		protected function render() {
-			$s     = $this->get_settings_for_display();
-			$list  = $this->products( $s );
-			$shop  = ! empty( $s['link']['url'] ) ? $s['link']['url'] : wc_get_page_permalink( 'shop' );
-			$uid   = 'wtpc-' . $this->get_id();
-			$bag   = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>';
-			?>
-			<section class="wtpc" data-ssr="1" data-shop="<?php echo esc_url( $shop ); ?>" aria-labelledby="<?php echo esc_attr( $uid ); ?>">
-				<div class="wtpc__in">
-					<header class="wtpc__head">
-						<div>
-							<?php if ( $s['subtitle'] ) : ?><p class="wtpc__sub wtpc__rv"><?php echo esc_html( $s['subtitle'] ); ?></p><?php endif; ?>
-							<h2 id="<?php echo esc_attr( $uid ); ?>" class="wtpc__title wtpc__rv"><?php echo esc_html( $s['title'] ); ?></h2>
-						</div>
-						<?php if ( $s['link_text'] ) : ?>
-							<a class="wtpc__all wtpc__rv" href="<?php echo esc_url( $shop ); ?>"><?php echo esc_html( $s['link_text'] ); ?> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-						<?php endif; ?>
-					</header>
-					<div class="wtpc__car">
-						<button type="button" class="wtpc__nav wtpc__nav--prev" aria-label="Previous products"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
-						<div class="wtpc__view" tabindex="0" aria-roledescription="carousel" aria-label="<?php echo esc_attr( $s['title'] ); ?>">
-							<ul class="wtpc__track">
-								<?php foreach ( $list as $p ) :
-									$img    = $p->get_image_id();
-									$count  = (int) $p->get_review_count();
-									$rating = (float) $p->get_average_rating();
-									$simple = $p->is_type( 'simple' ) && $p->is_purchasable() && $p->is_in_stock();
-									$sale   = $p->is_on_sale() && 'yes' === $s['show_regular'] && $p->get_regular_price();
-									?>
-									<li class="wtpc__card">
-										<a class="wtpc__img" href="<?php echo esc_url( $p->get_permalink() ); ?>" tabindex="-1" aria-hidden="true">
-											<?php echo $img ? wp_get_attachment_image( $img, 'woocommerce_single', false, [ 'loading' => 'lazy', 'sizes' => '(max-width:767px) 85vw,(max-width:1024px) 48vw,300px', 'alt' => $p->get_name() ] ) : wc_placeholder_img( 'woocommerce_single' ); ?>
-										</a>
-										<div class="wtpc__body">
-											<h3 class="wtpc__name"><a href="<?php echo esc_url( $p->get_permalink() ); ?>"><?php echo esc_html( $p->get_name() ); ?></a></h3>
-											<div class="wtpc__rate">
-												<?php if ( 'yes' === $s['show_rating'] && $count ) : ?>
-													<span class="wtpc__stars" aria-label="<?php echo esc_attr( sprintf( 'Rated %.1f out of 5', $rating ) ); ?>">&#9733;&#9733;&#9733;&#9733;&#9733;<span style="width:<?php echo esc_attr( $rating / 5 * 100 ); ?>%">&#9733;&#9733;&#9733;&#9733;&#9733;</span></span>
-													<span><?php echo esc_html( number_format( $rating, 1 ) . ' (' . $count . ')' ); ?></span>
-												<?php endif; ?>
-											</div>
-											<div class="wtpc__price">
-												<span class="wtpc__now"><?php echo wp_kses_post( wc_price( wc_get_price_to_display( $p ) ) ); ?></span>
-												<?php if ( $sale ) : ?><span class="wtpc__was"><span class="screen-reader-text">Was </span><?php echo wp_kses_post( wc_price( wc_get_price_to_display( $p, [ 'price' => $p->get_regular_price() ] ) ) ); ?></span><?php endif; ?>
-											</div>
-											<?php if ( $simple ) : ?>
-												<button type="button" class="wtpc__btn" data-id="<?php echo esc_attr( $p->get_id() ); ?>" data-name="<?php echo esc_attr( $p->get_name() ); ?>"><span><?php echo $bag . esc_html( $s['button_text'] ); ?></span></button>
-											<?php else : ?>
-												<a class="wtpc__btn" href="<?php echo esc_url( $p->get_permalink() ); ?>"><span><?php echo $bag; ?>Choose options</span></a>
-											<?php endif; ?>
-										</div>
-									</li>
-								<?php endforeach; ?>
-							</ul>
-						</div>
-						<button type="button" class="wtpc__nav wtpc__nav--next" aria-label="Next products"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
-					</div>
-					<div class="wtpc__dots" role="tablist" aria-label="Choose slide"></div>
-					<p class="wtpc__msg" role="status" aria-live="polite"></p>
-				</div>
-			</section>
-			<?php
+			$s = $this->get_settings_for_display();
+			wt_pc_markup( $s, $this->products( $s ), 'wtpc-' . $this->get_id() );
 			if ( \Elementor\Plugin::$instance->editor->is_edit_mode() ) {
 				echo '<script>window.wtpcInit&&document.querySelectorAll(".wtpc:not([data-wtpc-ready])").forEach(window.wtpcInit);</script>';
 			}
@@ -161,4 +163,27 @@ add_action( 'elementor/widgets/register', function ( $widgets_manager ) {
 	}
 
 	$widgets_manager->register( new WT_Product_Carousel_Widget() );
+} );
+
+/* Single product: related products as the carousel. */
+add_action( 'wp', function () {
+	if ( ! is_product() ) { return; }
+	remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20 );
+	remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_upsell_display', 15 );
+	add_action( 'woocommerce_after_single_product', function () {
+		global $product;
+		if ( ! $product ) { return; }
+		$ids = array_unique( array_merge( $product->get_upsell_ids(), wc_get_related_products( $product->get_id(), 12 ) ) );
+		if ( count( $ids ) < 4 ) {
+			$ids = array_unique( array_merge( $ids, wc_get_products( [ 'status' => 'publish', 'limit' => 12, 'return' => 'ids', 'exclude' => [ $product->get_id() ], 'orderby' => 'date', 'order' => 'DESC' ] ) ) );
+		}
+		$ids  = array_values( array_diff( $ids, [ $product->get_id() ] ) );
+		$list = $ids ? wc_get_products( [ 'status' => 'publish', 'include' => $ids, 'limit' => 12, 'visibility' => 'catalog' ] ) : [];
+		if ( ! $list ) { return; }
+		wp_enqueue_style( 'wt-product-carousel' );
+		wp_enqueue_script( 'wt-product-carousel' );
+		echo '<div class="wt-related">';
+		wt_pc_markup( [ 'subtitle' => 'You may also like', 'title' => 'Complete your laundry room', 'link_text' => 'View all products', 'link' => [ 'url' => '' ], 'button_text' => 'Add to basket', 'show_rating' => 'yes', 'show_regular' => 'yes' ], $list, 'wtpc-related' );
+		echo '</div>';
+	}, 5 );
 } );

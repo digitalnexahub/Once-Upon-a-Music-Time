@@ -1916,6 +1916,17 @@ a{color:var(--g)}a:hover,a:active{color:var(--g3)}
 .woocommerce-cart .cart_totals tr.order-total{border-bottom:0;padding-top:18px}
 .woocommerce-cart .cart_totals tr.order-total th{color:var(--tx);font-size:16px}
 
+/* single product layout fix */
+.single-product div.product{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)!important;align-items:start}
+.single-product div.product>*:not(.woocommerce-product-gallery):not(.summary){grid-column:1/-1!important}
+.single-product .woocommerce-product-gallery,.single-product div.product .summary{position:relative!important;top:auto!important}
+.single-product .woocommerce-product-gallery{min-width:0;overflow:hidden}
+.single-product .woocommerce-tabs.wt-acc{max-width:900px;margin:56px auto 0!important;width:100%}
+.single-product .woocommerce-tabs .panel{margin:0!important}
+.single-product .woocommerce-tabs .panel>h2:first-child{display:none}
+.wt-related{margin:80px 0 20px}
+.wt-related .wtpc{padding-top:40px;border-top:1px solid var(--ln)}
+
 CSS;
 }
 
