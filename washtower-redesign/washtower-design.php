@@ -725,10 +725,10 @@ html.wt-anim .wt-reveal.in,html.wt-anim .wt-reveal-group>.in{opacity:1;transform
 .wt-carousel[data-carousel]{--arrow-top:calc((100% - 70px) * .32)}
 /* ---------- category slider ---------- */
 .wt-cat-carousel{width:100%}
-.wt-cat-carousel .wt-car-track{display:grid!important;grid-auto-flow:column;grid-auto-columns:clamp(240px,21.5vw,338px);gap:12px!important;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin-right:calc(-1 * (max(0px, (100vw - 1320px) / 2) + 32px));padding-right:calc(max(0px, (100vw - 1320px) / 2) + 32px)!important;flex-wrap:nowrap!important;cursor:grab}
+.wt-cat-carousel .wt-car-track{display:grid!important;grid-auto-flow:column;grid-auto-columns:clamp(240px,21.5vw,338px);gap:12px!important;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;width:calc(100% + max(0px, (100vw - 1320px) / 2) + 32px)!important;max-width:none!important;--width:auto;padding-right:calc(max(0px, (100vw - 1320px) / 2) + 32px)!important;scroll-padding-left:0;flex-wrap:nowrap!important;cursor:grab}
 .wt-cat-carousel .wt-car-track::-webkit-scrollbar{display:none}
 .wt-cat-carousel{--arrow-top:50%}
-.wt-cat-carousel .wt-car-btn.next{right:calc(16px - (max(0px, (100vw - 1320px) / 2) + 32px) + 6%)!important}
+.wt-cat-carousel .wt-car-btn.next{right:calc(24px - max(0px, (100vw - 1320px) / 2) - 32px)!important}
 .wt-cat-carousel .wt-cat{aspect-ratio:4/5!important;width:auto!important;scroll-snap-align:start;border-radius:8px}
 .wt-cat-carousel .wt-cat:after{background:linear-gradient(180deg,transparent 58%,rgba(0,0,0,.6))}
 .wt-cat__t{left:24px!important;right:20px!important;bottom:22px!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;width:auto!important}
@@ -746,6 +746,8 @@ html.wt-anim .wt-reveal.in,html.wt-anim .wt-reveal-group>.in{opacity:1;transform
 .wt-rev-carousel .wt-car-btn.prev{left:-22px!important}.wt-rev-carousel .wt-car-btn.next{right:-22px!important}
 .wt-rev-carousel .wt-rcard{scroll-snap-align:start}
 @media (max-width:1024px){.wt-cat-carousel .wt-car-track{grid-auto-columns:clamp(220px,38vw,320px)}.wt-rev-carousel .wt-car-track{grid-auto-columns:calc((100% - 24px)/2)}}
-@media (max-width:767px){.wt-cat-carousel .wt-car-track{grid-auto-columns:74%;margin-right:-16px;padding-right:16px!important}.wt-cat-carousel .wt-car-btn.next{right:8px!important}.wt-rev-carousel .wt-car-track{grid-auto-columns:88%}.wt-rev-carousel .wt-car-btn{display:none!important}.wt-car-btn{width:38px!important;height:38px!important}}
+@media (max-width:767px){.wt-cat-carousel .wt-car-track{grid-auto-columns:74%;width:calc(100% + 16px)!important;padding-right:16px!important}.wt-cat-carousel .wt-car-btn.next{right:8px!important}.wt-rev-carousel .wt-car-track{grid-auto-columns:88%}.wt-rev-carousel .wt-car-btn{display:none!important}.wt-car-btn{width:38px!important;height:38px!important}}
+.wt-spot__b{padding:0!important;display:grid!important;place-items:center!important;line-height:1!important;font-size:18px!important;border:0!important}
+.wt-spot__b span{display:block;line-height:1}
 CSS;
 }
