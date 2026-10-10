@@ -727,7 +727,8 @@ if(sb&&cartF&&'IntersectionObserver' in window){new IntersectionObserver(functio
 /* product gallery: soft fade when switching image */
 d.querySelectorAll('.single-product .flex-control-thumbs img').forEach(function(t){t.addEventListener('click',function(){var g=d.querySelector('.woocommerce-product-gallery');if(!g)return;g.classList.remove('wt-swap');void g.offsetWidth;g.classList.add('wt-swap');});});
 /* add to cart feedback (WooCommerce triggers jQuery events) */
-if(window.jQuery){jQuery(d.body).on('adding_to_cart',function(e,btn){btn&&btn.addClass&&btn.addClass('is-loading').text('Adding…');}).on('added_to_cart',function(e,f,h,btn){if(btn&&btn.removeClass){btn.removeClass('is-loading').addClass('is-done').text('Added ✓');setTimeout(function(){btn.removeClass('is-done').text('Add to basket');},2200);}}).on('ajax_request_not_sent.adding_to_cart',function(e,btn){btn&&btn.removeClass&&btn.removeClass('is-loading').text('Add to basket');});
+if(window.jQuery){var bt=function(btn,t){var n=btn[0];if(!n)return;for(var k=0;k<n.childNodes.length;k++){if(n.childNodes[k].nodeType===3&&n.childNodes[k].nodeValue.trim()){n.childNodes[k].nodeValue=t;return;}}n.insertBefore(d.createTextNode(t),n.firstChild);};
+jQuery(d.body).on('adding_to_cart',function(e,btn){if(btn&&btn.addClass){btn.addClass('is-loading');bt(btn,'Adding…');}}).on('added_to_cart',function(e,f,h,btn){if(btn&&btn.removeClass&&btn.length){btn.removeClass('is-loading').addClass('is-done');bt(btn,'Added');setTimeout(function(){btn.removeClass('is-done added');bt(btn,'Add to basket');},2400);}}).on('ajax_request_not_sent.adding_to_cart',function(e,btn){if(btn&&btn.removeClass){btn.removeClass('is-loading');bt(btn,'Add to basket');}});
  jQuery(d).ajaxError(function(e,x,s){if(s&&s.url&&s.url.indexOf('add_to_cart')>-1){jQuery('.wt-atc.is-loading').removeClass('is-loading').addClass('is-error').text('Try again');}});}
 /* newsletter */
 d.querySelectorAll('.wt-news').forEach(function(f){var m=f.querySelector('.wt-news__msg');f.addEventListener('submit',function(e){e.preventDefault();var em=f.email.value.trim();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){m.textContent='Please enter a valid email address.';m.className='wt-news__msg err';f.email.focus();return;}
@@ -1886,6 +1887,20 @@ a{color:var(--g)}a:hover,a:active{color:var(--g3)}
 @media (max-width:420px){.woocommerce ul.products li.product .button{height:42px;font-size:13px!important}}
 @media (prefers-reduced-motion:reduce){.woocommerce ul.products li.product,.wt-archive-hero h1,.wt-archive-hero p,.wt-chips{animation:none!important;opacity:1!important}}
 
+/* drawer fit + toasts on top */
+.elementor-menu-cart__container{inset:0!important;width:auto!important;overflow:hidden!important}
+.elementor-menu-cart__main{position:fixed!important;top:0!important;right:0!important;left:auto!important;bottom:0!important;height:100%!important;max-width:100vw!important;box-sizing:border-box!important;overflow:hidden!important}
+.admin-bar .elementor-menu-cart__main{top:32px!important;height:calc(100% - 32px)!important}
+@media (max-width:782px){.admin-bar .elementor-menu-cart__main{top:46px!important;height:calc(100% - 46px)!important}}
+.elementor-menu-cart__close-button{position:absolute!important;z-index:3}
+.elementor-menu-cart__subtotal .amount{white-space:nowrap}
+.wt-toasts{top:20px!important;bottom:auto!important;right:auto!important;left:50%!important;transform:translateX(-50%);align-items:center}
+.admin-bar .wt-toasts{top:52px!important}
+.wt-toast{width:100%;transform:translateY(-140%)}
+.wt-toast.is-out{transform:translateY(-140%)!important;opacity:0}
+@keyframes wtToastIn{from{transform:translateY(-140%) scale(.96);opacity:0}to{transform:none;opacity:1}}
+@media (max-width:600px){.wt-toasts{left:50%!important;right:auto!important;width:calc(100vw - 32px)}}
+
 CSS;
 }
 
@@ -1905,7 +1920,7 @@ function toast(type,title,msg,ms){
  ms=ms||4500;var t=document.createElement('div');t.className='wt-toast wt-toast--'+type;t.setAttribute('role',type==='error'?'alert':'status');
  t.innerHTML='<span class="wt-toast__ic"><svg viewBox="0 0 24 24">'+IC[type]+'</svg></span><div class="wt-toast__b"><div class="wt-toast__t"></div><div class="wt-toast__m"></div></div><button type="button" class="wt-toast__x" aria-label="Close">&times;</button><span class="wt-toast__bar" style="animation-duration:'+ms+'ms"></span>';
  t.querySelector('.wt-toast__t').textContent=title;if(msg){t.querySelector('.wt-toast__m').innerHTML=msg;}
- var b=el();b.appendChild(t);while(b.children.length>4){b.removeChild(b.firstChild);}
+ var b=el();b.appendChild(t);while(b.children.length>3){b.removeChild(b.firstChild);}
  requestAnimationFrame(function(){requestAnimationFrame(function(){t.classList.add('is-in');});});
  var tm,bar=t.querySelector('.wt-toast__bar');
  function close(){clearTimeout(tm);t.classList.add('is-out');setTimeout(function(){t.remove();},500);}
