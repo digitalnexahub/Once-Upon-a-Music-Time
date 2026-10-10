@@ -541,11 +541,11 @@ add_action( 'woocommerce_before_main_content', function () {
 	if ( ! is_product_taxonomy() && ! is_shop() ) { return; }
 	$title = is_shop() ? 'All cabinets' : single_term_title( '', false );
 	$desc  = is_shop() ? 'Custom laundry cabinets and washing machine cupboards designed for modern living.' : wp_strip_all_tags( term_description() );
-	echo '<section class="wt-archive-hero"><div class="wt-in"><span class="wt-label">Explore our range</span><h1>' . esc_html( $title ) . '</h1><p>' . esc_html( $desc ) . '</p><div class="wt-chips">';
-	echo '<a class="' . ( is_shop() ? 'on' : '' ) . '" href="' . esc_url( wc_get_page_permalink( 'shop' ) ) . '">All</a>';
+	echo '<section class="wt-archive-hero"><div class="wt-in"><nav class="wt-crumbs" aria-label="Breadcrumb"><a href="' . esc_url( home_url( '/' ) ) . '">Home</a><span>/</span><a href="' . esc_url( wc_get_page_permalink( 'shop' ) ) . '">Shop</a>' . ( is_shop() ? '' : '<span>/</span><b>' . esc_html( $title ) . '</b>' ) . '</nav><span class="wt-label">Explore our range</span><h1>' . esc_html( $title ) . '</h1><p>' . esc_html( $desc ) . '</p><div class="wt-chips">';
+	echo '<a class="' . ( is_shop() ? 'on' : '' ) . '" href="' . esc_url( wc_get_page_permalink( 'shop' ) ) . '">All<i>' . (int) wp_count_posts( 'product' )->publish . '</i></a>';
 	foreach ( get_terms( [ 'taxonomy' => 'product_cat', 'hide_empty' => true ] ) as $c ) {
 		if ( 'uncategorized' === $c->slug ) { continue; }
-		echo '<a class="' . ( is_product_category( $c->slug ) ? 'on' : '' ) . '" href="' . esc_url( get_term_link( $c ) ) . '">' . esc_html( $c->name ) . '</a>';
+		echo '<a class="' . ( is_product_category( $c->slug ) ? 'on' : '' ) . '" href="' . esc_url( get_term_link( $c ) ) . '">' . esc_html( $c->name ) . '<i>' . (int) $c->count . '</i></a>';
 	}
 	echo '</div></div></section>';
 }, 1 );
@@ -555,6 +555,35 @@ add_action( 'woocommerce_single_product_summary', function () {
 }, 35 );
 
 add_filter( 'loop_shop_columns', function () { return 4; } );
+
+/* Archive: toolbar, card badges, category label, hover image. */
+add_action( 'wp', function () {
+	if ( ! is_shop() && ! is_product_taxonomy() ) { return; }
+	remove_action( 'woocommerce_before_main_content', 'woocommerce_breadcrumb', 20 );
+	remove_action( 'woocommerce_before_shop_loop_item_title', 'woocommerce_show_product_loop_sale_flash', 10 );
+} );
+add_action( 'woocommerce_before_shop_loop', function () { echo '<div class="wt-toolbar">'; }, 19 );
+add_action( 'woocommerce_before_shop_loop', function () {
+	echo '<div class="wt-view" role="group" aria-label="Grid size"><button type="button" data-cols="3" aria-label="3 per row"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="5" height="5"/><rect x="9.5" y="3" width="5" height="5"/><rect x="16" y="3" width="5" height="5"/><rect x="3" y="10" width="5" height="5"/><rect x="9.5" y="10" width="5" height="5"/><rect x="16" y="10" width="5" height="5"/></svg></button><button type="button" data-cols="4" aria-label="4 per row"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="4" height="4"/><rect x="7.3" y="4" width="4" height="4"/><rect x="12.6" y="4" width="4" height="4"/><rect x="18" y="4" width="4" height="4"/><rect x="2" y="10" width="4" height="4"/><rect x="7.3" y="10" width="4" height="4"/><rect x="12.6" y="10" width="4" height="4"/><rect x="18" y="10" width="4" height="4"/></svg></button></div></div>';
+}, 31 );
+add_action( 'woocommerce_before_shop_loop_item_title', function () {
+	global $product;
+	if ( ! $product ) { return; }
+	if ( $product->is_on_sale() && $product->get_regular_price() > 0 && $product->get_price() > 0 ) {
+		$pc = round( 100 - ( (float) $product->get_price() / (float) $product->get_regular_price() ) * 100 );
+		if ( $pc > 0 ) { echo '<span class="wt-pbadge">-' . (int) $pc . '%</span>'; }
+	}
+	$g = $product->get_gallery_image_ids();
+	if ( $g ) { echo wp_get_attachment_image( $g[0], 'woocommerce_thumbnail', false, [ 'class' => 'wt-alt-img', 'loading' => 'lazy', 'alt' => '' ] ); }
+}, 11 );
+add_action( 'woocommerce_shop_loop_item_title', function () {
+	global $product;
+	$t = $product ? get_the_terms( $product->get_id(), 'product_cat' ) : false;
+	if ( $t && ! is_wp_error( $t ) ) { echo '<span class="wt-pcat">' . esc_html( $t[0]->name ) . '</span>'; }
+}, 9 );
+add_filter( 'woocommerce_product_add_to_cart_text', function ( $t, $p ) {
+	return ( $p && $p->is_purchasable() && $p->is_in_stock() && $p->is_type( 'simple' ) ) ? __( 'Add to basket', 'woocommerce' ) : $t;
+}, 10, 2 );
 
 /* ---------------------------------------------------------------- JS */
 
@@ -1796,6 +1825,61 @@ a{color:var(--g)}a:hover,a:active{color:var(--g3)}
 @keyframes wtBar{from{transform:scaleX(1)}to{transform:scaleX(0)}}
 @media (max-width:600px){.wt-toasts{right:16px;left:16px;bottom:16px;width:auto}}
 
+/* archive v2 */
+.wt-archive-hero{position:relative;overflow:hidden;padding:44px 0 36px!important;margin-bottom:0!important;background:linear-gradient(180deg,var(--off),#fff)!important}
+.wt-archive-hero:after{content:"";position:absolute;right:-120px;top:-160px;width:520px;height:520px;border-radius:50%;background:radial-gradient(closest-side,rgba(29,64,50,.07),transparent);pointer-events:none}
+.wt-archive-hero .wt-in{max-width:1320px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+.wt-crumbs{display:flex;gap:8px;font:500 13px var(--sans);color:var(--tx2);margin-bottom:28px}.wt-crumbs a{color:var(--tx2)!important;text-decoration:none}.wt-crumbs a:hover{color:var(--g)!important}.wt-crumbs b{color:var(--tx);font-weight:600}
+.wt-archive-hero h1{animation:wtUp .7s var(--ease) both}.wt-archive-hero p{animation:wtUp .7s .08s var(--ease) both}.wt-chips{animation:wtUp .7s .16s var(--ease) both}
+@keyframes wtUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.wt-chips{flex-wrap:nowrap!important;overflow-x:auto;scrollbar-width:none;padding:2px 2px 6px}.wt-chips::-webkit-scrollbar{display:none}
+.wt-chips a{display:inline-flex!important;align-items:center;gap:8px;white-space:nowrap;border-radius:999px!important;padding:10px 16px 10px 18px!important;font-weight:600!important;transition:background .3s var(--ease),color .3s,border-color .3s,transform .3s var(--ease)}
+.wt-chips a:hover{transform:translateY(-2px)}
+.wt-chips a i{font-style:normal;font-size:11.5px;min-width:22px;height:22px;padding:0 6px;border-radius:999px;display:inline-grid;place-items:center;background:var(--off);color:var(--tx2);transition:.3s}
+.wt-chips a.on i,.wt-chips a:hover i{background:rgba(255,255,255,.18);color:#fff}
+.post-type-archive-product .site-main,.tax-product_cat .site-main,.tax-product_tag .site-main,.post-type-archive-product main#content,.tax-product_cat main#content{max-width:1320px!important;width:100%;margin:0 auto;padding:0 24px 80px!important}
+.wt-toolbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:16px;margin:26px 0 28px;padding:10px 10px 10px 20px;background:rgba(255,255,255,.86);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--ln);border-radius:999px}
+.admin-bar .wt-toolbar{top:32px}
+.wt-toolbar .woocommerce-result-count{margin:0 auto 0 0!important;float:none!important;font:500 14px var(--sans);color:var(--tx2)}
+.wt-toolbar .woocommerce-ordering{margin:0!important;float:none!important}
+.wt-toolbar .woocommerce-ordering select{appearance:none;-webkit-appearance:none;height:42px;border:1px solid var(--ln)!important;border-radius:999px!important;padding:0 42px 0 18px!important;font:600 14px var(--sans);color:var(--tx);background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231D4032' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 14px center/16px;cursor:pointer;transition:border-color .25s}
+.wt-toolbar .woocommerce-ordering select:hover,.wt-toolbar .woocommerce-ordering select:focus{border-color:var(--g)!important;outline:0}
+.wt-view{display:flex;gap:4px;background:var(--off);border-radius:999px;padding:4px}
+.wt-view button{width:34px;height:34px;border:0!important;border-radius:50%!important;background:transparent!important;color:var(--tx2)!important;display:grid;place-items:center;padding:0!important;cursor:pointer;transition:.25s}
+.wt-view button svg{width:16px;height:16px;fill:currentColor}.wt-view button.on{background:#fff!important;color:var(--g)!important;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.woocommerce ul.products{gap:28px 22px!important}
+.woocommerce ul.products.wt-c3{grid-template-columns:repeat(3,1fr)!important}
+.woocommerce ul.products li.product{border:0!important;border-radius:20px!important;padding:0 0 18px!important;background:transparent!important;box-shadow:none!important;transform:none!important;display:flex;flex-direction:column;opacity:0;animation:wtUp .7s var(--ease) forwards}
+.woocommerce ul.products li.product>a.woocommerce-LoopProduct-link{position:relative;display:flex;flex-direction:column;flex:1;text-decoration:none!important}
+.woocommerce ul.products li.product img{aspect-ratio:4/5!important;width:100%;height:auto;border-radius:20px;margin:0 0 16px!important;background:var(--beige);transition:transform .8s var(--ease),opacity .5s}
+.woocommerce ul.products li.product>a:first-child{overflow:visible}
+.woocommerce ul.products li.product .wt-alt-img{position:absolute;left:0;top:0;opacity:0}
+.woocommerce ul.products li.product:hover .wt-alt-img{opacity:1}
+.woocommerce ul.products li.product:hover img{transform:scale(1.025)}
+.woocommerce ul.products li.product>a:first-child:before{content:"";position:absolute;left:0;right:0;top:0;aspect-ratio:4/5;border-radius:20px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.04);z-index:2;pointer-events:none}
+.wt-pbadge{position:absolute;left:14px;top:14px;z-index:3;background:#fff;color:var(--g);font:700 12.5px/1 var(--sans);padding:8px 11px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.08)}
+.wt-pcat{display:block;padding:0 4px;font:600 11px/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--tx2);margin-bottom:8px}
+.woocommerce ul.products li.product .woocommerce-loop-product__title{font:600 17px/1.3 var(--sans)!important;padding:0 4px!important;margin:0 0 8px!important;color:var(--tx)!important}
+.woocommerce ul.products li.product .price{padding:0 4px!important;display:flex!important;gap:8px;align-items:baseline;flex-wrap:wrap;font:700 17px var(--sans)!important;color:var(--tx)!important;margin:0!important}
+.woocommerce ul.products li.product .price ins{text-decoration:none!important;color:var(--g)}
+.woocommerce ul.products li.product .price del{font-weight:500;font-size:14px!important;opacity:.7;order:2}
+.woocommerce ul.products li.product .button{position:relative;display:flex!important;align-items:center;justify-content:center;gap:8px;margin:16px 0 0!important;height:48px;padding:0 20px!important;border-radius:999px!important;font:600 14px var(--sans)!important;background:var(--g)!important;color:#fff!important;transition:background .3s,transform .3s var(--ease)!important;overflow:hidden}
+.woocommerce ul.products li.product .button:after{content:"→";transition:transform .35s var(--ease)}
+.woocommerce ul.products li.product .button:hover{background:var(--g3)!important}.woocommerce ul.products li.product .button:hover:after{transform:translateX(4px)}
+.woocommerce ul.products li.product .button.loading:after{content:"";width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:wtSpin .7s linear infinite;position:static!important;margin:0!important;opacity:1!important}
+.woocommerce ul.products li.product .button.added:after{content:"✓"}
+@keyframes wtSpin{to{transform:rotate(360deg)}}
+.woocommerce ul.products li.product .added_to_cart{display:none!important}
+.woocommerce nav.woocommerce-pagination ul{border:0!important;display:flex;justify-content:center;gap:8px;margin-top:48px!important}
+.woocommerce nav.woocommerce-pagination ul li{border:0!important}
+.woocommerce nav.woocommerce-pagination ul li a,.woocommerce nav.woocommerce-pagination ul li span{width:44px;height:44px;display:grid!important;place-items:center;padding:0!important;border-radius:50%;border:1px solid var(--ln)!important;font-weight:600;color:var(--tx)!important;transition:.25s}
+.woocommerce nav.woocommerce-pagination ul li span.current,.woocommerce nav.woocommerce-pagination ul li a:hover{background:var(--g)!important;border-color:var(--g)!important;color:#fff!important}
+.woocommerce-no-products-found .woocommerce-info{border:0!important;border-radius:20px;background:var(--off)!important;padding:40px!important;text-align:center}
+@media (max-width:1024px){.woocommerce ul.products,.woocommerce ul.products.wt-c3{grid-template-columns:repeat(3,1fr)!important}.wt-view{display:none}}
+@media (max-width:768px){.woocommerce ul.products,.woocommerce ul.products.wt-c3{grid-template-columns:repeat(2,1fr)!important;gap:24px 14px!important}.wt-toolbar{border-radius:16px;padding:10px 12px}.wt-toolbar .woocommerce-result-count{font-size:13px}.woocommerce ul.products li.product .woocommerce-loop-product__title{font-size:15px!important}.admin-bar .wt-toolbar{top:46px}}
+@media (max-width:420px){.woocommerce ul.products li.product .button{height:42px;font-size:13px!important}}
+@media (prefers-reduced-motion:reduce){.woocommerce ul.products li.product,.wt-archive-hero h1,.wt-archive-hero p,.wt-chips{animation:none!important;opacity:1!important}}
+
 CSS;
 }
 
@@ -1845,6 +1929,21 @@ if(window.jQuery){var $=jQuery,$b=$(document.body);
  $b.on('checkout_error',function(){fromNotices(document,true);});
  $(document).ajaxComplete(function(){setTimeout(function(){fromNotices(document,false);},60);});
 }
+})();
+</script>
+	<?php
+}, 30 );
+
+add_action( 'wp_footer', function () {
+	if ( ! is_shop() && ! is_product_taxonomy() ) { return; }
+	?>
+<script>
+(function(){
+var ul=document.querySelector('.woocommerce ul.products');if(!ul){return;}
+[].forEach.call(ul.children,function(li,i){li.style.animationDelay=(Math.min(i,11)*60)+'ms';});
+var bs=document.querySelectorAll('.wt-view button'),c='4';try{c=localStorage.getItem('wtCols')||'4';}catch(e){}
+function set(v){ul.classList.toggle('wt-c3',v==='3');[].forEach.call(bs,function(b){b.classList.toggle('on',b.dataset.cols===v);b.setAttribute('aria-pressed',b.dataset.cols===v);});try{localStorage.setItem('wtCols',v);}catch(e){}}
+set(c);[].forEach.call(bs,function(b){b.onclick=function(){set(b.dataset.cols);};});
 })();
 </script>
 	<?php
