@@ -410,7 +410,17 @@ add_action( 'woocommerce_single_product_summary', function () {
 	$from = date_i18n( 'j M', strtotime( '+7 days' ) ); $to = date_i18n( 'j M', strtotime( '+28 days' ) );
 	echo '<div class="wt-sp-deliv"><span class="wt-sp-deliv__ic">' . wt_ic( 'box' ) . '</span><span><b>Free delivery ' . esc_html( $from . ' – ' . $to ) . '</b><small>Signature delivery to your door, anywhere in the UK</small></span></div>';
 }, 31 );
-remove_action( 'woocommerce_before_single_product_summary', 'woocommerce_show_product_sale_flash', 10 );
+add_action( 'wp', function () { remove_action( 'woocommerce_before_single_product_summary', 'woocommerce_show_product_sale_flash', 10 ); } );
+
+/* Buy now: add to basket and go straight to checkout. */
+add_action( 'woocommerce_after_add_to_cart_button', function () {
+	global $product;
+	if ( ! $product || ! $product->is_purchasable() || ! $product->is_in_stock() ) { return; }
+	echo '<button type="submit" name="wt_buy_now" value="1" class="wt-buynow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>Buy now</button>';
+} );
+add_filter( 'woocommerce_add_to_cart_redirect', function ( $url ) {
+	return ! empty( $_REQUEST['wt_buy_now'] ) ? wc_get_checkout_url() : $url;
+}, 99 );
 add_action( 'wp_footer', function () {
 	if ( ! function_exists( 'is_product' ) || ! is_product() ) { return; }
 	global $product; if ( ! $product ) { $product = wc_get_product( get_the_ID() ); }
@@ -1938,6 +1948,16 @@ a{color:var(--g)}a:hover,a:active{color:var(--g3)}
 .single_add_to_cart_button .wt-bi{order:-1;width:20px;height:20px;flex-basis:20px;background-size:20px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z'/%3E%3Cpath d='M9 8V6a3 3 0 0 1 6 0v2'/%3E%3C/svg%3E")}
 .single_add_to_cart_button.wt-fx:hover .wt-bi{transform:translateY(-2px) rotate(-8deg)}
 
+/* buy now */
+.single-product form.cart{flex-wrap:wrap}
+.wt-buynow{flex:1 1 100%;height:56px;display:flex;align-items:center;justify-content:center;gap:10px;border:1.5px solid var(--g)!important;background:#fff!important;color:var(--g)!important;border-radius:14px!important;font:700 16px/1 var(--sans)!important;cursor:pointer;position:relative;overflow:hidden;isolation:isolate;transition:color .35s,transform .2s,box-shadow .35s}
+.wt-buynow:before{content:"";position:absolute;inset:0;background:var(--g);transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease);z-index:-1}
+.wt-buynow:hover{color:#fff!important;box-shadow:0 14px 30px -14px rgba(21,53,40,.55)}.wt-buynow:hover:before{transform:none}
+.wt-buynow:active{transform:scale(.98)}
+.wt-buynow svg{width:18px;height:18px;fill:currentColor;transition:transform .4s var(--ease)}.wt-buynow:hover svg{transform:scale(1.15) rotate(-8deg)}
+.wt-buynow.is-loading{pointer-events:none;opacity:.8}.wt-buynow.is-loading svg{animation:wtSpin .8s linear infinite}
+.variations_form .wt-buynow{margin-top:0}
+
 CSS;
 }
 
@@ -2048,7 +2068,7 @@ d.addEventListener('submit',function(e){if(e.target.closest('.woocommerce-orderi
 addEventListener('popstate',function(){if(isArchive()){load(location.href,false);}});
 /* AJAX add to basket on product pages (all product types) */
 d.addEventListener('submit',function(e){
- var f=e.target.closest('form.cart');if(!f||!window.fetch||f.closest('.grouped_form')&&false)return;
+ var f=e.target.closest('form.cart');if(e.submitter&&e.submitter.name==='wt_buy_now'){if(e.submitter.classList.contains('is-loading'))e.preventDefault();e.submitter.classList.add('is-loading');return;}if(!f||!window.fetch||f.closest('.grouped_form')&&false)return;
  var btn=f.querySelector('.single_add_to_cart_button');if(!btn||btn.classList.contains('disabled'))return;
  e.preventDefault();var fd=new FormData(f);if(btn.name&&btn.value){fd.set(btn.name,btn.value);}if(!fd.get('add-to-cart')){fd.set('add-to-cart',btn.value||f.querySelector('[name=product_id]')&&f.querySelector('[name=product_id]').value||'');}
  fd.set('wt_ajax','1');btn.classList.remove('added');btn.classList.add('loading');prog(40);
