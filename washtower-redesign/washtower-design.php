@@ -1368,7 +1368,7 @@ a{color:var(--g)}a:hover,a:active{color:var(--g3)}
 .wtu__stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 22px}
 .wtu__stats div{background:var(--off);border-radius:12px;padding:14px 12px}
 .wtu__stats b{display:block;font:700 18px/1.1 var(--sans);color:var(--tx)}
-.wtu__stats span{display:block;font:500 12px/1.2 var(--sans);color:var(--tx2);margin-top:4px}
+.wtu__stats div>span{display:block;font:500 12px/1.2 var(--sans);color:var(--tx2);margin-top:4px}
 .wtu__links{display:flex;flex-direction:column;gap:6px;margin-bottom:22px}
 .wtu__links a{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--ln);border-radius:12px;color:var(--tx)!important;text-decoration:none;font:600 15px/1 var(--sans);transition:border-color .3s,background .3s,transform .35s var(--ease)}
 .wta.is-open .wtu__links a{animation:wtaIn .55s var(--ease) both;animation-delay:calc(.15s + var(--i) * .06s)}
