@@ -813,5 +813,14 @@ h1,h2,h3,h4,h5,h6,.elementor-heading-title,.product_title,.woocommerce-loop-prod
 @media (min-width:1025px) and (max-width:1384px){.wt-hero__img{width:calc(100% + 32px)!important;max-width:none!important;--width:auto}}
 .wt-hero__img img{object-fit:cover!important;object-position:64% 55%!important}
 @media (max-width:1024px){.wt-hero__img img{object-position:62% 60%!important}}
+.wt-note .wt-note__t{color:#16211b!important;font-size:30px!important;font-weight:600;text-shadow:0 0 2px rgba(255,255,255,.95),0 0 10px rgba(255,248,236,.95),0 0 22px rgba(255,248,236,.85)}
+.wt-note svg{color:#16211b!important;filter:drop-shadow(0 0 3px rgba(255,255,255,.95)) drop-shadow(0 0 8px rgba(255,248,236,.8))}
+.wt-note svg path{stroke-width:1.8}
+.wt-hero .wt-p,.wt-hero .wt-p p{color:#3f4641!important;font-size:17px!important;line-height:1.65!important}
+.wt-hero .wt-label .elementor-heading-title{color:#3f4641!important}
+.wt-hero .wt-h1 .elementor-heading-title{color:#141a16!important}
+.wt-hero__trust .elementor-icon-box-title{color:#141a16!important;font-size:14px!important}
+.wt-hero__trust .elementor-icon-box-description{color:#4b524d!important;font-size:13px!important}
+@media (max-width:767px){.wt-note .wt-note__t{font-size:22px!important}}
 CSS;
 }
