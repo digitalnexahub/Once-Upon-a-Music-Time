@@ -123,6 +123,15 @@ add_shortcode( 'wt_footer', function () {
 	return ob_get_clean();
 } );
 
+/* "cart" wording -> "basket" in the mini cart and notices */
+add_filter( 'gettext', function ( $t, $text, $domain ) {
+	if ( in_array( $domain, [ 'woocommerce', 'elementor-pro' ], true ) ) {
+		$map = [ 'View cart' => 'View basket', 'Cart' => 'Basket', 'No products in the cart.' => 'Your basket is empty.' ];
+		if ( isset( $map[ $text ] ) ) { return $map[ $text ]; }
+	}
+	return $t;
+}, 10, 3 );
+
 /* ---------------------------------------------------------------- newsletter */
 
 add_action( 'init', function () {
