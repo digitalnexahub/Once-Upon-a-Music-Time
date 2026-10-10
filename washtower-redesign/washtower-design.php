@@ -350,7 +350,7 @@ JS;
 
 function wt_design_css() {
 	return <<<'CSS'
-:root{--g:#1D4032;--g2:#19392D;--g3:#153528;--bg:#FFFFFF;--off:#F8F7F3;--sage:#F1F4EE;--beige:#F2EEE7;--tx:#1D211E;--tx2:#666B66;--ln:#E5E8E2;--star:#E5AC32;--serif:'Cormorant Garamond',Georgia,serif;--sans:'Barlow',system-ui,-apple-system,sans-serif;--ease:cubic-bezier(.22,1,.36,1);--r:10px}
+:root{--g:#1D4032;--g2:#19392D;--g3:#153528;--bg:#FFFFFF;--off:#F8F7F3;--sage:#F1F4EE;--beige:#F2EEE7;--tx:#1D211E;--tx2:#666B66;--ln:#E5E8E2;--star:#E5AC32;--serif:'Barlow',system-ui,sans-serif;--sans:'Barlow',system-ui,-apple-system,sans-serif;--ease:cubic-bezier(.22,1,.36,1);--r:10px}
 body{background:var(--bg)!important;color:var(--tx);font-family:var(--sans)!important;-webkit-font-smoothing:antialiased}
 body.wt-lock{overflow:hidden}
 html,body{overflow-x:clip}
@@ -797,5 +797,9 @@ html.wt-anim .wt-reveal.in,html.wt-anim .wt-reveal-group>.in{opacity:1;transform
 .wth-nav .elementor-nav-menu--dropdown a{font:600 16px/1.2 'Barlow',sans-serif!important}
 @media (max-width:1366px){.wth-nav .elementor-nav-menu--main .elementor-item{font-size:16px!important;padding-left:11px!important;padding-right:11px!important}}
 @media (max-width:767px){.wt-cat-carousel .wt-cat__t .elementor-heading-title{font-size:22px!important;line-height:27px!important}}
+h1,h2,h3,h4,h5,h6,.elementor-heading-title,.product_title,.woocommerce-loop-product__title,.entry-title{font-family:'Barlow',sans-serif!important}
+.wt-h1 .elementor-heading-title{font-weight:700!important;letter-spacing:-.01em}
+.wt-h2 .elementor-heading-title,.wt-archive-hero h1,.single-product .product_title,.related.products>h2{font-weight:700!important;letter-spacing:-.005em}
+.wt-cat__h .elementor-heading-title,.wt-step__h .elementor-heading-title{font-weight:700!important}
 CSS;
 }
