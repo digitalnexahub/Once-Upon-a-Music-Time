@@ -67,83 +67,12 @@ add_filter( 'woocommerce_add_to_cart_fragments', function ( $f ) {
 	return $f;
 } );
 
-/* ---------------------------------------------------------------- header */
-
-add_action( 'wp_body_open', function () {
-	$shop    = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/' );
-	$cart    = function_exists( 'wc_get_cart_url' ) ? wc_get_cart_url() : home_url( '/' );
-	$account = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : wp_login_url();
-	$cats    = [
-		'Laundry Cabinets'         => wt_cat_url( 'laundry-cabinets' ),
-		'Stackable Washer & Dryer' => wt_cat_url( 'stackable-washer-dryer' ),
-		'Galley & Utility Walls'   => wt_cat_url( 'galley-utility-walls' ),
-		'Storage Cabinets'         => wt_cat_url( 'storage-cabinets' ),
-		'Accessories'              => wt_cat_url( 'accessories' ),
-		'All Cabinets'             => $shop,
-	];
-	$support = [
-		'Delivery Information' => wt_page_url( 'Delivery Information' ),
-		'Returns & Warranty'   => wt_page_url( 'Returns & Warranty' ),
-		'Installation Guide'   => wt_page_url( 'Installation Guide' ),
-		'FAQs'                 => wt_page_url( 'FAQs' ),
-		'Contact Us'           => wt_page_url( 'Contact Us' ),
-	];
-	$about = [
-		'Our Story'        => wt_page_url( 'Our Story' ),
-		'Sustainability'   => wt_page_url( 'Sustainability' ),
-		'Customer Reviews' => wt_page_url( 'Customer Reviews' ),
-		'Blog'             => get_permalink( get_option( 'page_for_posts' ) ),
-	];
-	$drop = function ( $items ) {
-		$o = '<ul class="wt-drop">';
-		foreach ( $items as $l => $u ) { $o .= '<li><a href="' . esc_url( $u ) . '">' . esc_html( $l ) . '</a></li>'; }
-		return $o . '</ul>';
-	};
-	?>
-	<a class="wt-skip" href="#wt-main">Skip to content</a>
-	<div class="wt-announce">
-		<div class="wt-in wt-announce__in">
-			<p class="wt-announce__l"><?php echo wt_icon( 'truck' ); ?> Free delivery on all cabinet orders <span>|</span> Made for modern homes <span>|</span> 10 year guarantee</p>
-			<p class="wt-announce__r">Rated Excellent <span class="wt-stars" aria-label="4.8 out of 5">★★★★★</span> 4.8/5</p>
-		</div>
-	</div>
-	<header class="wt-header" id="wt-header">
-		<div class="wt-in wt-header__in">
-			<a class="wt-logo" href="<?php echo esc_url( home_url( '/' ) ); ?>">WASHTOWER<sup>®</sup></a>
-			<nav class="wt-nav" id="wt-nav" aria-label="Main">
-				<ul>
-					<li class="has-drop"><a href="<?php echo esc_url( $shop ); ?>">Cabinets</a><button class="wt-drop-t" aria-expanded="false" aria-label="Cabinets submenu"></button><?php echo $drop( $cats ); ?></li>
-					<li><a href="<?php echo esc_url( wt_page_url( 'Design Your Own' ) ); ?>">Design Your Own</a></li>
-					<li><a href="<?php echo esc_url( wt_page_url( 'Inspiration' ) ); ?>">Inspiration</a></li>
-					<li class="has-drop"><a href="<?php echo esc_url( wt_page_url( 'About' ) ); ?>">About</a><button class="wt-drop-t" aria-expanded="false" aria-label="About submenu"></button><?php echo $drop( $about ); ?></li>
-					<li class="has-drop"><a href="<?php echo esc_url( wt_page_url( 'Support' ) ); ?>">Support</a><button class="wt-drop-t" aria-expanded="false" aria-label="Support submenu"></button><?php echo $drop( $support ); ?></li>
-				</ul>
-				<a class="wt-btn wt-nav__cta" href="<?php echo esc_url( wt_page_url( 'Get a Free Design' ) ); ?>">Get a Free Design</a>
-			</nav>
-			<div class="wt-tools">
-				<button class="wt-tool" id="wt-search-t" aria-label="Search" aria-expanded="false"><?php echo wt_icon( 'search' ); ?></button>
-				<a class="wt-tool" href="<?php echo esc_url( $account ); ?>" aria-label="My account"><?php echo wt_icon( 'user' ); ?></a>
-				<a class="wt-tool wt-cart" href="<?php echo esc_url( $cart ); ?>" aria-label="Basket"><?php echo wt_icon( 'bag' ); ?><span class="wt-count"><?php echo (int) wt_cart_count(); ?></span></a>
-				<a class="wt-btn wt-header__cta" href="<?php echo esc_url( wt_page_url( 'Get a Free Design' ) ); ?>">Get a Free Design</a>
-				<button class="wt-tool wt-burger" id="wt-burger" aria-label="Open menu" aria-expanded="false" aria-controls="wt-nav"><?php echo wt_icon( 'menu' ); ?></button>
-			</div>
-		</div>
-		<div class="wt-search" id="wt-search" hidden>
-			<form class="wt-in" role="search" action="<?php echo esc_url( home_url( '/' ) ); ?>">
-				<label for="wt-s" class="screen-reader-text">Search products</label>
-				<input id="wt-s" type="search" name="s" placeholder="Search cabinets, storage, accessories…" required>
-				<input type="hidden" name="post_type" value="product">
-				<button class="wt-btn" type="submit">Search</button>
-			</form>
-		</div>
-	</header>
-	<div id="wt-main"></div>
-	<?php
-} );
+/* Header is an Elementor Pro Theme Builder template ("WASHTOWER Header"). */
 
 /* ---------------------------------------------------------------- footer */
 
-add_action( 'wp_footer', function () {
+add_shortcode( 'wt_footer', function () {
+	ob_start();
 	$shop = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/' );
 	$cols = [
 		'Shop'  => [ 'All Cabinets' => $shop, 'Laundry Cabinets' => wt_cat_url( 'laundry-cabinets' ), 'Stackable Units' => wt_cat_url( 'stackable-washer-dryer' ), 'Storage Cabinets' => wt_cat_url( 'storage-cabinets' ), 'Accessories' => wt_cat_url( 'accessories' ) ],
@@ -191,7 +120,8 @@ add_action( 'wp_footer', function () {
 		</div>
 	</footer>
 	<?php
-}, 5 );
+	return ob_get_clean();
+} );
 
 /* ---------------------------------------------------------------- newsletter */
 
@@ -251,7 +181,7 @@ add_shortcode( 'wt_products_carousel', function ( $a ) {
 		if ( $rating ) { $o .= '<div class="wt-pcard__r">' . wt_stars( (float) $rating ) . ' <span>' . esc_html( number_format( (float) $rating, 1 ) ) . ' (' . (int) $count . ')</span></div>'; }
 		$o .= '<div class="wt-pcard__p">' . $p->get_price_html() . '</div>' . $btn . '</div></article>';
 	}
-	return $o . '</div><button class="wt-car-btn next" aria-label="Next products">' . wt_icon( 'right' ) . '</button><div class="wt-car-dots" role="tablist" aria-label="Carousel pages"></div></div>';
+	return $o . '</div><button class="wt-car-btn next" aria-label="Next products">' . wt_icon( 'right' ) . '</button><div class="wt-car-line" aria-hidden="true"><span></span></div></div>';
 } );
 
 // Latest posts as cards.
@@ -338,7 +268,7 @@ function wt_design_js() {
 (function(){
 var d=document,reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 /* sticky header state */
-var h=d.getElementById('wt-header');
+var h=d.querySelector('.wth-header');
 function onScroll(){if(h)h.classList.toggle('is-stuck',window.scrollY>40);var t=d.getElementById('wt-top');if(t)t.classList.toggle('show',window.scrollY>600);}
 window.addEventListener('scroll',onScroll,{passive:true});onScroll();
 /* mobile menu */
@@ -369,35 +299,33 @@ d.querySelectorAll('.wt-spot').forEach(function(s){var btn=s.querySelector('butt
  s.addEventListener('mouseleave',function(){if(window.matchMedia('(hover:hover)').matches&&!s.dataset.pinned)close(s);});
 });
 d.addEventListener('click',function(){d.querySelectorAll('.wt-spot.open').forEach(close);});
-/* carousels: arrows, dots, keyboard, touch swipe (native), mouse drag, autoplay */
+/* carousels: arrows, progress line, keyboard, touch swipe, mouse drag, autoplay */
 d.querySelectorAll('[data-carousel]').forEach(function(c){
- var tr=c.querySelector('.wt-car-track'),dots=c.querySelector('.wt-car-dots'),prev=c.querySelector('.prev'),next=c.querySelector('.next'),n=tr.children.length,timer=null,paused=false,drag=null,moved=false;
+ var tr=c.querySelector('.wt-car-track'),line=c.querySelector('.wt-car-line'),bar=line&&line.querySelector('span'),prev=c.querySelector('.prev'),next=c.querySelector('.next'),n=tr.children.length,timer=null,paused=false,drag=null,moved=false;
  function gap(){return parseFloat(getComputedStyle(tr).columnGap)||0;}
  function step(){return n?tr.children[0].getBoundingClientRect().width+gap():tr.clientWidth;}
  function per(){return Math.max(1,Math.round((tr.clientWidth+gap())/step()));}
  function max(){return Math.max(0,n-per());}
  function idx(){return Math.round(tr.scrollLeft/step());}
  function go(i){i=Math.max(0,Math.min(max(),i));tr.scrollTo({left:i*step(),behavior:reduce?'auto':'smooth'});}
- function build(){dots.innerHTML='';var m=max();c.classList.toggle('no-nav',m<1);for(var i=0;i<=m;i++){(function(i){var x=d.createElement('button');x.type='button';x.setAttribute('role','tab');x.setAttribute('aria-label','Go to slide '+(i+1));x.addEventListener('click',function(){go(i);restart();});dots.appendChild(x);})(i);}sync();}
- function sync(){var i=idx();Array.prototype.forEach.call(dots.children,function(x,j){x.classList.toggle('on',j===i);x.setAttribute('aria-selected',j===i?'true':'false');});prev.disabled=tr.scrollLeft<4;next.disabled=tr.scrollLeft>=tr.scrollWidth-tr.clientWidth-4;}
+ function sync(){var sw=tr.scrollWidth,cw=tr.clientWidth,f=sw>cw?cw/sw:1,pos=sw>cw?tr.scrollLeft/(sw-cw):0;if(bar){bar.style.width=(f*100)+'%';bar.style.transform='translateX('+(pos*(1/f-1)*100)+'%)';}prev.disabled=tr.scrollLeft<4;next.disabled=tr.scrollLeft>=sw-cw-4;c.classList.toggle('no-nav',max()<1);}
  prev.addEventListener('click',function(){go(idx()-1);restart();});
  next.addEventListener('click',function(){go(idx()+1);restart();});
+ if(line)line.addEventListener('click',function(e){var r=line.getBoundingClientRect();go(Math.round((e.clientX-r.left)/r.width*max()));restart();});
  var raf;tr.addEventListener('scroll',function(){cancelAnimationFrame(raf);raf=requestAnimationFrame(sync);},{passive:true});
  tr.addEventListener('keydown',function(e){if(e.key==='ArrowRight'){e.preventDefault();go(idx()+1);}if(e.key==='ArrowLeft'){e.preventDefault();go(idx()-1);}});
- /* mouse drag (touch uses native scrolling + snap) */
  tr.addEventListener('pointerdown',function(e){if(e.pointerType!=='mouse'||e.button!==0)return;drag={x:e.clientX,l:tr.scrollLeft};moved=false;});
  window.addEventListener('pointermove',function(e){if(!drag)return;var dx=e.clientX-drag.x;if(Math.abs(dx)>5){moved=true;c.classList.add('dragging');}if(moved)tr.scrollLeft=drag.l-dx;});
  window.addEventListener('pointerup',function(){if(!drag)return;drag=null;c.classList.remove('dragging');if(moved)go(idx());restart();});
  tr.addEventListener('click',function(e){if(moved){e.preventDefault();e.stopPropagation();moved=false;}},true);
  tr.addEventListener('dragstart',function(e){e.preventDefault();});
- /* autoplay, paused on hover/focus/off-screen */
  function tick(){if(paused||d.hidden)return;go(idx()>=max()?0:idx()+1);}
  function restart(){clearInterval(timer);if(!reduce&&max()>0)timer=setInterval(tick,5000);}
  c.addEventListener('mouseenter',function(){paused=true;});c.addEventListener('mouseleave',function(){paused=false;});
  c.addEventListener('focusin',function(){paused=true;});c.addEventListener('focusout',function(){paused=false;});
  tr.addEventListener('touchstart',function(){paused=true;},{passive:true});tr.addEventListener('touchend',function(){setTimeout(function(){paused=false;},4000);},{passive:true});
  if('IntersectionObserver' in window){new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting)restart();else clearInterval(timer);});}).observe(c);}else restart();
- var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(build,150);});build();
+ var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(sync,150);});sync();
 });
 /* add to cart feedback (WooCommerce triggers jQuery events) */
 if(window.jQuery){jQuery(d.body).on('adding_to_cart',function(e,btn){btn&&btn.addClass&&btn.addClass('is-loading').text('Adding…');}).on('added_to_cart',function(e,f,h,btn){if(btn&&btn.removeClass){btn.removeClass('is-loading').addClass('is-done').text('Added ✓');setTimeout(function(){btn.removeClass('is-done').text('Add to basket');},2200);}}).on('ajax_request_not_sent.adding_to_cart',function(e,btn){btn&&btn.removeClass&&btn.removeClass('is-loading').text('Add to basket');});
@@ -580,7 +508,7 @@ html,body{overflow-x:clip}
 .added_to_cart.wc-forward{display:block;text-align:center;font-size:12px;color:var(--g);margin-top:6px}
 .wt-car-btn{position:absolute;top:36%;z-index:3;width:40px;height:40px;border-radius:50%;background:#fff;border:1px solid var(--ln);display:grid;place-items:center;cursor:pointer;color:var(--tx);transition:.25s var(--ease);box-shadow:0 6px 16px -10px rgba(0,0,0,.3)}
 .wt-car-btn.prev{left:-56px}.wt-car-btn.next{right:-56px}.wt-car-btn:hover{background:var(--g);color:#fff}.wt-car-btn:disabled{opacity:.35;pointer-events:none}
-.wt-car-dots{display:flex;justify-content:center;gap:8px;margin-top:22px}
+
 .wt-car-dots button{width:7px;height:7px;border-radius:50%;border:0;background:#CFD5CD;padding:0;cursor:pointer;transition:.25s}.wt-car-dots button.on{background:var(--g);width:20px;border-radius:4px}
 .wt-carousel.no-nav .wt-car-btn,.wt-carousel.no-nav .wt-car-dots{display:none}
 /* why */
@@ -707,5 +635,58 @@ html.wt-anim .wt-reveal.in,html.wt-anim .wt-reveal-group>.in{opacity:1;transform
  .wt-trust{grid-template-columns:1fr}
 }
 @media (max-width:480px){.wt-trustbar>.wt-wrap,.wt-why-grid{gap:18px 12px}.wt-ib .elementor-icon-box-wrapper{gap:10px}}
+/* ---------- Theme Builder header ---------- */
+.wth-announce{background:#365647!important;min-height:36px}
+.wth-announce .elementor-icon-list-items{flex-wrap:nowrap!important}
+.wth-announce .elementor-icon-list-item,.wth-announce .elementor-icon-list-text{color:#fff!important;font:400 12px/1 var(--sans)!important;white-space:nowrap}
+.wth-announce .elementor-icon-list-icon svg{width:16px!important;height:16px!important}
+.wth-announce .elementor-icon-list-icon i,.wth-announce .elementor-icon-list-icon svg{color:#fff!important;fill:#fff!important;opacity:.9}
+.wth-announce .elementor-icon-list-item:after{border-color:rgba(255,255,255,.55)!important;height:12px!important;top:50%!important;transform:translateY(-50%)}
+.wth-rating p{margin:0;color:#fff;font:500 12px/1 var(--sans);white-space:nowrap;letter-spacing:.02em}.wth-rating .s{color:#E5AC32;letter-spacing:2px;margin:0 6px}
+.wth-header{background:#fff;border-bottom:1px solid var(--ln);transition:box-shadow .3s var(--ease)}
+.wth-header.elementor-sticky--effects{box-shadow:0 8px 24px -16px rgba(21,53,40,.35)}
+.wth-logo .elementor-heading-title{font:600 17px/1 var(--sans)!important;letter-spacing:.28em!important;color:var(--tx)!important}
+.wth-logo .elementor-heading-title a{color:inherit!important}
+.wth-nav .elementor-nav-menu--main .elementor-item{font:500 13.5px/1 var(--sans)!important;color:var(--tx)!important;padding:28px 16px!important}
+.wth-nav .elementor-nav-menu--main .elementor-item:hover,.wth-nav .elementor-nav-menu--main .elementor-item.elementor-item-active{color:var(--g)!important}
+.wth-nav .e--pointer-underline .elementor-item:after{background:var(--g)!important;height:2px!important;bottom:18px!important;left:16px!important;right:16px!important;width:auto!important}
+.wth-nav .elementor-nav-menu--dropdown{border:1px solid var(--ln);border-radius:var(--r);box-shadow:0 20px 40px -20px rgba(21,53,40,.3);padding:6px;background:#fff!important}
+.wth-nav .elementor-nav-menu--dropdown a{font:400 13.5px/1.2 var(--sans)!important;color:var(--tx)!important;padding:11px 14px!important;border-radius:6px}
+.wth-nav .elementor-nav-menu--dropdown a:hover,.wth-nav .elementor-nav-menu--dropdown a.elementor-item-active{background:var(--sage)!important;color:var(--g)!important}
+.wth-nav .elementor-menu-toggle{background:transparent!important;color:var(--tx)!important;font-size:22px}
+.wth-tools{gap:4px!important}
+.wth-tools .elementor-icon,.wth-tools .elementor-search-form__toggle i,.wth-tools .elementor-menu-cart__toggle .elementor-button{color:var(--tx)!important}
+.wth-ic .elementor-icon{font-size:18px!important;width:38px;height:38px;display:grid!important;place-items:center;border-radius:50%;transition:background .2s}
+.wth-ic .elementor-icon:hover{background:var(--sage)}
+.wth-ic .elementor-icon svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.5}
+.wth-search .elementor-search-form__toggle{--e-search-form-toggle-size:38px;--e-search-form-toggle-icon-size:18px;--e-search-form-toggle-background-color:transparent;--e-search-form-toggle-color:var(--tx)}
+.wth-search .elementor-search-form__toggle:hover{--e-search-form-toggle-background-color:var(--sage)}
+.wth-search .elementor-search-form--full-screen .elementor-search-form__container{background:rgba(21,53,40,.94)!important}
+.wth-cart .elementor-menu-cart__toggle .elementor-button{background:transparent!important;border:0!important;padding:9px!important;font-size:18px}
+.wth-cart .elementor-button-icon[data-counter]:before{background:var(--g)!important;font-size:10px;min-width:16px;height:16px;line-height:16px;top:-6px;right:-8px}
+.wth-cart .elementor-menu-cart__toggle .elementor-button-text{display:none}
+.wth-cta .elementor-button{height:40px;padding:0 20px!important;border-radius:6px!important;background:var(--g)!important;color:#fff!important;font:600 13px/1 var(--sans)!important;display:inline-flex!important;align-items:center;transition:background .25s var(--ease),transform .25s var(--ease)!important}
+.wth-cta .elementor-button:hover{background:var(--g3)!important;transform:translateY(-2px)}
+.wth-header,.wth-announce{animation:wtFade .6s var(--ease) both}
+@keyframes wtFade{from{opacity:0}to{opacity:1}}
+/* ---------- buttons: centre text vertically ---------- */
+.wt-b .elementor-button,.wt-link .elementor-button{display:inline-flex!important;align-items:center!important;justify-content:center!important;line-height:1!important}
+.wt-b .elementor-button .elementor-button-content-wrapper,.wt-link .elementor-button-content-wrapper{align-items:center!important;gap:8px}
+.wt-b .elementor-button-text,.wt-link .elementor-button-text{line-height:1!important;padding:0!important}
+/* ---------- hero trust bar overlap ---------- */
+.wt-hero{position:relative;padding-bottom:0!important}
+.wt-hero__txt{padding-bottom:150px!important}
+.wt-hero__trust{position:absolute!important;left:0;bottom:0;width:76%!important;z-index:3;background:#fff;border-radius:0 18px 0 0;padding:24px 40px 24px max(32px,calc((100vw - 1320px)/2 + 32px))!important;display:grid!important;grid-template-columns:repeat(4,auto);justify-content:space-between;gap:24px!important;animation:wtUp .9s .45s var(--ease) both}
+.wt-hero__trust .elementor-icon svg,.wt-ib .elementor-icon svg{fill:none!important;stroke:var(--g);stroke-width:1.5}
+.wt-hero__img{min-height:640px}
+/* ---------- carousel progress line ---------- */
+.wt-car-line{position:relative;width:min(470px,70%);height:3px;margin:30px auto 0;background:#D0D0D0;border-radius:3px;cursor:pointer;overflow:hidden}
+.wt-car-line span{position:absolute;left:0;top:0;height:100%;width:25%;background:#000;border-radius:3px;transition:transform .45s var(--ease),width .3s var(--ease)}
+.wt-carousel.no-nav .wt-car-line{display:none}
+@media (max-width:1024px){.wth-nav .elementor-nav-menu--dropdown.elementor-nav-menu__container{border-radius:0;margin-top:0}.wt-hero__trust{position:static!important;width:100%!important;border-radius:0;grid-template-columns:1fr 1fr;padding:24px 32px!important}.wt-hero__txt{padding-bottom:56px!important}.wt-hero__img{min-height:440px}.wth-announce .wth-rating{display:none}}
+@media (max-width:767px){.wth-announce .elementor-icon-list-item:not(:first-child){display:none!important}.wth-announce .elementor-icon-list-items{justify-content:center!important}.wt-hero__trust{padding:22px 16px!important;gap:18px 12px!important}.wt-hero__img{min-height:340px}.wth-logo .elementor-heading-title{font-size:14px!important;letter-spacing:.22em!important}.wth-cta{display:none}}
+.wth-announce svg,.wth-ic svg,.wt-ib svg,.wt-hero__trust svg{fill:none!important;stroke:currentColor!important}
+.wt-ib .elementor-icon{color:var(--g)!important}
+@media (max-width:1024px){.wth-nav{order:3}.wth-header>.e-con-inner,.wth-header{gap:6px!important}}
 CSS;
 }
