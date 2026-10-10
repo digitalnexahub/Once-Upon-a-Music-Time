@@ -309,13 +309,17 @@ d.querySelectorAll('[data-carousel],.wt-carousel').forEach(function(c){
  function gap(){return parseFloat(getComputedStyle(tr).columnGap)||0;}
  function step(){return n?tr.children[0].getBoundingClientRect().width+gap():tr.clientWidth;}
  function per(){return Math.max(1,Math.round((tr.clientWidth+gap())/step()));}
- function max(){return Math.max(0,n-per());}
- function idx(){return Math.round(tr.scrollLeft/step());}
- function go(i){i=Math.max(0,Math.min(max(),i));tr.scrollTo({left:i*step(),behavior:reduce?'auto':'smooth'});}
+ function room(){return Math.max(0,tr.scrollWidth-tr.clientWidth);}
+ function max(){return Math.max(0,Math.ceil(room()/step()-0.05));}
+ function idx(){return tr.scrollLeft>=room()-4?max():Math.round(tr.scrollLeft/step());}
+ function go(i){i=Math.max(0,Math.min(max(),i));tr.scrollTo({left:Math.min(i*step(),room()),behavior:reduce?'auto':'smooth'});}
  function sync(){var sw=tr.scrollWidth,cw=tr.clientWidth,f=sw>cw?cw/sw:1,pos=sw>cw?tr.scrollLeft/(sw-cw):0;if(bar){bar.style.width=(f*100)+'%';bar.style.transform='translateX('+(pos*(1/f-1)*100)+'%)';}prev.disabled=tr.scrollLeft<4;next.disabled=tr.scrollLeft>=sw-cw-4;c.classList.toggle('no-nav',max()<1);}
  prev.addEventListener('click',function(){go(idx()-1);restart();});
  next.addEventListener('click',function(){go(idx()+1);restart();});
- if(line)line.addEventListener('click',function(e){var r=line.getBoundingClientRect();go(Math.round((e.clientX-r.left)/r.width*max()));restart();});
+ if(line){var ld=null;function lineTo(x,smooth){var r=line.getBoundingClientRect(),f=tr.clientWidth/tr.scrollWidth,tw=r.width*f,p=Math.max(0,Math.min(1,(x-r.left-tw/2)/(r.width-tw)));tr.scrollTo({left:p*(tr.scrollWidth-tr.clientWidth),behavior:smooth&&!reduce?'smooth':'auto'});}
+  line.addEventListener('pointerdown',function(e){ld=true;paused=true;c.classList.add('dragging');line.setPointerCapture(e.pointerId);lineTo(e.clientX,false);e.preventDefault();});
+  line.addEventListener('pointermove',function(e){if(ld)lineTo(e.clientX,false);});
+  line.addEventListener('pointerup',function(){if(!ld)return;ld=null;c.classList.remove('dragging');paused=false;go(idx());restart();});}
  var raf;tr.addEventListener('scroll',function(){cancelAnimationFrame(raf);raf=requestAnimationFrame(sync);},{passive:true});
  tr.addEventListener('keydown',function(e){if(e.key==='ArrowRight'){e.preventDefault();go(idx()+1);}if(e.key==='ArrowLeft'){e.preventDefault();go(idx()-1);}});
  tr.addEventListener('pointerdown',function(e){if(e.pointerType!=='mouse'||e.button!==0)return;drag={x:e.clientX,l:tr.scrollLeft};moved=false;});
@@ -749,5 +753,30 @@ html.wt-anim .wt-reveal.in,html.wt-anim .wt-reveal-group>.in{opacity:1;transform
 @media (max-width:767px){.wt-cat-carousel .wt-car-track{grid-auto-columns:74%;width:calc(100% + 16px)!important;padding-right:16px!important}.wt-cat-carousel .wt-car-btn.next{right:8px!important}.wt-rev-carousel .wt-car-track{grid-auto-columns:88%}.wt-rev-carousel .wt-car-btn{display:none!important}.wt-car-btn{width:38px!important;height:38px!important}}
 .wt-spot__b{padding:0!important;display:grid!important;place-items:center!important;line-height:1!important;font-size:18px!important;border:0!important}
 .wt-spot__b span{display:block;line-height:1}
+/* ---------- v5: frosted arrows, draggable line, full-bleed category slider, hero trust bar ---------- */
+.wt-car-btn{background:rgba(255,255,255,.55)!important;-webkit-backdrop-filter:blur(12px) saturate(1.4);backdrop-filter:blur(12px) saturate(1.4);border:1px solid rgba(255,255,255,.6)!important;color:var(--tx)!important;width:56px!important;height:56px!important;box-shadow:0 10px 28px -10px rgba(0,0,0,.35)!important}
+.wt-car-btn svg{width:22px!important;height:22px!important}
+.wt-car-btn:hover{background:rgba(255,255,255,.85)!important;color:var(--tx)!important;transform:translateY(-50%) scale(1.06)}
+.wt-car-line{height:4px;cursor:grab;touch-action:none;padding:0;overflow:visible}
+.wt-car-line:before{content:"";position:absolute;left:0;right:0;top:-10px;bottom:-10px}
+.wt-car-line span{pointer-events:none}
+.wt-carousel.dragging .wt-car-line{cursor:grabbing}.wt-carousel.dragging .wt-car-line span{transition:none}
+.wt-cat-carousel .wt-car-track{width:100vw!important;margin-left:calc(-1 * (max(0px, (100vw - 1320px) / 2) + 32px))!important;padding-left:calc(max(0px, (100vw - 1320px) / 2) + 32px)!important;padding-right:calc(max(0px, (100vw - 1320px) / 2) + 32px)!important;scroll-padding-left:calc(max(0px, (100vw - 1320px) / 2) + 32px);grid-auto-columns:clamp(260px,23.5vw,460px)!important;gap:16px!important}
+.wt-cat-carousel .wt-cat{aspect-ratio:451/548!important}
+.wt-cat-carousel .wt-car-btn.prev{left:calc(40px - max(0px, (100vw - 1320px) / 2) - 32px)!important}
+.wt-cat-carousel .wt-car-btn.next{right:calc(40px - max(0px, (100vw - 1320px) / 2) - 32px)!important}
+.wt-hero__trust{background:var(--off)!important;border-radius:0 22px 0 0!important}
+.wt-hero__trust .elementor-icon-box-icon,.wt-trustbar .elementor-icon-box-icon,.wt-why .elementor-icon-box-icon,.wt-feats .elementor-icon-box-icon{flex:0 0 auto}
+.wt-hero__trust .elementor-icon,.wt-why .wt-ib .elementor-icon{width:34px!important;height:34px!important;font-size:30px!important;display:grid!important;place-items:center}
+.wt-hero__trust .elementor-icon svg,.wt-why .wt-ib .elementor-icon svg{width:30px!important;height:30px!important;stroke-width:1.4!important}
+.wt-feat .elementor-icon svg{width:18px!important;height:18px!important}
+.wth-ic .elementor-icon svg,.wth-search .elementor-search-form__toggle svg{width:19px!important;height:19px!important}
+@media (max-width:1024px){.wt-hero__trust{border-radius:0!important}}
+@media (max-width:767px){.wt-cat-carousel .wt-car-track{width:100vw!important;margin-left:-16px!important;padding-left:16px!important;padding-right:16px!important;scroll-padding-left:16px;grid-auto-columns:76%!important;gap:12px!important}.wt-cat-carousel .wt-car-btn.prev{left:-4px!important}.wt-cat-carousel .wt-car-btn.next{right:-4px!important}.wt-car-btn{width:44px!important;height:44px!important}.wt-hero__trust .elementor-icon svg,.wt-why .wt-ib .elementor-icon svg{width:26px!important;height:26px!important}}
+.wt-cat-carousel .wt-car-track{padding-right:40px!important}
+.wt-hero{grid-template-columns:50% 50%!important}
+.wt-h1 .elementor-heading-title{font-size:clamp(38px,3.5vw,60px)!important}
+@media (max-width:1024px){.wt-hero{grid-template-columns:1fr!important}}
+@media (max-width:767px){.wt-cat-carousel .wt-car-track{padding-right:16px!important}}
 CSS;
 }
