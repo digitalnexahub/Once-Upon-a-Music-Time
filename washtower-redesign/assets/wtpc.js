@@ -97,20 +97,22 @@
     track.addEventListener('click',function(e){
       var b=e.target.closest('button.wtpc__btn');if(!b||!track.contains(b))return;
       if(b.getAttribute('data-demo')){say('Demo mode: WooCommerce is not connected, nothing was added.',true);return;}
-      var label=b.innerHTML;b.classList.add('is-loading');b.setAttribute('aria-busy','true');
+      var label=b.innerHTML;b.classList.add('is-loading');b.setAttribute('data-label','Adding…');b.setAttribute('aria-busy','true');
       var url=(window.wc_add_to_cart_params&&wc_add_to_cart_params.wc_ajax_url)?wc_add_to_cart_params.wc_ajax_url.toString().replace('%%endpoint%%','add_to_cart'):location.origin+'/?wc-ajax=add_to_cart';
       var fd=new FormData();fd.append('product_id',b.getAttribute('data-id'));fd.append('quantity','1');
       fetch(url,{method:'POST',body:fd,credentials:'same-origin'}).then(function(r){return r.json();}).then(function(res){
         if(!res||res.error||!res.fragments){throw res&&res.product_url?{url:res.product_url}:new Error('failed');}
         applyFragments(res.fragments);
-        if(window.jQuery){jQuery(document.body).trigger('wc_fragment_refresh').trigger('added_to_cart',[res.fragments,res.cart_hash,jQuery(b)]);}
-        b.classList.remove('is-loading');b.classList.add('is-done');b.innerHTML='<span>&#10003; Added</span>';
+        if(window.jQuery){jQuery(document.body).trigger('wc_fragment_refresh').trigger('added_to_cart',[res.fragments,res.cart_hash,jQuery()]);}
+        root.querySelectorAll('.added_to_cart').forEach(function(a){a.remove();});
+        document.querySelectorAll('.elementor-menu-cart__toggle_button,.wt-cart').forEach(function(c){c.classList.remove('wtpc-bump');void c.offsetWidth;c.classList.add('wtpc-bump');});
+        b.classList.remove('is-loading');b.classList.add('is-done');b.innerHTML='<span><svg class="wtpc__tick" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.6 2.6L16 9.5"/></svg>Added to basket</span>';
         var cart=(window.wc_add_to_cart_params&&wc_add_to_cart_params.cart_url)||(location.origin+'/cart/');
         say(esc(b.getAttribute('data-name'))+' was added to your basket. <a href="'+esc(cart)+'">View basket</a>');
       }).catch(function(err){
         b.classList.remove('is-loading');b.classList.add('is-error');b.innerHTML='<span>Try again</span>';
         say(err&&err.url?'This product needs options. <a href="'+esc(err.url)+'">Choose options</a>':'Sorry, it could not be added to your basket. Please try again.',true);
-      }).then(function(){setTimeout(function(){b.classList.remove('is-done','is-error');b.removeAttribute('aria-busy');b.innerHTML=label;},2200);});
+      }).then(function(){setTimeout(function(){b.classList.remove('is-done','is-error');b.removeAttribute('aria-busy');b.innerHTML=label;},2600);});
     });
 
     /* ---------- scroll reveal (once) ---------- */
