@@ -1991,7 +1991,7 @@ html,body,body :where(*:not(i):not(svg):not(svg *):not([class*="eicon"]):not([cl
 
 /* mobile polish */
 @media (max-width:767px){
- .wth-cta{display:none!important}
+ .wth-tools>.elementor-element.wth-cta,body .elementor-element.wth-cta.elementor-hidden-mobile{display:none!important}
  .wth-header,.wth-header>.e-con-inner{flex-wrap:nowrap!important;gap:2px!important;padding-left:16px!important;padding-right:12px!important;min-height:60px}
  .wth-logo{margin-right:auto!important}.wth-logo .elementor-heading-title{font-size:15px!important;letter-spacing:.22em!important}
  .wth-tools{gap:0!important}.wth-tools .elementor-icon,.wth-tools .elementor-menu-cart__toggle .elementor-button{padding:10px!important}
