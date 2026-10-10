@@ -895,5 +895,8 @@ h1,h2,h3,h4,h5,h6,.elementor-heading-title,.product_title,.woocommerce-loop-prod
 .wt-spot:before{content:"";position:absolute;left:4px;top:4px;width:26px;height:26px;border-radius:50%;box-shadow:0 0 0 0 rgba(255,255,255,.8);animation:wtPulse 2.6s infinite;pointer-events:none}
 @media (max-width:1024px){.wt-design{grid-template-columns:1fr!important}.wt-design__txt{padding:56px 32px!important}.wt-hot{min-height:480px}}
 @media (max-width:767px){.wt-design__txt{padding:44px 16px!important}.wt-hot{min-height:400px}.wt-spot{padding:3px 3px 3px 3px}.wt-spot__lbl{display:none!important}.wt-spot__b{margin:0}.wt-design__btns{flex-direction:row!important;align-items:center!important;gap:22px!important}.wt-leaf{width:110px!important;opacity:.6}}
+.wt-design{background:linear-gradient(170deg,#F4F1EA 0%,#F8F6F1 45%,#FFFFFF 100%)!important}
+.wt-design__txt{background:transparent!important}
+@media (max-width:1024px){.wt-design__txt{background:linear-gradient(180deg,#F4F1EA 0%,#FFFFFF 100%)!important}}
 CSS;
 }
