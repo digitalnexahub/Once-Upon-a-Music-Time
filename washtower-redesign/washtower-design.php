@@ -203,7 +203,7 @@ add_shortcode( 'wt_blog_cards', function ( $a ) {
 // Reviews: real approved WooCommerce product reviews. Placeholder cards are shown only to editors until real reviews exist.
 add_shortcode( 'wt_reviews', function () {
 	$photos   = [ 63, 64, 65 ];
-	$reviews  = get_comments( [ 'type' => 'review', 'status' => 'approve', 'number' => 3, 'meta_key' => 'rating', 'orderby' => 'comment_date', 'order' => 'DESC' ] );
+	$reviews  = get_comments( [ 'type' => 'review', 'status' => 'approve', 'number' => 12, 'meta_key' => 'rating', 'orderby' => 'comment_date', 'order' => 'DESC' ] );
 	$cards    = [];
 	foreach ( $reviews as $r ) {
 		$cards[] = [ (int) get_comment_meta( $r->comment_ID, 'rating', true ), $r->comment_content, $r->comment_author, wc_review_is_from_verified_owner( $r->comment_ID ) ? 'Verified buyer' : 'Customer', get_avatar_url( $r, [ 'size' => 64 ] ) ];
@@ -221,12 +221,12 @@ add_shortcode( 'wt_reviews', function () {
 		];
 	}
 	$o = $placeholder ? '<p class="wt-admin-note">Editor-only preview: no approved product reviews yet, so visitors see a short call to action instead of these placeholder cards.</p>' : '';
-	$o .= '<div class="wt-reviews wt-reveal-group">';
+	$o .= '<div class="wt-carousel wt-rev-carousel wt-reveal"><div class="wt-car-track wt-reviews" tabindex="0" aria-label="Customer reviews">';
 	foreach ( $cards as $i => $c ) {
 		$av = $c[4] ? '<img src="' . esc_url( $c[4] ) . '" alt="" width="36" height="36" loading="lazy">' : '<span class="wt-av" aria-hidden="true">' . esc_html( mb_substr( $c[2], 0, 1 ) ) . '</span>';
 		$o .= '<figure class="wt-rcard"><div class="wt-rcard__t">' . wt_stars( $c[0] ) . '<blockquote>“' . esc_html( wp_trim_words( $c[1], 24 ) ) . '”</blockquote><figcaption>' . $av . '<span><b>' . esc_html( $c[2] ) . '</b><small>' . esc_html( $c[3] ) . '</small></span></figcaption></div>' . wp_get_attachment_image( $photos[ $i % 3 ], 'medium', false, [ 'class' => 'wt-rcard__img', 'loading' => 'lazy', 'alt' => '' ] ) . '</figure>';
 	}
-	return $o . '</div>';
+	return $o . '</div></div>';
 } );
 
 // Interactive hotspots on the "Design your own" image.
@@ -300,7 +300,11 @@ d.querySelectorAll('.wt-spot').forEach(function(s){var btn=s.querySelector('butt
 });
 d.addEventListener('click',function(){d.querySelectorAll('.wt-spot.open').forEach(close);});
 /* carousels: arrows, progress line, keyboard, touch swipe, mouse drag, autoplay */
-d.querySelectorAll('[data-carousel]').forEach(function(c){
+var ARW={l:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>',r:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>'};
+d.querySelectorAll('[data-carousel],.wt-carousel').forEach(function(c){
+ if(!c.querySelector('.wt-car-track'))return;
+ if(!c.querySelector('.wt-car-btn')){var bp=d.createElement('button');bp.type='button';bp.className='wt-car-btn prev';bp.setAttribute('aria-label','Previous');bp.innerHTML=ARW.l;var bn=d.createElement('button');bn.type='button';bn.className='wt-car-btn next';bn.setAttribute('aria-label','Next');bn.innerHTML=ARW.r;c.appendChild(bp);c.appendChild(bn);}
+ if(!c.querySelector('.wt-car-line')){var ln=d.createElement('div');ln.className='wt-car-line';ln.setAttribute('aria-hidden','true');ln.appendChild(d.createElement('span'));c.appendChild(ln);}
  var tr=c.querySelector('.wt-car-track'),line=c.querySelector('.wt-car-line'),bar=line&&line.querySelector('span'),prev=c.querySelector('.prev'),next=c.querySelector('.next'),n=tr.children.length,timer=null,paused=false,drag=null,moved=false;
  function gap(){return parseFloat(getComputedStyle(tr).columnGap)||0;}
  function step(){return n?tr.children[0].getBoundingClientRect().width+gap():tr.clientWidth;}
@@ -526,7 +530,7 @@ html.wt-anim .wt-util__img:not(.in) img{clip-path:inset(0 0 0 18%)}
 .wt-cap{position:absolute!important;left:12%;bottom:12%;width:auto!important;z-index:2;background:#fff;border-radius:999px;padding:12px 22px!important;box-shadow:0 14px 30px -14px rgba(0,0,0,.35)}
 .wt-cap p{margin:0;font:500 12px/1.4 var(--sans)!important;color:var(--tx)!important}
 /* reviews */
-.wt-reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.wt-reviews:not(.wt-car-track){display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
 .wt-rcard{margin:0;display:grid;grid-template-columns:1fr 112px;gap:16px;background:#fff;border:1px solid var(--ln);border-radius:var(--r);padding:18px}
 .wt-rcard blockquote{margin:10px 0 16px;font:400 13px/1.6 var(--sans);color:var(--tx2);border:0;padding:0}
 .wt-rcard figcaption{display:flex;align-items:center;gap:10px}.wt-rcard figcaption img,.wt-av{width:36px;height:36px;border-radius:50%;object-fit:cover}
@@ -584,7 +588,7 @@ html.wt-anim .wt-reveal.in,html.wt-anim .wt-reveal-group>.in{opacity:1;transform
 .woocommerce-tabs,.related.products,.upsells{grid-column:1/-1}
 .related.products>h2{font:500 36px/1.1 var(--serif)!important;margin:56px 0 22px}
 /* ---------- responsive ---------- */
-@media (max-width:1200px){.wt-header__in{gap:28px}.wt-nav ul{gap:22px}.wt-car-btn.prev{left:-12px}.wt-car-btn.next{right:-12px}.wt-blog,.wt-reviews{grid-template-columns:1fr 1fr}.wt-footer__grid{grid-template-columns:1fr 1fr 1fr}.wt-footer__brand,.wt-footer__news{grid-column:span 3}}
+@media (max-width:1200px){.wt-header__in{gap:28px}.wt-nav ul{gap:22px}.wt-car-btn.prev{left:-12px}.wt-car-btn.next{right:-12px}.wt-blog,.wt-reviews:not(.wt-car-track){grid-template-columns:1fr 1fr}.wt-footer__grid{grid-template-columns:1fr 1fr 1fr}.wt-footer__brand,.wt-footer__news{grid-column:span 3}}
 @media (max-width:1024px){
  .wt-burger{display:inline-grid}.wt-header__cta{display:none!important}
  .wt-nav{position:fixed;inset:0 0 0 auto;top:0;width:min(380px,100%);background:#fff;flex-direction:column;align-items:stretch;padding:90px 24px 24px;transform:translateX(100%);transition:transform .4s var(--ease);box-shadow:-20px 0 40px -20px rgba(0,0,0,.3);z-index:-1;overflow-y:auto;visibility:hidden}
@@ -627,7 +631,7 @@ html.wt-anim .wt-reveal.in,html.wt-anim .wt-reveal-group>.in{opacity:1;transform
  .wt-car-btn{display:none}
  .wt-hot{min-height:420px}.wt-spot__lbl{display:none}
  .wt-tip{width:200px}
- .wt-reviews,.wt-blog{grid-template-columns:1fr}
+ .wt-reviews:not(.wt-car-track),.wt-blog{grid-template-columns:1fr}
  .wt-rcard{grid-template-columns:1fr 92px}.wt-rcard__img{width:92px!important}
  .wt-footer__grid{grid-template-columns:1fr 1fr;gap:32px 20px}.wt-footer__brand,.wt-footer__news{grid-column:span 2}.wt-news{max-width:none}
  .wt-footer__base{flex-direction:column;gap:16px;align-items:flex-start}.wt-footer__base nav{flex-wrap:wrap;gap:16px}
@@ -706,5 +710,42 @@ html.wt-anim .wt-reveal.in,html.wt-anim .wt-reveal-group>.in{opacity:1;transform
 .wt-top{border:0!important}
 .wth-nav .elementor-nav-menu--main .elementor-item{padding-top:20px!important;padding-bottom:20px!important}
 @media (max-width:767px){.wth-announce .elementor-icon-list-item:after{display:none!important}}
+/* ---------- hotspot image: always clipped to its column ---------- */
+.wt-design__img{overflow:hidden;position:relative}
+.wt-design__img .elementor-widget-shortcode,.wt-design__img .elementor-shortcode{height:100%}
+.wt-hot{height:100%;overflow:hidden}
+.wt-hot .wt-hot__img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;object-fit:cover;object-position:center 40%}
+/* ---------- slider arrows: white circles over the slides ---------- */
+.wt-carousel{position:relative}
+.wt-car-btn{position:absolute!important;top:var(--arrow-top,50%)!important;transform:translateY(-50%);z-index:5;width:44px!important;height:44px!important;padding:0!important;border-radius:50%!important;border:0!important;background:#fff!important;color:var(--tx)!important;display:grid!important;place-items:center;box-shadow:0 8px 22px -8px rgba(0,0,0,.35)!important;cursor:pointer;transition:opacity .3s var(--ease),transform .3s var(--ease),background .25s,color .25s}
+.wt-car-btn.prev{left:16px!important;right:auto!important}.wt-car-btn.next{right:16px!important;left:auto!important}
+.wt-car-btn:hover{background:var(--g)!important;color:#fff!important}
+.wt-car-btn:disabled{opacity:0!important;pointer-events:none}
+.wt-car-btn svg,.wt-car-btn .wt-ic{width:18px;height:18px}
+.wt-carousel[data-carousel]{--arrow-top:calc((100% - 70px) * .32)}
+/* ---------- category slider ---------- */
+.wt-cat-carousel{width:100%}
+.wt-cat-carousel .wt-car-track{display:grid!important;grid-auto-flow:column;grid-auto-columns:clamp(240px,21.5vw,338px);gap:12px!important;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin-right:calc(-1 * (max(0px, (100vw - 1320px) / 2) + 32px));padding-right:calc(max(0px, (100vw - 1320px) / 2) + 32px)!important;flex-wrap:nowrap!important;cursor:grab}
+.wt-cat-carousel .wt-car-track::-webkit-scrollbar{display:none}
+.wt-cat-carousel{--arrow-top:50%}
+.wt-cat-carousel .wt-car-btn.next{right:calc(16px - (max(0px, (100vw - 1320px) / 2) + 32px) + 6%)!important}
+.wt-cat-carousel .wt-cat{aspect-ratio:4/5!important;width:auto!important;scroll-snap-align:start;border-radius:8px}
+.wt-cat-carousel .wt-cat:after{background:linear-gradient(180deg,transparent 58%,rgba(0,0,0,.6))}
+.wt-cat__t{left:24px!important;right:20px!important;bottom:22px!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;width:auto!important}
+.wt-cat__t .elementor-heading-title{font:700 21px/1.15 var(--sans)!important;color:#fff!important;letter-spacing:-.01em;text-shadow:0 1px 10px rgba(0,0,0,.25)}
+.wt-cat__go{width:auto!important;flex:0 0 auto}
+.wt-cat__go .elementor-icon{width:30px;height:30px;border:1.5px solid rgba(255,255,255,.9);border-radius:50%;display:grid!important;place-items:center;color:#fff!important;font-size:14px!important;transition:background .25s,color .25s}
+.wt-cat__go .elementor-icon svg{width:14px;height:14px;fill:none!important;stroke:currentColor!important}
+.wt-cat:hover .wt-cat__go .elementor-icon{background:#fff;color:var(--tx)!important}
+.wt-cat__badge{position:absolute!important;top:14px;left:14px;z-index:3;width:auto!important}
+.wt-cat__badge .elementor-heading-title{background:#fff;color:var(--tx)!important;font:700 10.5px/1 var(--sans)!important;letter-spacing:.12em;text-transform:uppercase;padding:8px 12px;border-radius:999px}
+.wt-cat-carousel .wt-car-line{margin-top:44px}
+/* ---------- reviews slider ---------- */
+.wt-rev-carousel .wt-car-track{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 48px)/3);gap:24px;grid-template-columns:none}
+.wt-rev-carousel{--arrow-top:50%}
+.wt-rev-carousel .wt-car-btn.prev{left:-22px!important}.wt-rev-carousel .wt-car-btn.next{right:-22px!important}
+.wt-rev-carousel .wt-rcard{scroll-snap-align:start}
+@media (max-width:1024px){.wt-cat-carousel .wt-car-track{grid-auto-columns:clamp(220px,38vw,320px)}.wt-rev-carousel .wt-car-track{grid-auto-columns:calc((100% - 24px)/2)}}
+@media (max-width:767px){.wt-cat-carousel .wt-car-track{grid-auto-columns:74%;margin-right:-16px;padding-right:16px!important}.wt-cat-carousel .wt-car-btn.next{right:8px!important}.wt-rev-carousel .wt-car-track{grid-auto-columns:88%}.wt-rev-carousel .wt-car-btn{display:none!important}.wt-car-btn{width:38px!important;height:38px!important}}
 CSS;
 }
