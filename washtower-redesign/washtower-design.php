@@ -335,6 +335,13 @@ d.querySelectorAll('[data-carousel],.wt-carousel').forEach(function(c){
  if('IntersectionObserver' in window){new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting)restart();else clearInterval(timer);});}).observe(c);}else restart();
  var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(sync,150);});sync();
 });
+/* advanced button hover: fill grows from the cursor entry point, gentle magnetic pull */
+var BTN='.wt-b .elementor-button,.wth-cta .elementor-button,.wt-atc,.wt-btn,.single_add_to_cart_button,.woocommerce ul.products li.product .button';
+d.querySelectorAll(BTN).forEach(function(b){b.classList.add('wt-fx');});
+function fxPos(b,e){var r=b.getBoundingClientRect();b.style.setProperty('--x',(e.clientX-r.left)+'px');b.style.setProperty('--y',(e.clientY-r.top)+'px');return r;}
+d.addEventListener('pointerover',function(e){var b=e.target.closest&&e.target.closest('.wt-fx');if(b&&!b.contains(e.relatedTarget))fxPos(b,e);});
+d.addEventListener('pointerout',function(e){var b=e.target.closest&&e.target.closest('.wt-fx');if(b&&!b.contains(e.relatedTarget)){fxPos(b,e);b.style.transform='';}});
+if(!reduce&&window.matchMedia('(hover:hover)').matches){d.addEventListener('pointermove',function(e){var b=e.target.closest&&e.target.closest('.wt-fx');if(!b)return;var r=b.getBoundingClientRect(),mx=(e.clientX-r.left-r.width/2)/r.width,my=(e.clientY-r.top-r.height/2)/r.height;b.style.transform='translate('+(mx*6).toFixed(2)+'px,'+(my*5-2).toFixed(2)+'px)';},{passive:true});}
 /* add to cart feedback (WooCommerce triggers jQuery events) */
 if(window.jQuery){jQuery(d.body).on('adding_to_cart',function(e,btn){btn&&btn.addClass&&btn.addClass('is-loading').text('Adding…');}).on('added_to_cart',function(e,f,h,btn){if(btn&&btn.removeClass){btn.removeClass('is-loading').addClass('is-done').text('Added ✓');setTimeout(function(){btn.removeClass('is-done').text('Add to basket');},2200);}}).on('ajax_request_not_sent.adding_to_cart',function(e,btn){btn&&btn.removeClass&&btn.removeClass('is-loading').text('Add to basket');});
  jQuery(d).ajaxError(function(e,x,s){if(s&&s.url&&s.url.indexOf('add_to_cart')>-1){jQuery('.wt-atc.is-loading').removeClass('is-loading').addClass('is-error').text('Try again');}});}
@@ -822,5 +829,27 @@ h1,h2,h3,h4,h5,h6,.elementor-heading-title,.product_title,.woocommerce-loop-prod
 .wt-hero__trust .elementor-icon-box-title{color:#141a16!important;font-size:14px!important}
 .wt-hero__trust .elementor-icon-box-description{color:#4b524d!important;font-size:13px!important}
 @media (max-width:767px){.wt-note .wt-note__t{font-size:22px!important}}
+/* ---------- advanced button hover ---------- */
+.wt-fx{position:relative!important;overflow:hidden!important;isolation:isolate;transition:transform .45s cubic-bezier(.22,1,.36,1),box-shadow .45s cubic-bezier(.22,1,.36,1),color .35s ease,border-color .35s ease,background-color .35s ease!important;will-change:transform}
+.wt-fx:before{content:"";position:absolute;left:var(--x,50%);top:var(--y,50%);width:0;height:0;border-radius:50%;transform:translate(-50%,-50%);background:var(--fx-fill,#0f2a1f);z-index:-1;transition:width .6s cubic-bezier(.22,1,.36,1),height .6s cubic-bezier(.22,1,.36,1);pointer-events:none}
+.wt-fx:after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.28),transparent);transform:skewX(-20deg);z-index:0;pointer-events:none;opacity:0}
+.wt-fx:hover:before,.wt-fx:focus-visible:before{width:260%;height:0;padding-bottom:260%}
+.wt-fx:hover:after{animation:wtSheen .9s cubic-bezier(.22,1,.36,1) .05s}
+@keyframes wtSheen{0%{left:-60%;opacity:0}20%{opacity:1}100%{left:130%;opacity:0}}
+.wt-fx:hover{box-shadow:0 14px 30px -14px rgba(21,53,40,.55)!important}
+.wt-fx:active{transition-duration:.12s!important;transform:translateY(1px) scale(.97)!important;box-shadow:0 4px 10px -6px rgba(21,53,40,.5)!important}
+.wt-fx .elementor-button-content-wrapper,.wt-fx>*{position:relative;z-index:1}
+.wt-fx .elementor-button-icon{display:inline-flex;overflow:hidden;transition:transform .45s cubic-bezier(.22,1,.36,1)!important}
+.wt-fx:hover .elementor-button-icon{transform:translateX(5px)!important}
+.wt-fx .elementor-button-icon svg,.wt-fx .elementor-button-icon i{transition:transform .45s cubic-bezier(.22,1,.36,1)}
+.wt-fx:hover .elementor-button-icon svg,.wt-fx:hover .elementor-button-icon i{animation:wtArrow .6s cubic-bezier(.22,1,.36,1)}
+@keyframes wtArrow{0%{transform:translateX(0)}45%{transform:translateX(120%);opacity:0}46%{transform:translateX(-120%);opacity:0}100%{transform:translateX(0);opacity:1}}
+/* primary (green) buttons: deeper green fill; outline buttons fill green with white text */
+.wt-b .elementor-button.wt-fx,.wth-cta .elementor-button.wt-fx,.wt-atc.wt-fx,.wt-btn.wt-fx,.single_add_to_cart_button.wt-fx{--fx-fill:#0f2a1f;background:var(--g)!important}
+.wt-b--o .elementor-button.wt-fx{--fx-fill:var(--g);background:#fff!important;color:var(--tx)!important}
+.wt-b--o .elementor-button.wt-fx:hover{color:#fff!important;border-color:var(--g)!important}
+.wt-b .elementor-button.wt-fx:hover,.wth-cta .elementor-button.wt-fx:hover,.wt-atc.wt-fx:hover,.wt-btn.wt-fx:hover{background:var(--g)!important}
+.wt-b--o .elementor-button.wt-fx:hover{background:#fff!important}
+@media (prefers-reduced-motion:reduce){.wt-fx,.wt-fx:before{transition:none!important}.wt-fx:after,.wt-fx .elementor-button-icon svg{animation:none!important}}
 CSS;
 }
