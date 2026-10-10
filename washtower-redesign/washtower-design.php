@@ -801,5 +801,13 @@ h1,h2,h3,h4,h5,h6,.elementor-heading-title,.product_title,.woocommerce-loop-prod
 .wt-h1 .elementor-heading-title{font-weight:700!important;letter-spacing:-.01em}
 .wt-h2 .elementor-heading-title,.wt-archive-hero h1,.single-product .product_title,.related.products>h2{font-weight:700!important;letter-spacing:-.005em}
 .wt-cat__h .elementor-heading-title,.wt-step__h .elementor-heading-title{font-weight:700!important}
+.wt-hero{max-width:1320px!important;margin-left:auto!important;margin-right:auto!important;padding:0 32px!important;box-sizing:border-box;background:var(--off)!important;box-shadow:0 0 0 100vmax var(--off);clip-path:inset(0 -100vmax)}
+.wt-hero__txt{padding:80px 48px 150px 0!important}
+.wt-hero__trust{left:32px!important;width:calc(80% - 32px)!important;padding:24px 40px 24px 0!important}
+.wt-hero__img{border-radius:0 0 0 22px;overflow:hidden}
+@media (max-width:1024px){.wt-hero{padding:0!important;box-shadow:none;clip-path:none}.wt-hero__txt{padding:56px 32px!important}.wt-hero__trust{width:100%!important;padding:24px 32px!important}.wt-hero__img{border-radius:0}}
+@media (max-width:767px){.wt-hero__txt{padding:44px 16px!important}.wt-hero__trust{padding:22px 16px!important}}
+@media (min-width:1025px){.wt-hero{padding:0!important}.wt-hero__trust{left:0!important;width:80%!important}}
+@media (min-width:1025px) and (max-width:1384px){.wt-hero{max-width:calc(100% - 64px)!important}}
 CSS;
 }
