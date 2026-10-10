@@ -1989,6 +1989,32 @@ html,body,body :where(*:not(i):not(svg):not(svg *):not([class*="eicon"]):not([cl
 @media (max-width:767px){.wt-rv2 .wt-rv2__card{flex:0 0 88%!important}.wt-rv2 .wt-rv2__head{flex-direction:column!important;align-items:flex-start!important;gap:10px}}
 @media (prefers-reduced-motion:reduce){.wt-rv2 .wt-rv2__card,.wt-rv2 .wt-rv2__img img{transition:none!important}.wt-rv2 .animated{animation:none!important}}
 
+/* mobile polish */
+@media (max-width:767px){
+ .wth-cta{display:none!important}
+ .wth-header,.wth-header>.e-con-inner{flex-wrap:nowrap!important;gap:2px!important;padding-left:16px!important;padding-right:12px!important;min-height:60px}
+ .wth-logo{margin-right:auto!important}.wth-logo .elementor-heading-title{font-size:15px!important;letter-spacing:.22em!important}
+ .wth-tools{gap:0!important}.wth-tools .elementor-icon,.wth-tools .elementor-menu-cart__toggle .elementor-button{padding:10px!important}
+ .wth-nav{flex:0 0 auto!important;order:5}.wth-nav .elementor-menu-toggle{width:44px;height:44px;display:grid!important;place-items:center;padding:0!important;border-radius:12px!important;background:var(--off)!important;margin-left:4px}
+ .wth-nav .elementor-nav-menu--dropdown.elementor-nav-menu__container{position:fixed!important;left:0!important;right:0!important;width:100vw!important;max-height:calc(100dvh - 120px);overflow-y:auto;border:0!important;border-top:1px solid var(--ln)!important;box-shadow:0 24px 40px -20px rgba(0,0,0,.25);padding:8px 16px 20px!important}
+ .wth-nav .elementor-nav-menu--dropdown a{font:600 17px/1.2 var(--sans)!important;padding:16px 8px!important;border-bottom:1px solid var(--ln)}
+ .wth-announce{font-size:12px}
+ html,body{overflow-x:clip}
+ body .elementor-section,body .e-con{--padding-left:16px;--padding-right:16px}
+ .elementor-widget-heading h1.elementor-heading-title{font-size:clamp(30px,8.6vw,40px)!important;line-height:1.08!important}
+ .elementor-widget-heading h2.elementor-heading-title{font-size:clamp(26px,7.4vw,34px)!important;line-height:1.12!important}
+ .wt-b .elementor-button,.wt-b--o .elementor-button{width:100%;justify-content:center;min-height:52px;border-radius:12px!important}
+ input,select,textarea{font-size:16px!important}
+ .wt-toolbar{top:auto;position:relative}
+ .woocommerce ul.products li.product .button{height:44px}
+ .single-product .product_title{font-size:clamp(26px,7.5vw,34px)!important}
+ .single-product .summary .price{font-size:28px!important}
+ .wt-sticky-buy{padding-bottom:max(10px,env(safe-area-inset-bottom))}
+ .wt-toast{font-size:13.5px;padding:12px 14px}
+ .woocommerce-checkout #order_review,.woocommerce-cart .cart-collaterals{position:static!important}
+}
+@media (max-width:380px){.wth-tools .elementor-widget:first-child{display:none}.wth-logo .elementor-heading-title{letter-spacing:.16em!important}}
+
 CSS;
 }
 
