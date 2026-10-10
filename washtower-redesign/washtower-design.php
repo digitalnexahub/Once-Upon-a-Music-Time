@@ -809,5 +809,7 @@ h1,h2,h3,h4,h5,h6,.elementor-heading-title,.product_title,.woocommerce-loop-prod
 @media (max-width:767px){.wt-hero__txt{padding:44px 16px!important}.wt-hero__trust{padding:22px 16px!important}}
 @media (min-width:1025px){.wt-hero{padding:0!important}.wt-hero__trust{left:0!important;width:80%!important}}
 @media (min-width:1025px) and (max-width:1384px){.wt-hero{max-width:calc(100% - 64px)!important}}
+@media (min-width:1385px){.wt-hero__img{width:calc(100% + (100vw - 1320px) / 2)!important;max-width:none!important;--width:auto}}
+@media (min-width:1025px) and (max-width:1384px){.wt-hero__img{width:calc(100% + 32px)!important;max-width:none!important;--width:auto}}
 CSS;
 }
