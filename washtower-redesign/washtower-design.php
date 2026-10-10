@@ -1996,8 +1996,6 @@ html,body,body :where(*:not(i):not(svg):not(svg *):not([class*="eicon"]):not([cl
  .wth-logo{margin-right:auto!important}.wth-logo .elementor-heading-title{font-size:15px!important;letter-spacing:.22em!important}
  .wth-tools{gap:0!important}.wth-tools .elementor-icon,.wth-tools .elementor-menu-cart__toggle .elementor-button{padding:10px!important}
  .wth-nav{flex:0 0 auto!important;order:5}.wth-nav .elementor-menu-toggle{width:44px;height:44px;display:grid!important;place-items:center;padding:0!important;border-radius:12px!important;background:var(--off)!important;margin-left:4px}
- .wth-nav .elementor-nav-menu--dropdown.elementor-nav-menu__container{position:fixed!important;left:0!important;right:0!important;width:100vw!important;max-height:calc(100dvh - 120px);overflow-y:auto;border:0!important;border-top:1px solid var(--ln)!important;box-shadow:0 24px 40px -20px rgba(0,0,0,.25);padding:8px 16px 20px!important}
- .wth-nav .elementor-nav-menu--dropdown a{font:600 17px/1.2 var(--sans)!important;padding:16px 8px!important;border-bottom:1px solid var(--ln)}
  .wth-announce{font-size:12px}
  html,body{overflow-x:clip}
  .elementor-widget-heading h1.elementor-heading-title{font-size:clamp(30px,8.6vw,40px)!important;line-height:1.08!important}
@@ -2013,6 +2011,40 @@ html,body,body :where(*:not(i):not(svg):not(svg *):not([class*="eicon"]):not([cl
  .woocommerce-checkout #order_review,.woocommerce-cart .cart-collaterals{position:static!important}
 }
 @media (max-width:380px){.wth-tools .elementor-widget:first-child{display:none}.wth-logo .elementor-heading-title{letter-spacing:.16em!important}}
+
+/* mobile slide panel menu */
+@media (max-width:1024px){.wth-nav .elementor-nav-menu--dropdown.elementor-nav-menu__container{display:none!important}}
+.wtm-ov{position:fixed;inset:0;background:rgba(16,26,21,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);z-index:100002;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s}
+.wtm{position:fixed;top:0;right:0;bottom:0;width:min(400px,88vw);background:#fff;z-index:100003;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .55s var(--ease);box-shadow:-30px 0 60px -30px rgba(0,0,0,.4);font-family:var(--sans)}
+.admin-bar .wtm{top:46px}@media (min-width:783px){.admin-bar .wtm{top:32px}}
+body.wtm-open .wtm{transform:none}body.wtm-open .wtm-ov{opacity:1;visibility:visible}body.wtm-open{overflow:hidden}
+.wtm__top{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--ln)}
+.wtm__logo{font:600 15px/1 var(--sans);letter-spacing:.24em;color:var(--tx)}
+.wtm__x{width:42px;height:42px;border-radius:50%!important;border:0!important;background:var(--off)!important;color:var(--tx)!important;display:grid;place-items:center;padding:0!important;cursor:pointer;transition:transform .4s var(--ease),background .3s}
+.wtm__x:hover{transform:rotate(90deg);background:var(--sage)!important}.wtm__x svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none}
+.wtm__body{flex:1;overflow-y:auto;padding:8px 20px 20px;overscroll-behavior:contain}
+.wtm ul{list-style:none;margin:0;padding:0}
+.wtm__nav>li{border-bottom:1px solid var(--ln);opacity:0;transform:translateX(24px);transition:opacity .45s,transform .55s var(--ease)}
+body.wtm-open .wtm__nav>li{opacity:1;transform:none}
+.wtm__row{display:flex;align-items:center}
+.wtm__nav>li>.wtm__row>a{flex:1;display:block;padding:18px 0;font:700 19px/1.2 var(--sans);color:var(--tx)!important;text-decoration:none}
+.wtm__nav a:hover{color:var(--g)!important}
+.wtm__sub-t{width:40px;height:40px;border-radius:50%!important;border:0!important;background:var(--off)!important;color:var(--tx)!important;padding:0!important;display:grid;place-items:center;cursor:pointer;transition:transform .4s var(--ease),background .3s}
+.wtm__sub-t svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.4;fill:none}
+li.is-open>.wtm__row .wtm__sub-t{transform:rotate(180deg);background:var(--g)!important;color:#fff!important}
+.wtm__nav .sub-menu{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s var(--ease)}
+.wtm__nav .sub-menu>.wtm__in{overflow:hidden;min-height:0}
+.wtm__nav li.is-open>.sub-menu{grid-template-rows:1fr}
+.wtm__nav .sub-menu a{display:block;padding:11px 0 11px 14px;font:500 16px/1.3 var(--sans);color:var(--tx2)!important;text-decoration:none;border-left:2px solid var(--ln)}
+.wtm__nav .sub-menu .wtm__in{padding-bottom:12px}
+.wtm__quick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}
+.wtm__quick a{display:flex;align-items:center;gap:10px;padding:14px;border-radius:14px;background:var(--off);color:var(--tx)!important;text-decoration:none;font:600 14px var(--sans)}
+.wtm__quick svg{width:18px;height:18px;stroke:var(--g);stroke-width:1.8;fill:none}
+.wtm__foot{padding:16px 20px max(16px,env(safe-area-inset-bottom));border-top:1px solid var(--ln)}
+.wtm__cta{display:flex;align-items:center;justify-content:center;gap:10px;height:54px;border-radius:14px;background:var(--g);color:#fff!important;text-decoration:none;font:700 16px var(--sans);transition:background .3s}
+.wtm__cta:hover{background:var(--g3)}.wtm__cta svg{width:16px;height:16px;stroke:#fff;stroke-width:2.2;fill:none;transition:transform .35s var(--ease)}.wtm__cta:hover svg{transform:translateX(4px)}
+.wtm__note{margin:10px 0 0;text-align:center;font:500 12.5px var(--sans);color:var(--tx2)}
+@media (prefers-reduced-motion:reduce){.wtm,.wtm__nav>li,.wtm-ov{transition:none!important}}
 
 CSS;
 }
@@ -2151,6 +2183,39 @@ document.querySelectorAll('.wt-rv2 .wt-rv2__row').forEach(function(row){
  function upd(){var x=row.scrollLeft,best=0,bd=1e9;cards.forEach(function(c,i){var dd=Math.abs(c.offsetLeft-row.offsetLeft-x);if(dd<bd){bd=dd;best=i;}});if(row.scrollLeft+row.clientWidth>=row.scrollWidth-4)best=cards.length-1;[].forEach.call(dots.children,function(b,i){b.classList.toggle('on',i===best);});}
  row.addEventListener('scroll',upd,{passive:true});upd();
 });
+})();
+</script>
+	<?php
+}, 30 );
+
+add_action( 'wp_footer', function () {
+	$cta = home_url( '/get-a-free-design/' );
+	$acc = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : home_url( '/' );
+	$bag = function_exists( 'wc_get_cart_url' ) ? wc_get_cart_url() : home_url( '/' );
+	?>
+<div class="wtm-ov" data-wtm-close></div>
+<aside class="wtm" id="wtm" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
+	<div class="wtm__top"><span class="wtm__logo">WASHTOWER&reg;</span><button type="button" class="wtm__x" data-wtm-close aria-label="Close menu"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+	<div class="wtm__body"><ul class="wtm__nav"></ul>
+		<div class="wtm__quick"><a href="<?php echo esc_url( $acc ); ?>"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>My account</a><a href="<?php echo esc_url( $bag ); ?>"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Basket</a></div>
+	</div>
+	<div class="wtm__foot"><a class="wtm__cta" href="<?php echo esc_url( $cta ); ?>">Get a Free Design<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><p class="wtm__note">Free delivery on all cabinet orders</p></div>
+</aside>
+<script>
+(function(){
+var d=document,P=d.getElementById('wtm');if(!P)return;var nav=P.querySelector('.wtm__nav'),src=d.querySelector('.wth-nav .elementor-nav-menu--main>ul')||d.querySelector('.wth-nav ul.elementor-nav-menu');
+var CH='<svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>';
+function build(ul,into){[].forEach.call(ul.children,function(li){var a=li.querySelector(':scope>a');if(!a)return;var n=d.createElement('li'),row=d.createElement('div');row.className='wtm__row';var l=d.createElement('a');l.href=a.href;l.textContent=a.textContent.trim();row.appendChild(l);n.appendChild(row);
+ var sub=li.querySelector(':scope>ul');if(sub){var b=d.createElement('button');b.type='button';b.className='wtm__sub-t';b.setAttribute('aria-label','Show '+l.textContent+' links');b.setAttribute('aria-expanded','false');b.innerHTML=CH;row.appendChild(b);
+  var su=d.createElement('div');su.className='sub-menu';var inn=d.createElement('ul');inn.className='wtm__in';build(sub,inn);su.appendChild(inn);n.appendChild(su);
+  b.onclick=function(){var o=n.classList.toggle('is-open');b.setAttribute('aria-expanded',o);};}
+ into.appendChild(n);});}
+if(src)build(src,nav);
+[].forEach.call(nav.children,function(li,i){li.style.transitionDelay=(80+i*50)+'ms';});
+var last;function open(){last=d.activeElement;d.body.classList.add('wtm-open');P.setAttribute('aria-hidden','false');setTimeout(function(){P.querySelector('.wtm__x').focus();},50);}
+function close(){d.body.classList.remove('wtm-open');P.setAttribute('aria-hidden','true');if(last&&last.focus)last.focus();}
+d.addEventListener('click',function(e){var t=e.target.closest('.wth-nav .elementor-menu-toggle');if(t){e.preventDefault();e.stopImmediatePropagation();open();return;}if(e.target.closest('[data-wtm-close]'))close();},true);
+d.addEventListener('keydown',function(e){if(e.key==='Escape'&&d.body.classList.contains('wtm-open'))close();});
 })();
 </script>
 	<?php
