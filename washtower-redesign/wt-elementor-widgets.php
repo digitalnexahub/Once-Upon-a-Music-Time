@@ -187,3 +187,38 @@ add_action( 'wp', function () {
 		echo '</div>';
 	}, 5 );
 } );
+
+/* Dynamic tags for the Testimonials loop item (data comes from WP Admin > Testimonials). */
+add_action( 'elementor/dynamic_tags/register', function ( $tags ) {
+	if ( ! class_exists( '\Elementor\Core\DynamicTags\Tag' ) ) { return; }
+	class WT_Tag_Stars extends \Elementor\Core\DynamicTags\Tag {
+		public function get_name() { return 'wt-review-stars'; }
+		public function get_title() { return 'Review stars'; }
+		public function get_group() { return 'post'; }
+		public function get_categories() { return [ \Elementor\Modules\DynamicTags\Module::TEXT_CATEGORY ]; }
+		public function render() {
+			$r = (int) get_post_meta( get_the_ID(), '_wt_rating', true ) ?: 5;
+			echo esc_html( str_repeat( '★', $r ) . str_repeat( '☆', 5 - $r ) );
+		}
+	}
+	class WT_Tag_Label extends \Elementor\Core\DynamicTags\Tag {
+		public function get_name() { return 'wt-review-label'; }
+		public function get_title() { return 'Review label (Verified buyer / Customer)'; }
+		public function get_group() { return 'post'; }
+		public function get_categories() { return [ \Elementor\Modules\DynamicTags\Module::TEXT_CATEGORY ]; }
+		public function render() { echo get_post_meta( get_the_ID(), '_wt_verified', true ) ? 'Verified buyer' : 'Customer'; }
+	}
+	class WT_Tag_Avatar extends \Elementor\Core\DynamicTags\Data_Tag {
+		public function get_name() { return 'wt-review-avatar'; }
+		public function get_title() { return 'Customer photo'; }
+		public function get_group() { return 'post'; }
+		public function get_categories() { return [ \Elementor\Modules\DynamicTags\Module::IMAGE_CATEGORY ]; }
+		public function get_value( array $options = [] ) {
+			$id = (int) get_post_meta( get_the_ID(), '_wt_avatar', true );
+			return $id ? [ 'id' => $id, 'url' => wp_get_attachment_image_url( $id, 'thumbnail' ) ] : [ 'id' => '', 'url' => get_avatar_url( 0, [ 'size' => 96, 'default' => 'mystery' ] ) ];
+		}
+	}
+	$tags->register( new WT_Tag_Stars() );
+	$tags->register( new WT_Tag_Label() );
+	$tags->register( new WT_Tag_Avatar() );
+} );
