@@ -2535,9 +2535,9 @@ var d=document;
 d.querySelectorAll('.wtp-faq .elementor-tab-content').forEach(function(c){c.classList.add('wtp-sm');c.removeAttribute('hidden');c.style.display='';});
 function setOpen(t,open){var c=d.getElementById(t.getAttribute('aria-controls'))||t.nextElementSibling;if(!c)return;
  t.classList.toggle('elementor-active',open);t.setAttribute('aria-expanded',open);c.classList.toggle('elementor-active',open);
- var start=c.getBoundingClientRect().height;c.classList.toggle('is-open',open);
- if(open){c.style.height='auto';var end=c.getBoundingClientRect().height;c.style.height=start+'px';void c.offsetHeight;c.style.height=end+'px';}
- else{c.style.height=start+'px';void c.offsetHeight;c.style.height='0px';}
+ var start=c.getBoundingClientRect().height;
+ if(open){c.style.transition='none';c.classList.add('is-open');c.style.height='auto';var end=c.getBoundingClientRect().height;c.classList.remove('is-open');c.style.height=start+'px';void c.offsetHeight;c.style.transition='';c.classList.add('is-open');c.style.height=end+'px';}
+ else{c.style.height=start+'px';void c.offsetHeight;c.classList.remove('is-open');c.style.height='0px';}
  c.addEventListener('transitionend',function f(e){if(e.propertyName!=='height')return;c.removeEventListener('transitionend',f);if(c.classList.contains('is-open'))c.style.height='auto';});
 }
 d.addEventListener('click',function(e){var t=e.target.closest('.wtp-faq .elementor-tab-title');if(!t)return;e.preventDefault();e.stopImmediatePropagation();setOpen(t,!t.classList.contains('elementor-active'));},true);
