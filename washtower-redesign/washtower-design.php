@@ -2232,6 +2232,8 @@ li.is-open>.wtm__row .wtm__sub-t{transform:rotate(180deg);background:var(--g)!im
 .wtc-steps strong{display:block;color:var(--tx);font:700 15px var(--sans);margin-bottom:4px}
 @media (max-width:767px){.wtc-main{margin-top:-50px!important}.wtc-steps{grid-template-columns:1fr}}
 
+@media (max-width:767px){.wtc-info .elementor-icon-box-wrapper{flex-direction:row!important;text-align:left!important}.wtc-info .elementor-icon-box-icon{margin:0!important;flex:none}.wtc-info{padding:12px 4px!important}}
+
 CSS;
 }
 
