@@ -230,3 +230,69 @@ add_action( 'elementor/dynamic_tags/register', function ( $tags ) {
 	$tags->register( new WT_Tag_Text() );
 	$tags->register( new WT_Tag_Avatar() );
 } );
+
+/* Review slider widget: reviews are added and edited in the Elementor panel (repeater). */
+add_action( 'elementor/widgets/register', function ( $widgets_manager ) {
+	class WT_Review_Slider_Widget extends \Elementor\Widget_Base {
+		public function get_name() { return 'wt-review-slider'; }
+		public function get_title() { return 'WASHTOWER Review Slider'; }
+		public function get_icon() { return 'eicon-testimonial-carousel'; }
+		public function get_categories() { return [ 'washtower', 'general' ]; }
+		public function get_keywords() { return [ 'review', 'testimonial', 'slider', 'carousel', 'washtower' ]; }
+
+		protected function register_controls() {
+			$this->start_controls_section( 'reviews_section', [ 'label' => 'Reviews' ] );
+			$r = new \Elementor\Repeater();
+			$r->add_control( 'rating', [ 'label' => 'Stars', 'type' => \Elementor\Controls_Manager::SELECT, 'default' => '5', 'options' => [ '5' => '5', '4' => '4', '3' => '3', '2' => '2', '1' => '1' ] ] );
+			$r->add_control( 'star_color', [ 'label' => 'Star colour', 'type' => \Elementor\Controls_Manager::COLOR, 'default' => '#2E8B57' ] );
+			$r->add_control( 'text', [ 'label' => 'Review', 'type' => \Elementor\Controls_Manager::TEXTAREA, 'rows' => 4, 'default' => '' ] );
+			$r->add_control( 'name', [ 'label' => 'Customer name', 'type' => \Elementor\Controls_Manager::TEXT, 'default' => '' ] );
+			$r->add_control( 'verified', [ 'label' => 'Verified buyer', 'type' => \Elementor\Controls_Manager::SWITCHER, 'default' => '', 'description' => 'Only turn on if this person really bought from you.' ] );
+			$r->add_control( 'avatar', [ 'label' => 'Customer photo (with permission)', 'type' => \Elementor\Controls_Manager::MEDIA, 'default' => [ 'url' => '' ] ] );
+			$r->add_control( 'image', [ 'label' => 'Room photo', 'type' => \Elementor\Controls_Manager::MEDIA, 'default' => [ 'url' => '' ] ] );
+			$this->add_control( 'reviews', [ 'label' => 'Reviews', 'type' => \Elementor\Controls_Manager::REPEATER, 'fields' => $r->get_controls(), 'default' => [], 'title_field' => '{{{ name || "New review" }}}' ] );
+			$this->add_control( 'empty_text', [ 'label' => 'Text when there are no reviews', 'type' => \Elementor\Controls_Manager::TEXT, 'default' => 'Be the first to share your review.' ] );
+			$this->end_controls_section();
+
+			$this->start_controls_section( 'slider_section', [ 'label' => 'Slider' ] );
+			$this->add_responsive_control( 'per_view', [ 'label' => 'Cards visible', 'type' => \Elementor\Controls_Manager::NUMBER, 'min' => 1, 'max' => 4, 'default' => 3, 'tablet_default' => 2, 'mobile_default' => 1, 'selectors' => [ '{{WRAPPER}} .wt-rs' => '--per: {{VALUE}};' ] ] );
+			$this->add_control( 'gap', [ 'label' => 'Gap (px)', 'type' => \Elementor\Controls_Manager::NUMBER, 'default' => 20, 'selectors' => [ '{{WRAPPER}} .wt-rs' => '--gap: {{VALUE}}px;' ] ] );
+			$this->add_control( 'autoplay', [ 'label' => 'Autoplay', 'type' => \Elementor\Controls_Manager::SWITCHER, 'default' => 'yes' ] );
+			$this->end_controls_section();
+
+			$this->start_controls_section( 'style_section', [ 'label' => 'Card', 'tab' => \Elementor\Controls_Manager::TAB_STYLE ] );
+			$this->add_control( 'card_bg', [ 'label' => 'Background', 'type' => \Elementor\Controls_Manager::COLOR, 'default' => '#FFFFFF', 'selectors' => [ '{{WRAPPER}} .wt-rs__card' => 'background: {{VALUE}};' ] ] );
+			$this->add_control( 'card_border', [ 'label' => 'Border', 'type' => \Elementor\Controls_Manager::COLOR, 'default' => '#E7E9E5', 'selectors' => [ '{{WRAPPER}} .wt-rs__card' => 'border-color: {{VALUE}};' ] ] );
+			$this->add_control( 'text_color', [ 'label' => 'Review text', 'type' => \Elementor\Controls_Manager::COLOR, 'default' => '#3A3F3B', 'selectors' => [ '{{WRAPPER}} .wt-rs__q' => 'color: {{VALUE}};' ] ] );
+			$this->add_group_control( \Elementor\Group_Control_Typography::get_type(), [ 'name' => 'q_typo', 'label' => 'Review typography', 'selector' => '{{WRAPPER}} .wt-rs__q' ] );
+			$this->end_controls_section();
+		}
+
+		protected function render() {
+			$s    = $this->get_settings_for_display();
+			$list = array_filter( (array) $s['reviews'], function ( $r ) { return trim( (string) $r['text'] ) !== '' && trim( (string) $r['name'] ) !== ''; } );
+			if ( ! $list ) {
+				echo '<p class="wt-reviews-empty">' . esc_html( $s['empty_text'] ) . '</p>';
+				if ( \Elementor\Plugin::$instance->editor->is_edit_mode() ) {
+					echo '<p class="wt-admin-note">Editor note: add reviews in the left panel under <b>Reviews</b> &rarr; <b>+ Add Item</b>.</p>';
+				}
+				return;
+			}
+			$fallback = [ 65, 63, 64 ];
+			echo '<div class="wt-rs" data-autoplay="' . ( 'yes' === $s['autoplay'] ? '1' : '0' ) . '"><div class="wt-rs__view" tabindex="0" aria-roledescription="carousel" aria-label="Customer reviews"><ul class="wt-rs__track">';
+			$i = 0;
+			foreach ( $list as $r ) {
+				$n   = max( 1, min( 5, (int) $r['rating'] ) );
+				$img = ! empty( $r['image']['id'] ) ? wp_get_attachment_image( $r['image']['id'], 'medium_large', false, [ 'class' => 'wt-rs__img', 'loading' => 'lazy', 'alt' => '' ] ) : ( ! empty( $r['image']['url'] ) ? '<img class="wt-rs__img" src="' . esc_url( $r['image']['url'] ) . '" alt="" loading="lazy">' : wp_get_attachment_image( $fallback[ $i % 3 ], 'medium_large', false, [ 'class' => 'wt-rs__img', 'loading' => 'lazy', 'alt' => '' ] ) );
+				$av  = ! empty( $r['avatar']['url'] ) ? '<img class="wt-rs__av" src="' . esc_url( ! empty( $r['avatar']['id'] ) ? wp_get_attachment_image_url( $r['avatar']['id'], 'thumbnail' ) : $r['avatar']['url'] ) . '" alt="" loading="lazy">' : '<span class="wt-rs__av wt-rs__av--i" aria-hidden="true">' . esc_html( mb_substr( $r['name'], 0, 1 ) ) . '</span>';
+				echo '<li class="wt-rs__slide"><figure class="wt-rs__card"><div class="wt-rs__l"><div class="wt-rs__stars" style="color:' . esc_attr( $r['star_color'] ?: '#2E8B57' ) . '" aria-label="' . esc_attr( $n . ' out of 5 stars' ) . '">' . str_repeat( '★', $n ) . '<span class="wt-rs__off">' . str_repeat( '★', 5 - $n ) . '</span></div><blockquote class="wt-rs__q">&ldquo;' . esc_html( $r['text'] ) . '&rdquo;</blockquote><figcaption class="wt-rs__who">' . $av . '<span><b>' . esc_html( $r['name'] ) . '</b><small>' . ( 'yes' === $r['verified'] ? 'Verified buyer' : 'Customer' ) . '</small></span></figcaption></div><div class="wt-rs__r">' . $img . '</div></figure></li>';
+				$i++;
+			}
+			echo '</ul></div><div class="wt-rs__nav"><button type="button" class="wt-rs__btn wt-rs__prev" aria-label="Previous review"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><div class="wt-rs__dots"></div><button type="button" class="wt-rs__btn wt-rs__next" aria-label="Next review"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button></div></div>';
+			if ( \Elementor\Plugin::$instance->editor->is_edit_mode() ) {
+				echo '<script>window.wtRsInit&&document.querySelectorAll(".wt-rs:not([data-ready])").forEach(window.wtRsInit);</script>';
+			}
+		}
+	}
+	$widgets_manager->register( new WT_Review_Slider_Widget() );
+} );
