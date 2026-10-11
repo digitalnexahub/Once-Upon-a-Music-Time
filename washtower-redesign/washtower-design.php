@@ -2352,6 +2352,11 @@ li.is-open>.wtm__row .wtm__sub-t{transform:rotate(180deg);background:var(--g)!im
 @media (max-width:1024px){.wtp-grid-3>.e-con,.wtp-grid-4>.e-con,.wtp-grid-6>.e-con{flex-basis:calc(50% - 10px)!important}}
 @media (max-width:767px){.wtp-grid>.e-con{flex-basis:100%!important}.wtp-card,.wtp-step{padding:22px!important}}
 
+/* product short description: no bullet dots */
+.single-product .woocommerce-product-details__short-description ul{list-style:none!important;padding-left:0!important;margin-left:0!important}
+.single-product .woocommerce-product-details__short-description li{list-style:none!important}
+.single-product .woocommerce-product-details__short-description li::marker{content:""!important}
+
 CSS;
 }
 
