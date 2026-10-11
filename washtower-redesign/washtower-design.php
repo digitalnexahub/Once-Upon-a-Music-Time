@@ -2184,6 +2184,16 @@ li.is-open>.wtm__row .wtm__sub-t{transform:rotate(180deg);background:var(--g)!im
 }
 @media (min-width:1025px) and (max-width:1300px){.wth-nav .elementor-nav-menu--main .elementor-item{padding-left:9px!important;padding-right:9px!important;font-size:16px!important}.wth-nav .e--pointer-underline .elementor-item:after{left:9px!important;right:9px!important}.wth-cta .elementor-button{padding:0 14px!important}}
 
+/* header: lock vertical centring */
+@media (min-width:1025px){
+ .wth-header{padding-top:0!important;padding-bottom:0!important;min-height:0!important}
+ .wth-header>.e-con-inner{height:76px!important;min-height:76px!important;padding-top:0!important;padding-bottom:0!important;align-items:center!important}
+ .wth-header>.e-con-inner>.elementor-element{align-self:center!important;margin-top:0!important;margin-bottom:0!important}
+ .wth-nav .elementor-nav-menu--main .elementor-item{padding-top:27px!important;padding-bottom:27px!important;line-height:22px!important}
+ .wth-nav .e--pointer-underline .elementor-item:after{bottom:16px!important}
+ .wth-logo .elementor-heading-title{line-height:1!important;display:block}
+}
+
 CSS;
 }
 
