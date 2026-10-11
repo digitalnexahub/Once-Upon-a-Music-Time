@@ -14,7 +14,7 @@ $hd  = function ( $t, $tag, $cl ) use ( $w ) { return $w( 'heading', [ 'title' =
 $tx  = function ( $t, $cl ) use ( $w ) { return $w( 'text-editor', [ 'editor' => '<p>' . $t . '</p>' ], $cl ); };
 $img = function ( $file ) {
 	global $wpdb;
-	$aid = (int) $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key='_wp_attached_file' AND meta_value LIKE %s LIMIT 1", '%' . $wpdb->esc_like( $file ) ) );
+	$aid = (int) $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key='_wp_attached_file' AND meta_value LIKE %s LIMIT 1", '%' . $wpdb->esc_like( $file ) . '.%' ) );
 	return [ 'id' => $aid, 'url' => $aid ? wp_get_attachment_image_url( $aid, 'large' ) : '' ];
 };
 
