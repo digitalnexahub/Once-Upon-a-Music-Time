@@ -2197,6 +2197,41 @@ li.is-open>.wtm__row .wtm__sub-t{transform:rotate(180deg);background:var(--g)!im
 /* remove 20px gap between announce bar and header */
 .wth{--gap:0px!important;--row-gap:0px!important;row-gap:0!important;gap:0!important}
 
+/* contact page */
+.wtc-hero{position:relative;overflow:hidden;background:radial-gradient(120% 140% at 85% 0%,#2F5A47 0%,#1D4032 45%,#153528 100%)!important}
+.wtc-hero:after{content:"";position:absolute;right:-140px;bottom:-200px;width:520px;height:520px;border-radius:50%;border:1px solid rgba(255,255,255,.08);box-shadow:0 0 0 60px rgba(255,255,255,.025),0 0 0 140px rgba(255,255,255,.02);pointer-events:none}
+.wtc-hero .elementor-heading-title{color:#fff!important}
+.wtc-eyebrow .elementor-heading-title{font:600 12px/1 var(--sans)!important;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.7)!important}
+.wtc-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+.wtc-chips span{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;font:500 14px var(--sans);backdrop-filter:blur(6px)}
+.wtc-chips span:before{content:"";width:8px;height:8px;border-radius:50%;background:#7FD3A6;box-shadow:0 0 0 4px rgba(127,211,166,.18)}
+.wtc-main{margin-top:-90px!important;position:relative;z-index:2}
+.wtc-card{background:#fff;border:1px solid var(--ln);border-radius:22px;box-shadow:0 30px 60px -40px rgba(16,30,22,.35)}
+.wtc-info .elementor-icon-box-wrapper{display:flex!important;gap:16px;align-items:flex-start;text-align:left!important}
+.wtc-info{padding:18px!important;border-radius:16px;transition:background .3s,transform .3s var(--ease)}
+.wtc-info:hover{background:var(--sage);transform:translateX(4px)}
+.wtc-info .elementor-icon{width:48px;height:48px;border-radius:14px;background:var(--sage);color:var(--g)!important;display:grid!important;place-items:center;font-size:20px!important;transition:background .3s,color .3s}
+.wtc-info:hover .elementor-icon{background:var(--g);color:#fff!important}
+.wtc-info .elementor-icon svg{fill:currentColor;width:20px;height:20px}
+.wtc-info .elementor-icon-box-title{margin:0 0 4px!important;font:700 16px/1.3 var(--sans)!important;color:var(--tx)}
+.wtc-info .elementor-icon-box-description{font:400 15px/1.5 var(--sans)!important;color:var(--tx2)}
+.wtc-form .elementor-field-group{margin-bottom:16px!important}
+.wtc-form .elementor-field-label{font:600 13px var(--sans)!important;color:var(--tx)!important;margin-bottom:8px!important}
+.wtc-form .elementor-field-textual,.wtc-form select{background:var(--off)!important;border:1px solid transparent!important;border-radius:12px!important;min-height:52px;padding:12px 16px!important;font:500 15px var(--sans)!important;color:var(--tx)!important;transition:border-color .25s,background .25s,box-shadow .25s}
+.wtc-form textarea.elementor-field-textual{min-height:140px}
+.wtc-form .elementor-field-textual:focus,.wtc-form select:focus{background:#fff!important;border-color:var(--g)!important;box-shadow:0 0 0 4px rgba(29,64,50,.1)!important;outline:0}
+.wtc-form .elementor-field-type-acceptance label{font:400 13px/1.5 var(--sans);color:var(--tx2)}
+.wtc-form .elementor-button{width:100%;min-height:56px;border-radius:14px!important;background:var(--g)!important;font:700 16px var(--sans)!important;transition:background .3s,transform .2s!important}
+.wtc-form .elementor-button:hover{background:var(--g3)!important}.wtc-form .elementor-button:active{transform:scale(.98)}
+.wtc-form .elementor-message{border-radius:12px;padding:12px 14px;margin-top:12px;font:500 14px var(--sans)}
+.wtc-form .elementor-message-success{background:var(--sage);color:var(--g)}
+.wtc-cta{background:var(--beige)!important;border-radius:24px}
+.wtc-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.wtc-steps div{background:#fff;border-radius:16px;padding:18px;font:500 14px/1.45 var(--sans);color:var(--tx2)}
+.wtc-steps b{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--g);color:#fff;font:700 13px var(--sans);margin-bottom:10px}
+.wtc-steps strong{display:block;color:var(--tx);font:700 15px var(--sans);margin-bottom:4px}
+@media (max-width:767px){.wtc-main{margin-top:-50px!important}.wtc-steps{grid-template-columns:1fr}}
+
 CSS;
 }
 
