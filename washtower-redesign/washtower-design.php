@@ -2279,6 +2279,16 @@ li.is-open>.wtm__row .wtm__sub-t{transform:rotate(180deg);background:var(--g)!im
 @media (max-width:767px){.wtp-cols-3,.wtp-two{grid-template-columns:1fr}.wtp-card{padding:22px}}
 @media (prefers-reduced-motion:reduce){.wtp-a{opacity:1!important;transform:none!important;transition:none!important}}
 
+/* FAQ icon: clean drawn plus/minus */
+.wtp-faq .elementor-toggle-icon{position:relative;width:36px!important;height:36px!important;min-width:36px;font-size:0!important;line-height:0!important;margin:0!important}
+.wtp-faq .elementor-toggle-icon>span,.wtp-faq .elementor-toggle-icon svg,.wtp-faq .elementor-toggle-icon i{display:none!important}
+.wtp-faq .elementor-toggle-icon:before,.wtp-faq .elementor-toggle-icon:after{content:"";position:absolute;left:50%;top:50%;width:13px;height:2px;margin:-1px 0 0 -6.5px;border-radius:2px;background:currentColor;transition:transform .4s var(--ease),opacity .3s}
+.wtp-faq .elementor-toggle-icon:after{transform:rotate(90deg)}
+.wtp-faq .elementor-tab-title.elementor-active .elementor-toggle-icon{transform:none!important}
+.wtp-faq .elementor-tab-title.elementor-active .elementor-toggle-icon:after{transform:rotate(0);opacity:0}
+.wtp-faq .elementor-tab-title:hover .elementor-toggle-icon{background:var(--sage)}
+.wtp-faq .elementor-tab-title.elementor-active:hover .elementor-toggle-icon{background:var(--g)}
+
 CSS;
 }
 
