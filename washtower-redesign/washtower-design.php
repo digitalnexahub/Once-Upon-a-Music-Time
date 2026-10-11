@@ -2448,6 +2448,8 @@ li.is-open>.wtm__row .wtm__sub-t{transform:rotate(180deg);background:var(--g)!im
 @media (max-width:767px){.wtwn__why{padding:48px 16px!important}.wtwn__feats{grid-template-columns:1fr 1fr;gap:20px 12px!important}.wtwn__feat{flex-direction:column!important;align-items:flex-start!important;gap:10px!important;padding:6px!important}.wtwn__ic .elementor-icon{width:44px;height:44px;font-size:26px!important}.wtwn__show{grid-template-columns:1fr}.wtwn__text{padding:44px 16px 32px!important}.wtwn__btn,.wtwn__btn .elementor-button{width:100%;justify-content:center}.wtwn__media{min-height:360px;margin:0 16px 44px;width:auto!important}.wtwn__frame{border-radius:14px}.wtwn__bubble{left:50%;bottom:18px;transform:translateX(-50%);white-space:nowrap}.wtwn__bubble .elementor-heading-title{padding:12px 20px;font-size:13px!important}.wtwn__bubble br{display:none}}
 @media (prefers-reduced-motion:reduce){.wtwn__bubble,.wt3n__arrow .elementor-icon{animation:none!important}}
 
+.e-con:has(>.wt3n){background:#F8F7F4!important}
+
 CSS;
 }
 
