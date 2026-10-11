@@ -1833,7 +1833,7 @@ a{color:var(--g)}a:hover,a:active{color:var(--g3)}
 .wt-sticky-buy__btn:hover{background:var(--g3)!important;transform:translateY(-2px)}
 .single-product .related.products{margin-top:60px}
 @media (max-width:1024px){.woocommerce-cart .woocommerce,.woocommerce-checkout form.checkout{grid-template-columns:1fr}.woocommerce-cart .cart-collaterals,.woocommerce-checkout #order_review,.woocommerce-checkout #order_review_heading{grid-column:1;position:static}.woocommerce-checkout #order_review{grid-row:auto}.woocommerce-checkout #order_review_heading{grid-row:auto}.single-product .woocommerce-product-gallery{position:static!important}}
-@media (max-width:767px){.wt-co main{padding:0 16px 70px}.wt-steps-bar li span:not(.wt-steps-bar__dot){display:none}.wt-steps-bar li.is-current span{display:inline!important}
+@media (max-width:767px){.wt-co main{padding:0 16px 70px}.wt-steps-bar li span:not(.wt-steps-bar__dot){display:none}.wt-steps-bar li.is-current span:not(.wt-steps-bar__dot){display:inline!important}
  .woocommerce-cart table.cart tr.cart_item{grid-template-columns:84px 1fr 36px;grid-template-areas:"img name rm" "img price rm" "qty qty sub";row-gap:10px;column-gap:14px}
  .woocommerce-cart table.cart .product-thumbnail img{width:84px!important;height:84px!important}
  .woocommerce-cart table.cart .product-subtotal{align-self:center}
@@ -2312,6 +2312,9 @@ li.is-open>.wtm__row .wtm__sub-t{transform:rotate(180deg);background:var(--g)!im
  .wth-nav .elementor-menu-toggle{width:42px!important;height:42px!important;border-radius:12px!important;background:var(--g)!important;color:#fff!important}
  .wth-nav .elementor-menu-toggle svg,.wth-nav .elementor-menu-toggle i{fill:#fff!important;color:#fff!important;width:20px;height:20px;font-size:20px}
 }
+
+/* steps bar mobile fit */
+@media (max-width:767px){.wt-steps-bar ol{max-width:100%;width:100%}.wt-steps-bar li{min-width:0}.wt-steps-bar li:not(:last-child):after{margin:0 8px;min-width:12px}.wt-steps-bar__dot{display:grid!important;place-items:center}}
 
 CSS;
 }
