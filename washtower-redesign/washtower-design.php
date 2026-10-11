@@ -2299,6 +2299,20 @@ li.is-open>.wtm__row .wtm__sub-t{transform:rotate(180deg);background:var(--g)!im
 .wt-lcsec+.wt-sec{padding-top:56px!important}
 @media (max-width:767px){.wt-lcsec+.wt-sec{padding-top:40px!important}}
 
+/* mobile header: icons grouped on the right */
+@media (max-width:1024px){
+ .wth-header>.e-con-inner{display:flex!important;flex-wrap:nowrap!important;justify-content:flex-start!important;align-items:center!important;gap:0!important}
+ .wth-header .wth-logo{order:1;margin-right:auto!important;flex:0 1 auto!important;width:auto!important;min-width:0}
+ .wth-header .wth-tools{order:2;flex:0 0 auto!important;width:auto!important;margin:0!important;gap:2px!important;justify-content:flex-end!important}
+ .wth-header .wth-nav{order:3;flex:0 0 auto!important;width:auto!important;margin:0 0 0 6px!important}
+ .wth-tools>.elementor-element:not(.wth-cta){width:40px!important;height:40px!important;display:grid!important;place-items:center;border-radius:12px;transition:background .25s}
+ .wth-tools>.elementor-element:not(.wth-cta):hover{background:var(--off)}
+ .wth-tools .elementor-icon,.wth-tools .elementor-menu-cart__toggle .elementor-button,.wth-tools .elementor-search-form__toggle{padding:0!important;width:40px!important;height:40px!important;display:grid!important;place-items:center}
+ .wth-tools svg{width:21px!important;height:21px!important}
+ .wth-nav .elementor-menu-toggle{width:42px!important;height:42px!important;border-radius:12px!important;background:var(--g)!important;color:#fff!important}
+ .wth-nav .elementor-menu-toggle svg,.wth-nav .elementor-menu-toggle i{fill:#fff!important;color:#fff!important;width:20px;height:20px;font-size:20px}
+}
+
 CSS;
 }
 
