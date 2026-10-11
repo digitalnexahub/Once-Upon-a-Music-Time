@@ -2194,6 +2194,9 @@ li.is-open>.wtm__row .wtm__sub-t{transform:rotate(180deg);background:var(--g)!im
  .wth-logo .elementor-heading-title{line-height:1!important;display:block}
 }
 
+/* remove 20px gap between announce bar and header */
+.wth{--gap:0px!important;--row-gap:0px!important;row-gap:0!important;gap:0!important}
+
 CSS;
 }
 
