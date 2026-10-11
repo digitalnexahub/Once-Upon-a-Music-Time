@@ -2468,11 +2468,11 @@ li.is-open>.wtm__row .wtm__sub-t{transform:rotate(180deg);background:var(--g)!im
 .wtf-btn--ghost .elementor-button{background:transparent!important;color:#fff!important;border:1px solid rgba(255,255,255,.35)!important}
 .wtf-btn--ghost .elementor-button:hover{background:rgba(255,255,255,.08)!important;border-color:#fff!important}
 .wtf-main{padding-top:72px!important;padding-bottom:40px!important;position:relative;z-index:1}
-.wtf-main>.e-con-inner,.wtf-main{display:grid!important;grid-template-columns:1.4fr .8fr .9fr .8fr 1.5fr;gap:40px}
+.wtf-main>.e-con-inner{display:grid!important;grid-template-columns:1.4fr .8fr .9fr .8fr 1.5fr;gap:40px;width:100%}
 .wtf-logo .elementor-heading-title{font:600 18px/1 var(--sans)!important;letter-spacing:.32em;color:#fff!important;margin:0}
 .wtf-logo .elementor-heading-title a{color:#fff!important}.wtf-logo sup{font-size:9px;letter-spacing:0}
 .wtf-about,.wtf-about p{font:400 14.5px/1.7 var(--sans)!important;color:rgba(255,255,255,.66)!important;margin:0!important;max-width:300px}
-.wtf-social .elementor-social-icons-wrapper{display:flex!important;gap:10px}
+.wtf-social .elementor-social-icons-wrapper{display:flex!important;gap:10px;justify-content:flex-start!important}.wtf-social .elementor-widget-container,.wtf-social{text-align:left!important}
 .wtf-social .elementor-social-icon{width:40px!important;height:40px!important;border-radius:50%!important;background:rgba(255,255,255,.07)!important;border:1px solid rgba(255,255,255,.12);display:grid!important;place-items:center;font-size:15px!important;transition:background .3s,transform .3s var(--ease),border-color .3s;margin:0!important}
 .wtf-social .elementor-social-icon svg{fill:#fff!important;width:15px;height:15px}
 .wtf-social .elementor-social-icon i{color:#fff!important}
@@ -2499,8 +2499,8 @@ li.is-open>.wtm__row .wtm__sub-t{transform:rotate(180deg);background:var(--g)!im
 .wtf-form .elementor-button-icon svg{fill:#12241B;width:13px}
 .wtf-form .elementor-message{color:#9ED9B8!important;font:500 13px var(--sans);margin-top:8px}
 .wtf-small,.wtf-small p{font:400 12px var(--sans)!important;color:rgba(255,255,255,.45)!important;margin:0!important}
-.wtf-mark-wrap{position:relative;z-index:0;pointer-events:none;user-select:none}
-.wtf-mark .elementor-heading-title{font:800 clamp(64px,15.5vw,230px)/.8 var(--sans)!important;letter-spacing:.06em;color:transparent!important;-webkit-text-stroke:1px rgba(255,255,255,.12);text-align:center;margin:10px 0 -.12em!important;white-space:nowrap;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,0) 80%);-webkit-background-clip:text;background-clip:text}
+.wtf-mark-wrap{position:relative;z-index:0;pointer-events:none;user-select:none;overflow:hidden}
+.wtf-mark .elementor-heading-title{font:800 clamp(48px,12.6vw,190px)/.8 var(--sans)!important;letter-spacing:.02em;color:transparent!important;-webkit-text-stroke:1px rgba(255,255,255,.12);text-align:center;margin:10px 0 -.12em!important;white-space:nowrap;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,0) 80%);-webkit-background-clip:text;background-clip:text}
 .wtf-bottom{border-top:1px solid rgba(255,255,255,.1);position:relative;z-index:1;background:#12241B}
 .wtf-copy .elementor-heading-title{font:400 13px var(--sans)!important;color:rgba(255,255,255,.55)!important;margin:0}
 .wtf-bottom__r{width:auto!important;flex:none}
@@ -2513,9 +2513,9 @@ li.is-open>.wtm__row .wtm__sub-t{transform:rotate(180deg);background:var(--g)!im
 .wtf-top .elementor-button{height:40px;padding:0 16px!important;border-radius:999px!important;background:rgba(255,255,255,.08)!important;border:1px solid rgba(255,255,255,.14)!important;color:#fff!important;font:600 13px var(--sans)!important;display:inline-flex!important;align-items:center;gap:8px;transition:background .3s,transform .3s var(--ease)!important}
 .wtf-top .elementor-button:hover{background:#7FD3A6!important;color:#12241B!important;transform:translateY(-2px)}
 .wtf-top .elementor-button-icon svg{width:12px;fill:currentColor}
-@media (max-width:1100px){.wtf-main>.e-con-inner,.wtf-main{grid-template-columns:1fr 1fr 1fr}.wtf-brand,.wtf-news{grid-column:span 3}.wtf-news{max-width:none}}
+@media (max-width:1100px){.wtf-main>.e-con-inner{grid-template-columns:1fr 1fr 1fr}.wtf-brand,.wtf-news{grid-column:span 3}.wtf-news{max-width:none}}
 @media (max-width:767px){.wtf{margin-top:90px}.wtf-cta{padding:28px 22px!important;border-radius:22px!important}.wtf-cta__btns,.wtf-btn,.wtf-btn .elementor-button{width:100%!important;justify-content:center}
- .wtf-main{padding-top:48px!important}.wtf-main>.e-con-inner,.wtf-main{grid-template-columns:1fr 1fr;gap:32px 20px}.wtf-brand,.wtf-news{grid-column:span 2}.wtf-col:nth-child(4){grid-column:span 2}
+ .wtf-main{padding-top:48px!important}.wtf-main>.e-con-inner{grid-template-columns:1fr 1fr;gap:32px 20px}.wtf-brand,.wtf-news{grid-column:span 2}.wtf-col:nth-child(4){grid-column:span 2}
  .wtf-bottom{text-align:center}.wtf-bottom__r{flex-direction:column!important;gap:14px!important}.wtf-legal .elementor-icon-list-items{justify-content:center}}
 
 CSS;
