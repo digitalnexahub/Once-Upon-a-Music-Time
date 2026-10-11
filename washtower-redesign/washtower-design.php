@@ -2295,6 +2295,10 @@ li.is-open>.wtm__row .wtm__sub-t{transform:rotate(180deg);background:var(--g)!im
 .wtp-faq .elementor-tab-content.wtp-sm>*{transform:translateY(-6px);transition:transform .5s cubic-bezier(.22,1,.36,1)}
 .wtp-faq .elementor-tab-content.wtp-sm.is-open>*{transform:none}
 
+/* tighter gap between reviews and blog */
+.wt-lcsec+.wt-sec{padding-top:56px!important}
+@media (max-width:767px){.wt-lcsec+.wt-sec{padding-top:40px!important}}
+
 CSS;
 }
 
