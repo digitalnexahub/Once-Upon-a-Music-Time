@@ -2289,6 +2289,12 @@ li.is-open>.wtm__row .wtm__sub-t{transform:rotate(180deg);background:var(--g)!im
 .wtp-faq .elementor-tab-title:hover .elementor-toggle-icon{background:var(--sage)}
 .wtp-faq .elementor-tab-title.elementor-active:hover .elementor-toggle-icon{background:var(--g)}
 
+/* FAQ smooth open/close */
+.wtp-faq .elementor-tab-content.wtp-sm{display:block!important;height:0;overflow:hidden;opacity:0;padding-top:0!important;padding-bottom:0!important;transition:height .5s cubic-bezier(.22,1,.36,1),opacity .4s ease,padding .5s cubic-bezier(.22,1,.36,1)}
+.wtp-faq .elementor-tab-content.wtp-sm.is-open{opacity:1;padding-bottom:20px!important}
+.wtp-faq .elementor-tab-content.wtp-sm>*{transform:translateY(-6px);transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.wtp-faq .elementor-tab-content.wtp-sm.is-open>*{transform:none}
+
 CSS;
 }
 
@@ -2520,3 +2526,23 @@ var q=document.querySelector('[data-wtp-search]');if(q){q.addEventListener('inpu
 </script>
 	<?php
 }, 30 );
+
+add_action( 'wp_footer', function () {
+	?>
+<script>
+(function(){
+var d=document;
+d.querySelectorAll('.wtp-faq .elementor-tab-content').forEach(function(c){c.classList.add('wtp-sm');c.removeAttribute('hidden');c.style.display='';});
+function setOpen(t,open){var c=d.getElementById(t.getAttribute('aria-controls'))||t.nextElementSibling;if(!c)return;
+ t.classList.toggle('elementor-active',open);t.setAttribute('aria-expanded',open);c.classList.toggle('elementor-active',open);
+ var start=c.getBoundingClientRect().height;c.classList.toggle('is-open',open);
+ if(open){c.style.height='auto';var end=c.getBoundingClientRect().height;c.style.height=start+'px';void c.offsetHeight;c.style.height=end+'px';}
+ else{c.style.height=start+'px';void c.offsetHeight;c.style.height='0px';}
+ c.addEventListener('transitionend',function f(e){if(e.propertyName!=='height')return;c.removeEventListener('transitionend',f);if(c.classList.contains('is-open'))c.style.height='auto';});
+}
+d.addEventListener('click',function(e){var t=e.target.closest('.wtp-faq .elementor-tab-title');if(!t)return;e.preventDefault();e.stopImmediatePropagation();setOpen(t,!t.classList.contains('elementor-active'));},true);
+d.addEventListener('keydown',function(e){var t=e.target.closest&&e.target.closest('.wtp-faq .elementor-tab-title');if(t&&(e.key==='Enter'||e.key===' ')){e.preventDefault();e.stopImmediatePropagation();setOpen(t,!t.classList.contains('elementor-active'));}},true);
+})();
+</script>
+	<?php
+}, 31 );
