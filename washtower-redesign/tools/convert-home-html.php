@@ -83,7 +83,7 @@ $show = $c( [ 'flex_direction' => 'row', 'flex_gap' => $g( 0 ) ], [
 	], 'wtwn__text' ),
 	$c( [ 'flex_direction' => 'column', 'flex_gap' => $g( 0 ) ], [
 		$w( 'image', [ 'image' => $img( 'cabinet-wall-1-8-natural-oak' ), 'image_size' => 'large' ], 'wtwn__frame' ),
-		$hd( 'Laundry, storage and more<br>in perfect harmony', 'p', 'wtwn__bubble' ),
+		$hd( 'Laundry, storage and more <br>in perfect harmony', 'p', 'wtwn__bubble' ),
 	], 'wtwn__media wtp-a' ),
 ], 'wtwn__show' );
 $whyshow = $c( [ 'flex_direction' => 'column', 'flex_gap' => $g( 0 ) ], [ $why, $show ], 'wtwn' );
