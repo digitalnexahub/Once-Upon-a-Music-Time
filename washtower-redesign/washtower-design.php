@@ -507,10 +507,47 @@ add_shortcode( 'wt_blog_cards', function ( $a ) {
 } );
 
 // Reviews: real approved WooCommerce product reviews. Placeholder cards are shown only to editors until real reviews exist.
+/* Testimonials you add by hand: WP Admin > Testimonials. */
+add_action( 'init', function () {
+	register_post_type( 'wt_testimonial', [
+		'label' => 'Testimonials', 'labels' => [ 'name' => 'Testimonials', 'singular_name' => 'Testimonial', 'add_new_item' => 'Add testimonial', 'edit_item' => 'Edit testimonial', 'new_item' => 'New testimonial' ],
+		'public' => false, 'show_ui' => true, 'show_in_menu' => true, 'menu_icon' => 'dashicons-format-quote', 'menu_position' => 26,
+		'supports' => [ 'title', 'editor', 'thumbnail', 'page-attributes' ], 'show_in_rest' => false,
+	] );
+} );
+add_filter( 'enter_title_here', function ( $t, $p ) { return 'wt_testimonial' === $p->post_type ? 'Customer name (e.g. Sarah L.)' : $t; }, 10, 2 );
+add_action( 'add_meta_boxes_wt_testimonial', function () {
+	add_meta_box( 'wt_t', 'Review details', function ( $p ) {
+		wp_nonce_field( 'wt_t', 'wt_t_nonce' );
+		wp_enqueue_media();
+		$r  = (int) get_post_meta( $p->ID, '_wt_rating', true ) ?: 5;
+		$av = (int) get_post_meta( $p->ID, '_wt_avatar', true );
+		echo '<p><label><b>Rating</b><br><select name="wt_rating">';
+		for ( $i = 5; $i >= 1; $i-- ) { echo '<option value="' . $i . '"' . selected( $r, $i, false ) . '>' . str_repeat( '★', $i ) . '</option>'; }
+		echo '</select></label></p>';
+		echo '<p><label><input type="checkbox" name="wt_verified" value="1"' . checked( (bool) get_post_meta( $p->ID, '_wt_verified', true ), true, false ) . '> Verified buyer (only tick if this person really bought from you)</label></p>';
+		echo '<p><b>Customer photo</b> (optional, with their permission)<br><img id="wt_av_img" src="' . esc_url( $av ? wp_get_attachment_image_url( $av, 'thumbnail' ) : '' ) . '" style="width:56px;height:56px;border-radius:50%;object-fit:cover;' . ( $av ? '' : 'display:none;' ) . '"><input type="hidden" name="wt_avatar" id="wt_avatar" value="' . esc_attr( $av ?: '' ) . '"> <button type="button" class="button" id="wt_av_btn">Choose photo</button> <button type="button" class="button-link" id="wt_av_rm">Remove</button></p>';
+		echo '<p class="description">Review text goes in the main editor. The room photo on the card is the <b>Featured image</b> (right sidebar).</p>';
+		echo <<<'JS'
+<script>jQuery(function($){var f;$('#wt_av_btn').on('click',function(){f=f||wp.media({title:'Customer photo',multiple:false,library:{type:'image'}});f.off('select').on('select',function(){var a=f.state().get('selection').first().toJSON();$('#wt_avatar').val(a.id);$('#wt_av_img').attr('src',(a.sizes&&a.sizes.thumbnail?a.sizes.thumbnail.url:a.url)).show();});f.open();});$('#wt_av_rm').on('click',function(){$('#wt_avatar').val('');$('#wt_av_img').hide();});});</script>
+JS;
+	}, 'wt_testimonial', 'side', 'high' );
+} );
+add_action( 'save_post_wt_testimonial', function ( $id ) {
+	if ( ! isset( $_POST['wt_t_nonce'] ) || ! wp_verify_nonce( $_POST['wt_t_nonce'], 'wt_t' ) || ! current_user_can( 'edit_post', $id ) ) { return; }
+	update_post_meta( $id, '_wt_rating', max( 1, min( 5, (int) ( $_POST['wt_rating'] ?? 5 ) ) ) );
+	update_post_meta( $id, '_wt_verified', empty( $_POST['wt_verified'] ) ? '' : '1' );
+	update_post_meta( $id, '_wt_avatar', absint( $_POST['wt_avatar'] ?? 0 ) );
+} );
+
 add_shortcode( 'wt_reviews', function () {
 	$photos   = [ 63, 64, 65 ];
 	$reviews  = get_comments( [ 'type' => 'review', 'status' => 'approve', 'number' => 12, 'meta_key' => 'rating', 'orderby' => 'comment_date', 'order' => 'DESC' ] );
 	$cards    = [];
+	foreach ( get_posts( [ 'post_type' => 'wt_testimonial', 'post_status' => 'publish', 'numberposts' => 12, 'orderby' => 'menu_order date', 'order' => 'ASC' ] ) as $t ) {
+		$av = (int) get_post_meta( $t->ID, '_wt_avatar', true );
+		$cards[] = [ max( 1, min( 5, (int) get_post_meta( $t->ID, '_wt_rating', true ) ?: 5 ) ), wp_strip_all_tags( $t->post_content ), get_the_title( $t ), get_post_meta( $t->ID, '_wt_verified', true ) ? 'Verified buyer' : 'Customer', $av ? wp_get_attachment_image_url( $av, 'thumbnail' ) : '', get_post_thumbnail_id( $t ) ];
+	}
 	foreach ( $reviews as $r ) {
 		$cards[] = [ (int) get_comment_meta( $r->comment_ID, 'rating', true ), $r->comment_content, $r->comment_author, wc_review_is_from_verified_owner( $r->comment_ID ) ? 'Verified buyer' : 'Customer', get_avatar_url( $r, [ 'size' => 64 ] ) ];
 	}
@@ -526,11 +563,12 @@ add_shortcode( 'wt_reviews', function () {
 			[ 5, 'Placeholder review text. Replace with a genuine customer review.', 'Customer name', 'Verified buyer', '' ],
 		];
 	}
-	$o = $placeholder ? '<p class="wt-admin-note">Editor-only preview: no approved product reviews yet, so visitors see a short call to action instead of these placeholder cards.</p>' : '';
+	$o = $placeholder ? '<p class="wt-admin-note">Editor-only preview: no reviews yet. Add them in WP Admin &rarr; Testimonials &rarr; Add testimonial. Visitors see a short call to action until then.</p>' : '';
 	$o .= '<div class="wt-carousel wt-rev-carousel wt-reveal"><div class="wt-car-track wt-reviews" tabindex="0" aria-label="Customer reviews">';
 	foreach ( $cards as $i => $c ) {
 		$av = $c[4] ? '<img src="' . esc_url( $c[4] ) . '" alt="" width="36" height="36" loading="lazy">' : '<span class="wt-av" aria-hidden="true">' . esc_html( mb_substr( $c[2], 0, 1 ) ) . '</span>';
-		$o .= '<figure class="wt-rcard"><div class="wt-rcard__t">' . wt_stars( $c[0] ) . '<blockquote>“' . esc_html( wp_trim_words( $c[1], 24 ) ) . '”</blockquote><figcaption>' . $av . '<span><b>' . esc_html( $c[2] ) . '</b><small>' . esc_html( $c[3] ) . '</small></span></figcaption></div>' . wp_get_attachment_image( $photos[ $i % 3 ], 'medium', false, [ 'class' => 'wt-rcard__img', 'loading' => 'lazy', 'alt' => '' ] ) . '</figure>';
+		$ph = ! empty( $c[5] ) ? (int) $c[5] : $photos[ $i % 3 ];
+		$o .= '<figure class="wt-rcard"><div class="wt-rcard__t">' . wt_stars( $c[0] ) . '<blockquote>“' . esc_html( wp_trim_words( $c[1], 24 ) ) . '”</blockquote><figcaption>' . $av . '<span><b>' . esc_html( $c[2] ) . '</b><small>' . esc_html( $c[3] ) . '</small></span></figcaption></div>' . wp_get_attachment_image( $ph, 'medium', false, [ 'class' => 'wt-rcard__img', 'loading' => 'lazy', 'alt' => '' ] ) . '</figure>';
 	}
 	return $o . '</div></div>';
 } );
