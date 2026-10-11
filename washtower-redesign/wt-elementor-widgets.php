@@ -274,9 +274,6 @@ add_action( 'elementor/widgets/register', function ( $widgets_manager ) {
 			$list = array_filter( (array) $s['reviews'], function ( $r ) { return trim( (string) $r['text'] ) !== '' && trim( (string) $r['name'] ) !== ''; } );
 			$is_editor = current_user_can( 'edit_posts' ) || \Elementor\Plugin::$instance->editor->is_edit_mode() || \Elementor\Plugin::$instance->preview->is_preview_mode();
 			if ( 'yes' === ( $s['demo_mode'] ?? '' ) && ! $is_editor ) { $list = []; }
-			if ( $list && 'yes' === ( $s['demo_mode'] ?? '' ) ) {
-				echo '<p class="wt-admin-note">Demo reviews &ndash; only you (logged in) can see these. Replace them in Elementor &rarr; Reviews, then turn off &ldquo;Demo mode&rdquo; to show them to visitors.</p>';
-			}
 			if ( ! $list ) {
 				echo '<p class="wt-reviews-empty">' . esc_html( $s['empty_text'] ) . '</p>';
 				if ( \Elementor\Plugin::$instance->editor->is_edit_mode() ) {
