@@ -2134,7 +2134,7 @@ li.is-open>.wtm__row .wtm__sub-t{transform:rotate(180deg);background:var(--g)!im
 .wt-pdc__atc .single_add_to_cart_button{flex:1 1 100%;display:flex!important;align-items:center;justify-content:center;gap:10px}
 .wt-pdc__atc .elementor-add-to-cart,.wt-pdc__atc .elementor-widget-container{width:100%}
 .wt-rvc__q,.wt-rvc__q p{font:400 15px/1.55 var(--sans);color:#3A3F3B;margin:0}
-@media (max-width:767px){.wt-lchead{flex-wrap:wrap!important;align-items:flex-start!important}.wt-rvc{flex-direction:column-reverse!important}.wt-rvc>.e-con{width:100%!important}.wt-rvc__img img{aspect-ratio:4/3;min-height:0;height:auto!important}}
+@media (max-width:767px){.wt-lchead{flex-wrap:wrap!important;align-items:flex-start!important}.wt-rvc__img img{min-height:150px}}
 
 CSS;
 }
