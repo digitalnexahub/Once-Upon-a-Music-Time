@@ -2182,6 +2182,7 @@ li.is-open>.wtm__row .wtm__sub-t{transform:rotate(180deg);background:var(--g)!im
  .wth-header .wth-logo,.wth-header .wth-tools{flex:0 0 auto!important;width:auto!important;margin:0!important}
  .wth-header .wth-nav{flex:0 1 auto!important;width:auto!important;margin:0!important}
 }
+@media (min-width:1025px) and (max-width:1300px){.wth-nav .elementor-nav-menu--main .elementor-item{padding-left:9px!important;padding-right:9px!important;font-size:16px!important}.wth-nav .e--pointer-underline .elementor-item:after{left:9px!important;right:9px!important}.wth-cta .elementor-button{padding:0 14px!important}}
 
 CSS;
 }
