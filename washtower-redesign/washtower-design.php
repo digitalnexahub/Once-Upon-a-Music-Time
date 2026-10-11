@@ -2297,3 +2297,13 @@ d.addEventListener('keydown',function(e){if(e.key==='Escape'&&d.body.classList.c
 </script>
 	<?php
 }, 30 );
+
+/* Shown under the reviews loop carousel only while no testimonials are published. */
+add_shortcode( 'wt_reviews_empty', function () {
+	if ( wp_count_posts( 'wt_testimonial' )->publish > 0 ) { return ''; }
+	$o = '<p class="wt-reviews-empty">Be the first to <a href="' . esc_url( wt_page_url( 'Customer Reviews' ) ) . '">share your review</a>.</p>';
+	if ( current_user_can( 'edit_posts' ) ) {
+		$o .= '<p class="wt-admin-note">Editor-only note: add reviews in WP Admin &rarr; <a href="' . esc_url( admin_url( 'post-new.php?post_type=wt_testimonial' ) ) . '">Testimonials</a>. They appear in this slider automatically.</p>';
+	}
+	return $o;
+} );
