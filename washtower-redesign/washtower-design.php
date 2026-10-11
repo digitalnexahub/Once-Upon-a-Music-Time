@@ -2518,6 +2518,39 @@ li.is-open>.wtm__row .wtm__sub-t{transform:rotate(180deg);background:var(--g)!im
  .wtf-main{padding-top:48px!important}.wtf-main>.e-con-inner{grid-template-columns:1fr 1fr;gap:32px 20px}.wtf-brand,.wtf-news{grid-column:span 2}.wtf-col:nth-child(4){grid-column:span 2}
  .wtf-bottom{text-align:center}.wtf-bottom__r{flex-direction:column!important;gap:14px!important}.wtf-legal .elementor-icon-list-items{justify-content:center}}
 
+/* footer v2: editorial CTA (no overlap, no glow) */
+.wtf{margin-top:0!important;background:#14271E!important}
+.wtf:before{display:none!important}
+.wtf-cta-wrap{margin-top:0!important;padding-top:72px!important}
+.wtf-cta{background:none!important;border:0!important;border-bottom:1px solid rgba(255,255,255,.12)!important;border-radius:0!important;box-shadow:none!important;padding:0 0 64px!important;display:grid!important;grid-template-columns:300px 1fr auto;align-items:center!important;gap:48px!important;overflow:visible}
+.wtf-cta:after{display:none!important}
+.wtf-cta__img{width:100%!important;align-self:stretch}
+.wtf-cta__img img{width:100%!important;height:100%!important;min-height:200px;max-height:240px;object-fit:cover;border-radius:6px 80px 6px 6px!important;display:block;filter:saturate(.9)}
+.wtf-cta__eyebrow .elementor-heading-title{color:#B9C9A8!important;letter-spacing:2px;font-size:12px!important}
+.wtf-cta__title .elementor-heading-title{font:600 clamp(30px,3.2vw,48px)/1.05 var(--sans)!important;letter-spacing:-.02em;max-width:14ch}
+.wtf-cta__text,.wtf-cta__text p{max-width:46ch;color:rgba(255,255,255,.68)!important}
+.wtf-cta__btns{flex-direction:column!important;align-items:stretch!important;gap:10px!important;min-width:230px}
+.wtf-btn .elementor-button{border-radius:6px!important;height:56px;justify-content:space-between;width:100%}
+.wtf-btn--light .elementor-button{background:#F2EEE7!important;color:#14271E!important}
+.wtf-btn--light .elementor-button:hover{background:#fff!important;box-shadow:none;transform:none}
+.wtf-btn--ghost .elementor-button{border-color:rgba(255,255,255,.28)!important;justify-content:center}
+.wtf-main{padding-top:64px!important}
+.wtf-news{background:none!important;border:0!important;border-left:1px solid rgba(255,255,255,.12)!important;border-radius:0!important;padding:0 0 0 36px!important;backdrop-filter:none}
+.wtf-form input.elementor-field{border-radius:6px!important}
+.wtf-form .elementor-button{border-radius:6px!important;background:#F2EEE7!important;color:#14271E!important}
+.wtf-form .elementor-button:hover{background:#fff!important}
+.wtf-form .elementor-button-icon svg{fill:#14271E}
+.wtf-social .elementor-social-icon{border-radius:6px!important;background:transparent!important;border:1px solid rgba(255,255,255,.2)}
+.wtf-social .elementor-social-icon:hover{background:#F2EEE7!important;border-color:#F2EEE7}
+.wtf-social .elementor-social-icon:hover svg{fill:#14271E!important}
+.wtf-links .elementor-icon-list-text:before{background:#B9C9A8}
+.wtf-perks .elementor-icon-list-icon svg,.wtf-perks .elementor-icon-list-icon i{fill:#B9C9A8!important;color:#B9C9A8!important}
+.wtf-mark .elementor-heading-title{background:none!important;-webkit-text-stroke:0;color:rgba(255,255,255,.04)!important;letter-spacing:-.01em;font-weight:700!important}
+.wtf-top .elementor-button{border-radius:6px!important}
+.wtf-top .elementor-button:hover{background:#F2EEE7!important;color:#14271E!important}
+@media (max-width:1100px){.wtf-cta{grid-template-columns:220px 1fr;gap:32px!important}.wtf-cta__btns{grid-column:1/-1;flex-direction:row!important}.wtf-news{border-left:0!important;border-top:1px solid rgba(255,255,255,.12)!important;padding:28px 0 0!important}}
+@media (max-width:767px){.wtf-cta-wrap{padding-top:52px!important}.wtf-cta{grid-template-columns:1fr;gap:24px!important;padding-bottom:44px!important}.wtf-cta__img img{max-height:200px}.wtf-cta__btns{flex-direction:column!important;min-width:0}}
+
 CSS;
 }
 
