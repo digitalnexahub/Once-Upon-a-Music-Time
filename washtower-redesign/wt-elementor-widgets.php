@@ -251,6 +251,7 @@ add_action( 'elementor/widgets/register', function ( $widgets_manager ) {
 			$r->add_control( 'avatar', [ 'label' => 'Customer photo (with permission)', 'type' => \Elementor\Controls_Manager::MEDIA, 'default' => [ 'url' => '' ] ] );
 			$r->add_control( 'image', [ 'label' => 'Room photo', 'type' => \Elementor\Controls_Manager::MEDIA, 'default' => [ 'url' => '' ] ] );
 			$this->add_control( 'reviews', [ 'label' => 'Reviews', 'type' => \Elementor\Controls_Manager::REPEATER, 'fields' => $r->get_controls(), 'default' => [], 'title_field' => '{{{ name || "New review" }}}' ] );
+			$this->add_control( 'demo_mode', [ 'label' => 'Demo mode (only editors see the reviews)', 'type' => \Elementor\Controls_Manager::SWITCHER, 'default' => '', 'description' => 'Turn OFF after you replace the demo reviews with real ones, so visitors can see them.' ] );
 			$this->add_control( 'empty_text', [ 'label' => 'Text when there are no reviews', 'type' => \Elementor\Controls_Manager::TEXT, 'default' => 'Be the first to share your review.' ] );
 			$this->end_controls_section();
 
@@ -271,6 +272,11 @@ add_action( 'elementor/widgets/register', function ( $widgets_manager ) {
 		protected function render() {
 			$s    = $this->get_settings_for_display();
 			$list = array_filter( (array) $s['reviews'], function ( $r ) { return trim( (string) $r['text'] ) !== '' && trim( (string) $r['name'] ) !== ''; } );
+			$is_editor = current_user_can( 'edit_posts' ) || \Elementor\Plugin::$instance->editor->is_edit_mode() || \Elementor\Plugin::$instance->preview->is_preview_mode();
+			if ( 'yes' === ( $s['demo_mode'] ?? '' ) && ! $is_editor ) { $list = []; }
+			if ( $list && 'yes' === ( $s['demo_mode'] ?? '' ) ) {
+				echo '<p class="wt-admin-note">Demo reviews &ndash; only you (logged in) can see these. Replace them in Elementor &rarr; Reviews, then turn off &ldquo;Demo mode&rdquo; to show them to visitors.</p>';
+			}
 			if ( ! $list ) {
 				echo '<p class="wt-reviews-empty">' . esc_html( $s['empty_text'] ) . '</p>';
 				if ( \Elementor\Plugin::$instance->editor->is_edit_mode() ) {
