@@ -2316,6 +2316,12 @@ li.is-open>.wtm__row .wtm__sub-t{transform:rotate(180deg);background:var(--g)!im
 /* steps bar mobile fit */
 @media (max-width:767px){.wt-steps-bar ol{max-width:100%;width:100%}.wt-steps-bar li{min-width:0}.wt-steps-bar li:not(:last-child):after{margin:0 8px;min-width:12px}.wt-steps-bar__dot{display:grid!important;place-items:center}}
 
+/* footer round buttons: perfectly centred icons */
+.wt-news button,.wt-top{padding:0!important;margin:0!important;box-sizing:border-box!important;min-width:0!important;line-height:0!important;font-size:0!important;display:flex!important;align-items:center!important;justify-content:center!important;flex:none}
+.wt-news button{width:36px!important;height:36px!important;top:5px!important;right:5px!important}
+.wt-top{width:40px!important;height:40px!important}
+.wt-news button .wt-ic,.wt-top .wt-ic,.wt-news button svg,.wt-top svg{display:block!important;margin:0!important;flex:none}
+
 CSS;
 }
 
