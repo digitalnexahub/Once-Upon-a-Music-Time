@@ -27,7 +27,7 @@ $hero = $c( [ '_title' => 'Contact Hero', 'content_width' => 'boxed', 'boxed_wid
 	$w( 'heading', [ 'title' => 'Contact us', 'header_size' => 'p' ], 'wtc-eyebrow' ),
 	$h( 'Let&rsquo;s plan your perfect laundry room', 'h1', 60, 36, '#FFFFFF' ),
 	$txt( '<p>Questions about sizes, finishes, delivery or your order? Our team is happy to help &ndash; send us a message and we&rsquo;ll get back to you.</p>', 'rgba(255,255,255,.78)', 19 ),
-	$w( 'html', [ 'html' => '<div class="wtc-chips"><span>Free design advice</span><span>Free UK delivery</span><span>10 year guarantee</span></div>' ] ),
+	$w( 'icon-list', [ 'view' => 'inline', 'icon_list' => [ [ '_id' => $id(), 'text' => 'Free design advice', 'selected_icon' => [ 'value' => 'fas fa-check', 'library' => 'fa-solid' ] ], [ '_id' => $id(), 'text' => 'Free UK delivery', 'selected_icon' => [ 'value' => 'fas fa-check', 'library' => 'fa-solid' ] ], [ '_id' => $id(), 'text' => '10 year guarantee', 'selected_icon' => [ 'value' => 'fas fa-check', 'library' => 'fa-solid' ] ] ] ], 'wtc-chips-n' ),
 ], 'wtc-hero', false );
 
 $info = $c( [ 'flex_direction' => 'column', 'flex_gap' => $g( 6 ), 'width' => [ 'unit' => '%', 'size' => 40 ], 'width_tablet' => [ 'unit' => '%', 'size' => 100 ], 'padding' => $pad( 30, 22, 30, 22 ) ], [
@@ -72,7 +72,9 @@ $cta = $c( [ '_title' => 'Free Design CTA', 'content_width' => 'boxed', 'boxed_w
 			$w( 'button', [ 'text' => 'Get a Free Design', 'link' => [ 'url' => $design ], 'selected_icon' => [ 'value' => 'fas fa-arrow-right', 'library' => 'fa-solid' ], 'icon_align' => 'right' ], 'wt-b' ),
 		] ),
 		$c( [ 'flex_direction' => 'column', 'width' => [ 'unit' => '%', 'size' => 58 ], 'width_tablet' => [ 'unit' => '%', 'size' => 100 ] ], [
-			$w( 'html', [ 'html' => '<div class="wtc-steps"><div><b>1</b><strong>Tell us your space</strong>Measurements and a photo are enough.</div><div><b>2</b><strong>Get your design</strong>We suggest a layout and finish.</div><div><b>3</b><strong>Delivered to you</strong>Free UK delivery to your door.</div></div>' ] ),
+			$c( [ 'flex_direction' => 'row', 'flex_wrap' => 'wrap', 'flex_gap' => $g( 14 ) ], array_map( function ( $st ) use ( $c, $w, $h, $txt, $g ) {
+				return $c( [ 'flex_direction' => 'column', 'flex_gap' => $g( 8 ) ], [ $w( 'heading', [ 'title' => $st[0], 'header_size' => 'span' ], 'wtp-n-n' ), $h( $st[1], 'h3', 16, 16 ), $txt( '<p>' . $st[2] . '</p>', '#666B66', 14 ) ], 'wtp-step wtp-step--sm' );
+			}, [ [ '1', 'Tell us your space', 'Measurements and a photo are enough.' ], [ '2', 'Get your design', 'We suggest a layout and finish.' ], [ '3', 'Delivered to you', 'Free UK delivery to your door.' ] ] ), 'wtp-grid wtp-grid-3' ),
 		] ),
 	], 'wtc-cta' ),
 ], '', false );

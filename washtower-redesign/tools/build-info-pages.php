@@ -17,12 +17,12 @@ $url = function ( $t ) { return function_exists( 'wt_page_url' ) ? wt_page_url( 
 
 /* Shared pieces */
 $hero = function ( $eyebrow, $title, $intro, $chips ) use ( $c, $w, $h, $txt, $g, $pad, $box ) {
-	$ch = '<div class="wtc-chips">'; foreach ( $chips as $x ) { $ch .= '<span>' . $x . '</span>'; } $ch .= '</div>';
+	$li = []; foreach ( $chips as $x ) { $li[] = [ '_id' => substr( md5( $x . microtime() ), 0, 7 ), 'text' => $x, 'selected_icon' => [ 'value' => 'fas fa-check', 'library' => 'fa-solid' ] ]; }
 	return $c( $box( [ '_title' => 'Hero', 'flex_direction' => 'column', 'flex_gap' => $g( 18 ), 'padding' => $pad( 96, 24, 120, 24 ), 'padding_mobile' => $pad( 60, 16, 80, 16 ) ] ), [
 		$w( 'heading', [ 'title' => $eyebrow, 'header_size' => 'p' ], 'wtc-eyebrow wtp-a' ),
 		$h( $title, 'h1', 58, 34, '#FFFFFF', 'wtp-a' ),
 		$txt( '<p>' . $intro . '</p>', 'rgba(255,255,255,.8)', 19, 'wtp-a wtp-narrow' ),
-		$w( 'html', [ 'html' => $ch ], 'wtp-a' ),
+		$w( 'icon-list', [ 'view' => 'inline', 'icon_list' => $li ], 'wtc-chips-n wtp-a' ),
 	], 'wtc-hero', false );
 };
 $section = function ( $title, $sub, $els, $bg = '#FFFFFF', $label = '' ) use ( $c, $h, $txt, $g, $pad, $box, $w ) {
@@ -32,15 +32,27 @@ $section = function ( $title, $sub, $els, $bg = '#FFFFFF', $label = '' ) use ( $
 	if ( $sub ) { $head[] = $txt( '<p>' . $sub . '</p>', '#666B66', 17, 'wtp-a wtp-narrow' ); }
 	return $c( $box( [ '_title' => wp_strip_all_tags( $title ), 'flex_direction' => 'column', 'flex_gap' => $g( 34 ), 'background_background' => 'classic', 'background_color' => $bg, 'padding' => $pad( 90, 24, 90, 24 ), 'padding_mobile' => $pad( 56, 16, 56, 16 ) ] ), array_merge( [ $c( [ 'flex_direction' => 'column', 'flex_gap' => $g( 12 ) ], $head ) ], $els ), '', false );
 };
-$cards = function ( $items, $cols = 3 ) use ( $w ) {
-	$o = '<div class="wtp-cards wtp-cols-' . $cols . '">';
-	foreach ( $items as $i => $it ) { $o .= '<div class="wtp-card wtp-a" style="--d:' . ( $i * 80 ) . 'ms"><span class="wtp-ic">' . $it[0] . '</span><h3>' . $it[1] . '</h3><p>' . $it[2] . '</p></div>'; }
-	return $w( 'html', [ 'html' => $o . '</div>' ] );
+$cards = function ( $items, $cols = 3 ) use ( $c, $w, $h, $txt, $g ) {
+	$kids = [];
+	foreach ( $items as $i => $it ) {
+		$kids[] = $c( [ 'flex_direction' => 'column', 'flex_gap' => $g( 10 ) ], [
+			$w( 'icon', [ 'selected_icon' => [ 'value' => $it[0], 'library' => 'fa-solid' ] ], 'wtp-ic-n' ),
+			$h( $it[1], 'h3', 19, 18 ),
+			$txt( '<p>' . $it[2] . '</p>', '#666B66', 15.5 ),
+		], 'wtp-card wtp-a' );
+	}
+	return $c( [ 'flex_direction' => 'row', 'flex_wrap' => 'wrap', 'flex_gap' => $g( 20 ) ], $kids, 'wtp-grid wtp-grid-' . $cols );
 };
-$steps = function ( $items ) use ( $w ) {
-	$o = '<ol class="wtp-steps">';
-	foreach ( $items as $i => $it ) { $o .= '<li class="wtp-a" style="--d:' . ( $i * 90 ) . 'ms"><span class="wtp-n">' . ( $i + 1 ) . '</span><div><h3>' . $it[0] . '</h3><p>' . $it[1] . '</p></div></li>'; }
-	return $w( 'html', [ 'html' => $o . '</ol>' ] );
+$steps = function ( $items ) use ( $c, $w, $h, $txt, $g ) {
+	$kids = [];
+	foreach ( $items as $i => $it ) {
+		$kids[] = $c( [ 'flex_direction' => 'column', 'flex_gap' => $g( 12 ) ], [
+			$w( 'heading', [ 'title' => (string) ( $i + 1 ), 'header_size' => 'span' ], 'wtp-n-n' ),
+			$h( $it[0], 'h3', 18, 18 ),
+			$txt( '<p>' . $it[1] . '</p>', '#666B66', 15 ),
+		], 'wtp-step wtp-a' );
+	}
+	return $c( [ 'flex_direction' => 'row', 'flex_wrap' => 'wrap', 'flex_gap' => $g( 20 ) ], $kids, 'wtp-grid wtp-grid-' . count( $items ) . ' wtp-steps-n' );
 };
 $faq = function ( $items ) use ( $w, $id ) {
 	$t = []; foreach ( $items as $q ) { $t[] = [ '_id' => $id(), 'tab_title' => $q[0], 'tab_content' => '<p>' . $q[1] . '</p>' ]; }
@@ -54,20 +66,7 @@ $cta = function ( $title, $text, $btn, $link ) use ( $c, $h, $txt, $w, $g, $pad,
 		], 'wtc-cta wtp-a' ),
 	], '', false );
 };
-$I = [
-	'truck' => '<svg viewBox="0 0 24 24"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>',
-	'clock' => '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
-	'home'  => '<svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9H3z"/><path d="M9 20v-6h6v6"/></svg>',
-	'box'   => '<svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/></svg>',
-	'shield'=> '<svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>',
-	'undo'  => '<svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg>',
-	'tool'  => '<svg viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg>',
-	'level' => '<svg viewBox="0 0 24 24"><rect x="2" y="9" width="20" height="6" rx="2"/><path d="M12 9v6M8 12h.01M16 12h.01"/></svg>',
-	'chat'  => '<svg viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 4z"/></svg>',
-	'drill' => '<svg viewBox="0 0 24 24"><path d="M4 8h11v6H4zM15 10h5M9 14v6h3"/></svg>',
-	'ruler' => '<svg viewBox="0 0 24 24"><path d="M3 17L17 3l4 4L7 21z"/><path d="M7 13l2 2M10 10l2 2M13 7l2 2"/></svg>',
-	'users' => '<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.8c1.8.8 3 2.6 3.5 5.2"/></svg>',
-];
+$I = [ 'truck' => 'fas fa-truck', 'clock' => 'fas fa-clock', 'home' => 'fas fa-home', 'box' => 'fas fa-box-open', 'shield' => 'fas fa-shield-alt', 'undo' => 'fas fa-undo-alt', 'tool' => 'fas fa-tools', 'level' => 'fas fa-ruler-horizontal', 'chat' => 'fas fa-comments', 'drill' => 'fas fa-screwdriver', 'ruler' => 'fas fa-ruler-combined', 'users' => 'fas fa-user-friends' ];
 $contact = $url( 'Contact Us' );
 $design  = $url( 'Get a Free Design' );
 
@@ -85,7 +84,16 @@ $pages['returns-warranty'] = [
 	$hero( 'Returns & warranty', 'Built to last, backed by our guarantee', 'We want you to love your laundry cabinet. If something is not right, here is how returns and warranty claims work.', [ '10 year guarantee', '14-day right to cancel', 'Free replacement parts' ] ),
 	$section( 'Our promise to you', '', [ $cards( [ [ $I['shield'], '10 year guarantee', 'Our cabinets are guaranteed for 10 years against manufacturing defects under normal home use.' ], [ $I['undo'], '14-day right to cancel', 'You can cancel your order within 14 days of delivery. Items must be unused, unassembled and in their original packaging.' ], [ $I['box'], 'Missing or damaged parts', 'Something missing or damaged on arrival? Tell us within 48 hours and we will send a replacement part free of charge.' ] ] ) ], '#FFFFFF', 'Peace of mind' ),
 	$section( 'How to return an item', 'Returns are simple. Follow these steps and we will guide you through the rest.', [ $steps( [ [ 'Contact us', 'Send us your order number and the item you want to return.' ], [ 'Pack it up', 'Use the original packaging and keep all parts together.' ], [ 'We arrange collection', 'We confirm the return and the collection or drop-off details.' ], [ 'Refund issued', 'Your refund is processed once the item has been received and checked.' ] ] ) ], '#F8F7F3', 'Step by step' ),
-	$section( 'What the warranty covers', '', [ $w( 'html', [ 'html' => '<div class="wtp-two"><div class="wtp-list wtp-yes wtp-a"><h3>Covered</h3><ul><li>Manufacturing defects in panels and doors</li><li>Hinges and drawer runners that fail in normal use</li><li>Faulty fittings supplied with your cabinet</li></ul></div><div class="wtp-list wtp-no wtp-a" style="--d:100ms"><h3>Not covered</h3><ul><li>Damage from incorrect assembly or installation</li><li>Water damage from leaks or flooding</li><li>Normal wear, misuse or changes to the cabinet</li></ul></div></div>' ] ) ] ),
+	$section( 'What the warranty covers', '', [ $c( [ 'flex_direction' => 'row', 'flex_wrap' => 'wrap', 'flex_gap' => $g( 20 ) ], [
+		$c( [ 'flex_direction' => 'column', 'flex_gap' => $g( 14 ) ], [ $h( 'Covered', 'h3', 20, 19, '#1D4032' ), $w( 'icon-list', [ 'icon_list' => [
+			[ '_id' => $id(), 'text' => 'Manufacturing defects in panels and doors', 'selected_icon' => [ 'value' => 'fas fa-check', 'library' => 'fa-solid' ] ],
+			[ '_id' => $id(), 'text' => 'Hinges and drawer runners that fail in normal use', 'selected_icon' => [ 'value' => 'fas fa-check', 'library' => 'fa-solid' ] ],
+			[ '_id' => $id(), 'text' => 'Faulty fittings supplied with your cabinet', 'selected_icon' => [ 'value' => 'fas fa-check', 'library' => 'fa-solid' ] ] ] ] ) ], 'wtp-list-n wtp-yes wtp-a' ),
+		$c( [ 'flex_direction' => 'column', 'flex_gap' => $g( 14 ) ], [ $h( 'Not covered', 'h3', 20, 19, '#8C3B2C' ), $w( 'icon-list', [ 'icon_list' => [
+			[ '_id' => $id(), 'text' => 'Damage from incorrect assembly or installation', 'selected_icon' => [ 'value' => 'fas fa-times', 'library' => 'fa-solid' ] ],
+			[ '_id' => $id(), 'text' => 'Water damage from leaks or flooding', 'selected_icon' => [ 'value' => 'fas fa-times', 'library' => 'fa-solid' ] ],
+			[ '_id' => $id(), 'text' => 'Normal wear, misuse or changes to the cabinet', 'selected_icon' => [ 'value' => 'fas fa-times', 'library' => 'fa-solid' ] ] ] ] ) ], 'wtp-list-n wtp-no wtp-a' ),
+	], 'wtp-grid wtp-grid-2' ) ] ),
 	$section( 'Returns questions', '', [ $faq( [ [ 'Who pays for return shipping?', 'Please contact us before returning an item and we will explain the costs for your order.' ], [ 'Can I return an assembled cabinet?', 'Cancellations under the 14-day right apply to unused, unassembled items. If an assembled item is faulty, it is covered by our guarantee.' ], [ 'How do I make a warranty claim?', 'Contact us with your order number, a short description and photos of the issue.' ] ] ) ], '#F8F7F3' ),
 	$cta( 'Need help with a return or claim?', 'Send us your order number and we will take it from there.', 'Contact us', $contact ),
 ];
@@ -102,7 +110,7 @@ $pages['installation-guide'] = [
 $pages['faqs'] = [
 	$hero( 'FAQs', 'Answers to common questions', 'Everything you need to know about our cabinets, ordering, delivery and returns.', [ 'Products', 'Ordering', 'Delivery', 'Returns' ] ),
 	$c( $box( [ '_title' => 'FAQ body', 'flex_direction' => 'column', 'flex_gap' => $g( 50 ), 'padding' => $pad( 80, 24, 60, 24 ), 'padding_mobile' => $pad( 50, 16, 40, 16 ) ] ), [
-		$w( 'html', [ 'html' => '<div class="wtp-search wtp-a"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" placeholder="Search questions..." aria-label="Search questions" data-wtp-search></div>' ] ),
+		$w( 'shortcode', [ 'shortcode' => '[wt_faq_search]' ] ),
 		$c( [ 'flex_direction' => 'column', 'flex_gap' => $g( 18 ) ], [ $h( 'Products', 'h2', 28, 24, '#1D211E', 'wtp-a' ), $faq( [ [ 'Which washing machines and dryers fit?', 'Most standard full-size appliances fit. Check the internal dimensions on each product page against your appliance measurements.' ], [ 'What are the cabinets made of?', 'High-quality chipboard with a water-repellent melamine coating, with soft-close hinges.' ], [ 'Can I choose a different finish?', 'Available finishes are shown on each product. Contact us if you are looking for something specific.' ] ] ) ] ),
 		$c( [ 'flex_direction' => 'column', 'flex_gap' => $g( 18 ) ], [ $h( 'Ordering', 'h2', 28, 24, '#1D211E', 'wtp-a' ), $faq( [ [ 'How do I place an order?', 'Add products to your basket and go to checkout. You will receive a confirmation email.' ], [ 'Can I change my order?', 'Contact us as soon as possible with your order number and we will do our best to help.' ], [ 'Do you offer design help?', 'Yes &ndash; request a free design and we will suggest the best layout for your space.' ] ] ) ] ),
 		$c( [ 'flex_direction' => 'column', 'flex_gap' => $g( 18 ) ], [ $h( 'Delivery', 'h2', 28, 24, '#1D211E', 'wtp-a' ), $faq( [ [ 'How much is delivery?', 'Delivery is free on all cabinet orders within the UK mainland.' ], [ 'How long does delivery take?', 'Most orders arrive within 1&ndash;4 weeks. See the estimate on each product page.' ] ] ) ] ),

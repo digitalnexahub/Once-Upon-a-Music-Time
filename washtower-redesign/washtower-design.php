@@ -2322,6 +2322,36 @@ li.is-open>.wtm__row .wtm__sub-t{transform:rotate(180deg);background:var(--g)!im
 .wt-top{width:40px!important;height:40px!important}
 .wt-news button .wt-ic,.wt-top .wt-ic,.wt-news button svg,.wt-top svg{display:block!important;margin:0!important;flex:none}
 
+/* info pages: native Elementor widgets */
+.wtp-grid{width:100%}
+.wtp-grid>.e-con{flex:1 1 0!important;min-width:0;width:auto!important}
+.wtp-grid-3>.e-con{flex-basis:calc(33.333% - 14px)!important}.wtp-grid-2>.e-con{flex-basis:calc(50% - 10px)!important}.wtp-grid-4>.e-con{flex-basis:calc(25% - 15px)!important}.wtp-grid-6>.e-con{flex-basis:calc(33.333% - 14px)!important}
+.wtp-card,.wtp-step{background:#fff!important;border:1px solid var(--ln)!important;border-radius:20px!important;--padding-top:28px;--padding-bottom:28px;--padding-left:26px;--padding-right:26px;padding:28px 26px!important;transition:opacity .8s var(--ease),transform .5s var(--ease),box-shadow .4s var(--ease),border-color .3s}
+.wtp-card.is-in:hover,.wtp-step.is-in:hover{transform:translateY(-6px);box-shadow:0 26px 50px -30px rgba(16,30,22,.35);border-color:#D5DCD3!important}
+.wtp-card .elementor-heading-title,.wtp-step .elementor-heading-title{margin:0}
+.wtp-card .elementor-widget-text-editor p,.wtp-step .elementor-widget-text-editor p{margin:0}
+.wtp-ic-n .elementor-icon-wrapper{text-align:left!important}
+.wtp-ic-n .elementor-icon{width:54px;height:54px;border-radius:16px;background:var(--sage);color:var(--g)!important;fill:var(--g);display:grid!important;place-items:center;font-size:22px!important;margin-bottom:8px;transition:background .35s,color .35s,transform .5s var(--ease)}
+.wtp-ic-n .elementor-icon svg{width:22px;height:22px;fill:currentColor}
+.wtp-card:hover .wtp-ic-n .elementor-icon{background:var(--g);color:#fff!important;transform:rotate(-6deg) scale(1.05)}
+.wtp-n-n .elementor-heading-title{width:44px;height:44px;border-radius:50%;background:var(--g);color:#fff!important;display:grid!important;place-items:center;font:700 17px/1 var(--sans)!important;box-shadow:0 0 0 6px var(--sage)}
+.wtp-step--sm{padding:18px!important;border-radius:16px!important;border:0!important}
+.wtp-step--sm .wtp-n-n .elementor-heading-title{width:30px;height:30px;font-size:13px!important;box-shadow:none}
+.wtp-list-n{border-radius:20px!important;padding:28px!important}
+.wtp-list-n.wtp-yes{background:var(--sage)!important}.wtp-list-n.wtp-no{background:#FBF1EF!important}
+.wtp-list-n .elementor-icon-list-item{padding:6px 0!important;font:400 16px/1.5 var(--sans)!important;color:var(--tx)!important}
+.wtp-list-n .elementor-icon-list-icon{width:22px!important;height:22px;border-radius:50%;display:grid!important;place-items:center;margin-right:10px!important;flex:none}
+.wtp-list-n.wtp-yes .elementor-icon-list-icon{background:var(--g)}.wtp-list-n.wtp-no .elementor-icon-list-icon{background:#C0574A}
+.wtp-list-n .elementor-icon-list-icon svg,.wtp-list-n .elementor-icon-list-icon i{width:11px!important;height:11px;fill:#fff!important;color:#fff!important;font-size:11px!important}
+.wtc-chips-n .elementor-icon-list-items{display:flex!important;flex-wrap:wrap;gap:10px;margin:6px 0 0!important}
+.wtc-chips-n .elementor-icon-list-item{margin:0!important;padding:10px 16px!important;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff!important;font:500 14px var(--sans)!important;backdrop-filter:blur(6px)}
+.wtc-chips-n .elementor-icon-list-item:after{display:none!important}
+.wtc-chips-n .elementor-icon-list-text{color:#fff!important;padding:0!important}
+.wtc-chips-n .elementor-icon-list-icon{width:18px!important;height:18px;border-radius:50%;background:#7FD3A6;display:grid!important;place-items:center;margin-right:8px!important}
+.wtc-chips-n .elementor-icon-list-icon svg,.wtc-chips-n .elementor-icon-list-icon i{width:9px!important;fill:#153528!important;color:#153528!important;font-size:9px!important}
+@media (max-width:1024px){.wtp-grid-3>.e-con,.wtp-grid-4>.e-con,.wtp-grid-6>.e-con{flex-basis:calc(50% - 10px)!important}}
+@media (max-width:767px){.wtp-grid>.e-con{flex-basis:100%!important}.wtp-card,.wtp-step{padding:22px!important}}
+
 CSS;
 }
 
@@ -2573,3 +2603,8 @@ d.addEventListener('keydown',function(e){var t=e.target.closest&&e.target.closes
 </script>
 	<?php
 }, 31 );
+
+/* FAQ search box (used on the FAQs page via the Shortcode widget). */
+add_shortcode( 'wt_faq_search', function () {
+	return '<div class="wtp-search wtp-a"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" placeholder="Search questions..." aria-label="Search questions" data-wtp-search></div>';
+} );
