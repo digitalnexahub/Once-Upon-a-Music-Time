@@ -2123,6 +2123,19 @@ li.is-open>.wtm__row .wtm__sub-t{transform:rotate(180deg);background:var(--g)!im
 .wt-pill .elementor-button:hover .elementor-button-icon{transform:translateX(4px)}
 @media (max-width:767px){.wt-lc-prod .elementor-swiper-button{display:none}.wt-lc-prod .swiper-pagination-progressbar{width:80%!important}}
 
+.wt-lchead{flex-wrap:nowrap!important}.wt-lchead>.e-con{flex:1 1 auto!important;width:auto!important}
+.wt-lchead .elementor-widget-button{flex:0 0 auto}
+.wt-textlink .elementor-button{background:none!important;border:0!important;padding:0!important;color:#202522!important;font:600 15px var(--sans)!important;box-shadow:none!important;transition:color .3s}
+.wt-textlink .elementor-button:hover{color:var(--g)!important}.wt-textlink .elementor-button-icon{transition:transform .3s var(--ease)}.wt-textlink .elementor-button:hover .elementor-button-icon{transform:translateX(4px)}
+.wt-textlink .elementor-button-icon svg{width:13px;fill:currentColor}
+.wt-lcsec{overflow-x:clip}
+.wt-lc-prod .swiper{overflow:visible!important}
+.wt-pdc__atc form.cart{display:flex!important;width:100%}
+.wt-pdc__atc .single_add_to_cart_button{flex:1 1 100%;display:flex!important;align-items:center;justify-content:center;gap:10px}
+.wt-pdc__atc .elementor-add-to-cart,.wt-pdc__atc .elementor-widget-container{width:100%}
+.wt-rvc__q,.wt-rvc__q p{font:400 15px/1.55 var(--sans);color:#3A3F3B;margin:0}
+@media (max-width:767px){.wt-lchead{flex-wrap:wrap!important;align-items:flex-start!important}.wt-rvc{flex-direction:column-reverse!important}.wt-rvc>.e-con{width:100%!important}.wt-rvc__img img{aspect-ratio:4/3;min-height:0;height:auto!important}}
+
 CSS;
 }
 

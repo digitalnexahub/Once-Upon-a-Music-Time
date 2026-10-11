@@ -201,6 +201,13 @@ add_action( 'elementor/dynamic_tags/register', function ( $tags ) {
 			echo esc_html( str_repeat( '★', $r ) . str_repeat( '☆', 5 - $r ) );
 		}
 	}
+	class WT_Tag_Text extends \Elementor\Core\DynamicTags\Tag {
+		public function get_name() { return 'wt-review-text'; }
+		public function get_title() { return 'Review text'; }
+		public function get_group() { return 'post'; }
+		public function get_categories() { return [ \Elementor\Modules\DynamicTags\Module::TEXT_CATEGORY ]; }
+		public function render() { echo '&ldquo;' . esc_html( wp_trim_words( wp_strip_all_tags( get_post_field( 'post_content', get_the_ID() ) ), 40 ) ) . '&rdquo;'; }
+	}
 	class WT_Tag_Label extends \Elementor\Core\DynamicTags\Tag {
 		public function get_name() { return 'wt-review-label'; }
 		public function get_title() { return 'Review label (Verified buyer / Customer)'; }
@@ -220,5 +227,6 @@ add_action( 'elementor/dynamic_tags/register', function ( $tags ) {
 	}
 	$tags->register( new WT_Tag_Stars() );
 	$tags->register( new WT_Tag_Label() );
+	$tags->register( new WT_Tag_Text() );
 	$tags->register( new WT_Tag_Avatar() );
 } );
