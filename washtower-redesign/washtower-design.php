@@ -2176,6 +2176,14 @@ li.is-open>.wtm__row .wtm__sub-t{transform:rotate(180deg);background:var(--g)!im
 @media (max-width:1024px){.wt-rs{--per:2}}@media (max-width:767px){.wt-rs{--per:1}.wt-rs__card{padding:14px;gap:12px}.wt-rs__r{min-height:160px}}
 @media (prefers-reduced-motion:reduce){.wt-rs__track,.wt-rs__card,.wt-rs__img{transition:none!important}}
 
+/* header: menu truly centred */
+@media (min-width:1025px){
+ .wth-header>.e-con-inner,.wth-header.e-con-full{display:grid!important;grid-template-columns:1fr auto 1fr;align-items:center;column-gap:24px}
+ .wth-header .wth-logo{justify-self:start}
+ .wth-header .wth-nav{justify-self:center;flex:none!important;width:auto!important}
+ .wth-header .wth-tools{justify-self:end;width:auto!important}
+}
+
 CSS;
 }
 
